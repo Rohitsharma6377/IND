@@ -1,0 +1,23 @@
+import std.net.http as http
+import std.json as json
+import db.sql as sql
+
+async fn handler(req):
+    # Simple route
+    if req.url == "/":
+        return http.text("Hello from IND HTTP server!")
+
+    # Example DB query (requires driver dependency installed)
+    if req.url == "/users":
+        let db = await sql.connect("sqlite://./examples/server/users.db")
+        await db.exec("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, name TEXT);")
+        let rows = await db.query("SELECT id, name FROM users")
+        await db.close()
+        return http.json(rows)
+
+    return { status: 404, body: "Not Found" }
+
+fn main():
+    http.serve(handler, { port: 8080 })
+
+main()

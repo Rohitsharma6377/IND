@@ -1,0 +1,8 @@
+{
+  "name": "ind-transpiler",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/transpile.mjs",
+  "bin": {},
+  "private": true
+}
