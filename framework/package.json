@@ -1,0 +1,13 @@
+{
+  "name": "indjs-framework",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm -ws run build",
+    "dev": "npm --workspace apps/hello run dev",
+    "start": "npm --workspace apps/hello run start"
+  }
+}

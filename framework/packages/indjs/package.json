@@ -1,0 +1,87 @@
+{
+  "name": "indjs",
+  "version": "1.0.0",
+  "description": "A modern, fast, and lightweight full-stack React framework with file-based routing, SSR, and built-in optimizations",
+  "type": "module",
+  "author": "INDJS Team",
+  "license": "MIT",
+  "homepage": "https://github.com/Rohitsharma6377/IND#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rohitsharma6377/IND.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Rohitsharma6377/IND/issues"
+  },
+  "keywords": [
+    "react",
+    "framework",
+    "ssr",
+    "full-stack",
+    "file-based-routing",
+    "nextjs-alternative",
+    "web-framework",
+    "typescript",
+    "tailwind",
+    "esbuild",
+    "hot-reload",
+    "static-generation"
+  ],
+  "bin": {
+    "indjs": "bin/indjs.js"
+  },
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./auth": "./src/auth/index.mjs",
+    "./database": "./src/database/index.mjs",
+    "./testing": "./src/testing/index.mjs",
+    "./deployment": "./src/deployment/index.mjs"
+  },
+  "files": [
+    "src/**/*",
+    "bin/**/*",
+    "templates/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "express": "^4.19.2",
+    "mime": "^3.0.0",
+    "esbuild": "^0.23.0",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "autoprefixer": "^10.4.19",
+    "sharp": "^0.33.5",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "compression": "^1.7.4",
+    "dotenv": "^16.3.1",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.1",
+    "inquirer": "^9.2.12",
+    "commander": "^11.1.0"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "optionalDependencies": {
+    "mongodb": "^6.3.0",
+    "pg": "^8.11.3",
+    "sqlite3": "^5.1.6",
+    "prisma": "^5.7.1",
+    "@prisma/client": "^5.7.1"
+  },
+  "scripts": {
+    "build": "echo 'No build step required'",
+    "test": "echo 'Tests not implemented yet'",
+    "prepublishOnly": "echo 'Ready for NPM publication'"
+  }
+}

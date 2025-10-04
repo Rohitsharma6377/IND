@@ -1,0 +1,20 @@
+{
+    "name": "site-crawler-sitemap",
+    "version": "1.0.0",
+    "description": "Polite site crawler that generates sitemap.xml",
+    "main": "crawler.js",
+    "scripts": {
+        "start": "node crawler.js"
+    },
+    "dependencies": {
+        "axios": "^1.6.0",
+        "cheerio": "^1.0.0-rc.12",
+        "p-limit": "^3.1.0",
+        "puppeteer": "^24.23.0",
+        "robots-parser": "^3.0.1",
+        "xmlbuilder2": "^3.1.1"
+    },
+    "engines": {
+        "node": ">=16"
+    }
+}

@@ -1,0 +1,10 @@
+node_modules
+test-app/
+test-project/
+my-new-app/
+quick-test-app/
+*.log
+.DS_Store
+.env
+.env.local
+.env.*.local
