@@ -109,9 +109,21 @@ export async function dev({ root, port }) {
   });
 
   let { pages, api } = await discoverRoutes(root);
-  try { bus.emit('build-start', { type: 'client' }); } catch {}
-  await buildClientBundles({ root, pages });
-  try { bus.emit('build-end', { type: 'client' }); } catch {}
+  let viteServer = null;
+  if (cfg?.experimental?.devBundler === 'vite') {
+    try {
+      const { startVite } = await import('./dev_vite.mjs');
+      viteServer = await startVite({ app, root, bus });
+      console.log('[indjs] Vite dev server mounted');
+    } catch (e) {
+      console.warn('[indjs] Failed to start Vite dev server, falling back to esbuild:', e?.message || e);
+    }
+  }
+
+  if (!viteServer) {
+    try { bus.emit('build-start', { type: 'client' }); } catch {}
+    await safeBuildClient({ root, pages, onSuccess: () => { try { bus.emit('build-end', { type: 'client' }); } catch {} } });
+  }
   const cssWatcher = await watchCss({ root, onRebuild: () => { console.log('[indjs] css rebuilt'); bus.emit('rebuild', { type: 'css' }); } });
 
   // Global middleware
@@ -281,13 +293,41 @@ export async function dev({ root, port }) {
     debounceTimer = setTimeout(async () => {
       try { bus.emit('build-start', { type: 'client' }); } catch {}
       ({ pages, api } = await discoverRoutes(root));
-      await buildClientBundles({ root, pages });
-      await loadMiddleware();
-      console.log('[indjs] routes updated and client rebuilt');
-      bus.emit('rebuild', { type: 'routes' });
-      try { bus.emit('build-end', { type: 'client' }); } catch {}
+      if (!viteServer) {
+        await safeBuildClient({ root, pages, onSuccess: async () => {
+          await loadMiddleware();
+          console.log('[indjs] routes updated and client rebuilt');
+          bus.emit('rebuild', { type: 'routes' });
+          try { bus.emit('build-end', { type: 'client' }); } catch {}
+        } });
+      } else {
+        await loadMiddleware();
+        console.log('[indjs] routes updated');
+        bus.emit('rebuild', { type: 'routes' });
+        try { bus.emit('build-end', { type: 'client' }); } catch {}
+      }
     }, 100);
   });
+
+  async function safeBuildClient({ root, pages, onSuccess }) {
+    try {
+      await buildClientBundles({ root, pages });
+      if (typeof onSuccess === 'function') await onSuccess();
+    } catch (e) {
+      // Do not crash dev server; emit structured error
+      try {
+        const payload = { message: String(e && e.message || e || 'Build failed') };
+        if (e && e.errors && Array.isArray(e.errors) && e.errors[0] && e.errors[0].location) {
+          const loc = e.errors[0].location; // esbuild primary error
+          payload.file = loc.file || null;
+          payload.line = loc.line || null;
+          payload.column = loc.column || null;
+        }
+        bus.emit('error', payload);
+      } catch {}
+      console.error('[indjs] client build error:', e?.message || e);
+    }
+  }
 
   // Graceful shutdown on CTRL+C
   process.on('SIGINT', () => { watcher.close(); cssWatcher?.close(); server.close(() => process.exit(0)); });

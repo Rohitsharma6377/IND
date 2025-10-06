@@ -1,5 +1,5 @@
 {
-  "name": "indjs-framework",
+  "name": "indjs",
   "private": false,
   "workspaces": [
     "packages/*",
@@ -10,5 +10,5 @@
     "dev": "npm --workspace apps/hello run dev",
     "start": "npm --workspace apps/hello run start"
   },
-  "version": "0.0.1"
+  "version": "1.0.13"
 }

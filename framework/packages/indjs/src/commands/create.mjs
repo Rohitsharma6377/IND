@@ -25,6 +25,26 @@ const templates = {
   }
 };
 
+async function createHead(appPath) {
+  const head = `import React from 'react';
+
+export default function Head() {
+  return (
+    <>
+      <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+      <link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png" />
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+      <link rel="manifest" href="/site.webmanifest" />
+      <meta name="theme-color" content="#4F46E5" />
+    </>
+  );
+}
+`;
+  await fs.writeFile(path.join(appPath, 'pages', '_head.jsx'), head);
+}
+ 
+
 export async function create({ name, template }) {
   const spinner = ora('Creating INDJS application...').start();
   
@@ -39,10 +59,10 @@ export async function create({ name, template }) {
       // Directory doesn't exist, which is good
     }
 
-    // Select template if not provided
+    // Select template and options
     if (!template) {
       spinner.stop();
-      const { selectedTemplate } = await inquirer.prompt([
+      const answers = await inquirer.prompt([
         {
           type: 'list',
           name: 'selectedTemplate',
@@ -51,21 +71,53 @@ export async function create({ name, template }) {
             name: `${value.name} - ${value.description}`,
             value: key
           }))
+        },
+        {
+          type: 'list',
+          name: 'language',
+          message: 'Language:',
+          choices: [
+            { name: 'JavaScript', value: 'js' },
+            { name: 'TypeScript', value: 'ts' }
+          ],
+          default: 'js'
+        },
+        {
+          type: 'confirm',
+          name: 'useTailwind',
+          message: 'Include Tailwind CSS?',
+          default: true
+        },
+        {
+          type: 'list',
+          name: 'state',
+          message: 'State management:',
+          choices: [
+            { name: 'None', value: 'none' },
+            { name: 'Redux Toolkit', value: 'rtk' }
+          ],
+          default: 'none'
         }
       ]);
-      template = selectedTemplate;
+      template = answers.selectedTemplate;
+      var opts = { language: answers.language, useTailwind: answers.useTailwind, state: answers.state };
       spinner.start('Creating INDJS application...');
+    } else {
+      var opts = { language: 'js', useTailwind: true, state: 'none' };
     }
 
     // Create directory structure
     await fs.mkdir(appPath, { recursive: true });
     await createDirectoryStructure(appPath, template);
-    await createPackageJson(appPath, name);
-    await createConfigFiles(appPath);
-    await createPages(appPath, template);
+    await createGitignore(appPath);
+    await createPackageJson(appPath, name, opts);
+    await createConfigFiles(appPath, opts);
+    await createPages(appPath, template, opts);
     await createComponents(appPath, template);
-    await createStyles(appPath);
+    if (opts.useTailwind) { await createStyles(appPath); }
+    await createAppShell(appPath, opts);
     await createPublicAssets(appPath);
+    await createHead(appPath);
 
     spinner.succeed(chalk.green(`✅ Successfully created ${name}`));
     
@@ -113,11 +165,15 @@ async function createDirectoryStructure(appPath, template) {
   }
 }
 
-async function createPackageJson(appPath, name) {
+async function createPackageJson(appPath, name, opts) {
+  const isTS = opts?.language === 'ts';
+  const useTailwind = opts?.useTailwind !== false;
+  const useRTK = opts?.state === 'rtk';
   const packageJson = {
     name: name.toLowerCase().replace(/\s+/g, '-'),
     version: '0.1.0',
     private: true,
+    type: 'module',
     scripts: {
       dev: 'indjs dev',
       build: 'indjs build',
@@ -125,14 +181,16 @@ async function createPackageJson(appPath, name) {
       test: 'indjs test'
     },
     dependencies: {
-      indjs: '^1.0.0',
+      indjs: '^1.0.11',
       react: '^18.2.0',
-      'react-dom': '^18.2.0'
+      'react-dom': '^18.2.0',
+      ...(useRTK ? { '@reduxjs/toolkit': '^2.3.0', 'react-redux': '^9.1.2' } : {})
     },
     devDependencies: {
-      '@types/react': '^18.2.0',
-      '@types/react-dom': '^18.2.0',
-      typescript: '^5.0.0'
+      ...(isTS ? { '@types/react': '^18.2.0', '@types/react-dom': '^18.2.0', typescript: '^5.0.0' } : {}),
+      vite: '^5.4.0',
+      '@vitejs/plugin-react': '^4.3.0',
+      ...(useTailwind ? { tailwindcss: '^3.4.18', autoprefixer: '^10.4.21' } : {})
     }
   };
 
@@ -142,7 +200,8 @@ async function createPackageJson(appPath, name) {
   );
 }
 
-async function createConfigFiles(appPath) {
+async function createConfigFiles(appPath, opts) {
+  const isTS = opts?.language === 'ts';
   // TypeScript config
   const tsConfig = {
     compilerOptions: {
@@ -168,13 +227,15 @@ async function createConfigFiles(appPath) {
     include: ['**/*.ts', '**/*.tsx'],
     exclude: ['node_modules', '.indjs']
   };
-
-  await fs.writeFile(
-    path.join(appPath, 'tsconfig.json'),
-    JSON.stringify(tsConfig, null, 2)
-  );
+  if (isTS) {
+    await fs.writeFile(
+      path.join(appPath, 'tsconfig.json'),
+      JSON.stringify(tsConfig, null, 2)
+    );
+  }
 
   // Tailwind config
+  if (opts?.useTailwind !== false) {
   const tailwindConfig = `/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -187,7 +248,7 @@ module.exports = {
   plugins: [],
 }`;
 
-  await fs.writeFile(path.join(appPath, 'tailwind.config.js'), tailwindConfig);
+  await fs.writeFile(path.join(appPath, 'tailwind.config.cjs'), tailwindConfig);
 
   // PostCSS config
   const postCssConfig = `module.exports = {
@@ -196,8 +257,8 @@ module.exports = {
     autoprefixer: {},
   },
 }`;
-
-  await fs.writeFile(path.join(appPath, 'postcss.config.js'), postCssConfig);
+  await fs.writeFile(path.join(appPath, 'postcss.config.cjs'), postCssConfig);
+  }
 
   // Environment variables
   const envExample = `# Database
@@ -219,9 +280,17 @@ SMTP_PASS=
 `;
 
   await fs.writeFile(path.join(appPath, '.env.example'), envExample);
+
+  // INDJS config - enable Vite by default
+  const indjsConfig = `export default {
+  experimental: { devBundler: 'vite' }
+};
+`;
+  await fs.writeFile(path.join(appPath, 'indjs.config.js'), indjsConfig);
 }
 
-async function createPages(appPath, template) {
+async function createPages(appPath, template, opts) {
+  const ext = opts?.language === 'ts' ? 'tsx' : 'jsx';
   // Index page
   const indexPage = `import React from 'react';
 
@@ -264,7 +333,7 @@ export async function getServerSideProps() {
   };
 }`;
 
-  await fs.writeFile(path.join(appPath, 'pages', 'index.jsx'), indexPage);
+  await fs.writeFile(path.join(appPath, 'pages', `index.${ext}`), indexPage);
 
   // About page
   const aboutPage = `import React from 'react';
@@ -296,7 +365,7 @@ export default function About() {
   );
 }`;
 
-  await fs.writeFile(path.join(appPath, 'pages', 'about.jsx'), aboutPage);
+  await fs.writeFile(path.join(appPath, 'pages', `about.${ext}`), aboutPage);
 
   // API route
   const apiHello = `export async function get({ req, res }) {
@@ -320,6 +389,7 @@ export async function post({ req, res, body }) {
 
   // Layout
   const layout = `import React from 'react';
+${opts?.useTailwind !== false ? "import '../styles/globals.css';" : ''}
 
 export default function Layout({ children }) {
   return (
@@ -351,7 +421,44 @@ export default function Layout({ children }) {
   );
 }`;
 
-  await fs.writeFile(path.join(appPath, 'pages', '_layout.jsx'), layout);
+  await fs.writeFile(path.join(appPath, 'pages', `_layout.${ext}`), layout);
+}
+
+async function createAppShell(appPath, opts) {
+  const ext = opts?.language === 'ts' ? 'tsx' : 'jsx';
+  const cssImport = opts?.useTailwind !== false ? "import '../styles/globals.css';\n" : '';
+  const app = `import React from 'react';
+${cssImport}
+export default function App(props) {
+  return <>{props.children}</>;
+}
+`;
+  await fs.writeFile(path.join(appPath, 'pages', `_app.${ext}`), app);
+}
+
+async function createGitignore(appPath) {
+  const gitignore = `# Dependencies
+node_modules/
+
+# Build output
+.indjs/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+`;
+  await fs.writeFile(path.join(appPath, '.gitignore'), gitignore);
 }
 
 async function createComponents(appPath, template) {

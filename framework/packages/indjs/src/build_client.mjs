@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 import fsSync from 'fs';
 import crypto from 'crypto';
 import { getConfig } from './config.mjs';
+import { createRequire } from 'module';
 
 function routeToFileSegment(route) {
   if (route === '/') return 'index';
@@ -19,6 +20,7 @@ export async function buildClientBundles({ root, pages }) {
   await fs.mkdir(path.join(outDir, 'pages'), { recursive: true });
 
   const appRoot = root; // the app directory that contains pages/
+  const cfg = getConfig();
   const aliasPlugin = {
     name: 'alias-app-root',
     setup(build) {
@@ -37,7 +39,6 @@ export async function buildClientBundles({ root, pages }) {
   };
 
   // Optional Preact aliasing to shrink client bundles
-  const cfg = getConfig();
   const preactAlias = cfg?.build?.preact === true ? {
     name: 'preact-alias',
     setup(build) {
@@ -54,6 +55,7 @@ export async function buildClientBundles({ root, pages }) {
   } : null;
 
   const manifest = {};
+  const entries = [];
   for (const p of pages) {
     const name = routeToFileSegment(p.route);
     const entryFile = path.join(outDir, `entry_${name}.js`);
@@ -80,29 +82,59 @@ if (el) {
 }
 `;
     await fs.writeFile(entryFile, code, 'utf8');
+    entries.push({ name, entryFile, route: p.route });
+  }
 
-    await esbuild.build({
-      entryPoints: { [name]: entryFile },
-      bundle: true,
-      format: 'esm',
-      sourcemap: true,
-      outfile: path.join(outDir, 'pages', `${name}.js`),
-      platform: 'browser',
-      jsx: 'automatic',
-      loader: { '.js': 'jsx', '.jsx': 'jsx' },
-      external: [],
-      plugins: preactAlias ? [aliasPlugin, preactAlias] : [aliasPlugin]
+  // If experimental.devBundler === 'vite', use Vite for production build
+  if (cfg?.experimental?.devBundler === 'vite') {
+    const appRequire = createRequire(path.join(appRoot, 'package.json'));
+    const { build } = appRequire('vite');
+    const input = {};
+    for (const e of entries) input[e.name] = e.entryFile;
+    await build({
+      root: appRoot,
+      build: {
+        outDir,
+        emptyOutDir: false,
+        manifest: true,
+        rollupOptions: { input },
+        sourcemap: true,
+      }
     });
-
-    // Create a content-hashed copy for production use
+    // Read Vite's manifest and map our routes
     try {
-      const filePath = path.join(outDir, 'pages', `${name}.js`);
-      const buf = await fs.readFile(filePath);
-      const hash = crypto.createHash('sha256').update(buf).digest('hex').slice(0, 8);
-      const hashed = `pages/${name}.${hash}.js`;
-      await fs.writeFile(path.join(outDir, hashed), buf);
-      manifest[p.route] = `/${hashed}`;
+      const viteManifestPath = path.join(outDir, 'manifest.json');
+      const viteManifest = JSON.parse(await fs.readFile(viteManifestPath, 'utf8'));
+      for (const e of entries) {
+        const rec = viteManifest[e.name];
+        if (rec && rec.file) manifest[e.route] = `/${rec.file}`;
+      }
     } catch {}
+  } else {
+    // esbuild bundling (previous behavior)
+    for (const e of entries) {
+      await esbuild.build({
+        entryPoints: { [e.name]: e.entryFile },
+        bundle: true,
+        format: 'esm',
+        sourcemap: true,
+        outfile: path.join(outDir, 'pages', `${e.name}.js`),
+        platform: 'browser',
+        jsx: 'automatic',
+        loader: { '.js': 'jsx', '.jsx': 'jsx' },
+        external: [],
+        plugins: preactAlias ? [aliasPlugin, preactAlias] : [aliasPlugin]
+      });
+      // Create a content-hashed copy for production use
+      try {
+        const filePath = path.join(outDir, 'pages', `${e.name}.js`);
+        const buf = await fs.readFile(filePath);
+        const hash = crypto.createHash('sha256').update(buf).digest('hex').slice(0, 8);
+        const hashed = `pages/${e.name}.${hash}.js`;
+        await fs.writeFile(path.join(outDir, hashed), buf);
+        manifest[e.route] = `/${hashed}`;
+      } catch {}
+    }
   }
 
   // Write manifest for production server to consume

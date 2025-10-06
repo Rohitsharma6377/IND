@@ -376,15 +376,17 @@ export default {
     env: {
       NODE_ENV: 'production'
     }
+  },
+  experimental: {
+    devBundler: 'vite'
   }
 };
-```
 
-## 🌟 Examples
+### Vite Integration (Experimental)
 
-### Blog Application
+Enable Vite for a Turbopack-like dev experience and optimized client builds.
 
-```jsx
+Add to `indjs.config.js`:
 // pages/blog/[slug].jsx
 export default function BlogPost({ post }) {
   return (
