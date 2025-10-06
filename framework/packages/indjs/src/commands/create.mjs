@@ -3,6 +3,8 @@ import path from 'path';
 import chalk from 'chalk';
 import ora from 'ora';
 import inquirer from 'inquirer';
+import { fileURLToPath } from 'url';
+import sharp from 'sharp';
 
 const templates = {
   basic: {
@@ -433,4 +435,41 @@ Allow: /
 Sitemap: https://yoursite.com/sitemap.xml`;
 
   await fs.writeFile(path.join(appPath, 'public', 'robots.txt'), robots);
+
+  // Copy INDJS logos to public/
+  try {
+    const thisFile = fileURLToPath(import.meta.url);
+    const pkgRoot = path.resolve(path.dirname(thisFile), '..', '..');
+    const assetsDir = path.join(pkgRoot, 'assets');
+    const logoJpg = path.join(assetsDir, 'indjs.jpeg');
+    const logoPng = path.join(assetsDir, 'indjs2.png');
+    // Copy if exists
+    try { await fs.copyFile(logoJpg, path.join(appPath, 'public', 'indjs.jpeg')); } catch {}
+    try { await fs.copyFile(logoPng, path.join(appPath, 'public', 'indjs2.png')); } catch {}
+
+    // Generate standard favicons from PNG if available
+    try {
+      const srcPng = path.join(appPath, 'public', 'indjs2.png');
+      const hasPng = await fs.stat(srcPng).then(()=>true).catch(()=>false);
+      if (hasPng) {
+        await sharp(srcPng).resize(32, 32).png().toFile(path.join(appPath, 'public', 'favicon-32x32.png'));
+        await sharp(srcPng).resize(16, 16).png().toFile(path.join(appPath, 'public', 'favicon-16x16.png'));
+        await sharp(srcPng).resize(180, 180).png().toFile(path.join(appPath, 'public', 'apple-touch-icon.png'));
+        const manifest = {
+          name: 'INDJS App',
+          short_name: 'INDJS',
+          icons: [
+            { src: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+            { src: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+            { src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
+          ],
+          start_url: '/',
+          display: 'standalone',
+          background_color: '#ffffff',
+          theme_color: '#4F46E5'
+        };
+        await fs.writeFile(path.join(appPath, 'public', 'site.webmanifest'), JSON.stringify(manifest, null, 2));
+      }
+    } catch {}
+  } catch {}
 }

@@ -129,8 +129,9 @@ function htmlDoc({ body, title, description, head, props, clientSrc, cssHref, de
   (function(){
     try{
       var es = new EventSource('/__indjs/events');
-      var panel = null; var badge = null; var timer = null; var building = false;
+      var panel = null; var badge = null; var badgeCount = null; var issueCount = 0; var timer = null; var building = false;
       var tip = null;
+      var errors = []; var idx = -1;
       function ensureBadge(){
         if(badge) return badge;
         badge = document.createElement('div');
@@ -141,6 +142,17 @@ function htmlDoc({ body, title, description, head, props, clientSrc, cssHref, de
         badge.style.borderRadius='999px';badge.style.boxShadow='0 8px 20px rgba(0,0,0,.35)';badge.style.font='12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial';
         badge.style.pointerEvents='none';
         badge.innerHTML = '<span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#4F46E5;border-radius:50%;font-weight:700;letter-spacing:.2px;font-size:10px">I</span><span id="__indjs_badge_text" style="opacity:.85">Ready</span>';
+        // count bubble
+        badgeCount = document.createElement('span');
+        badgeCount.id='__indjs_badge_count';
+        badgeCount.style.marginLeft='6px';
+        badgeCount.style.display='none';
+        badgeCount.style.background='#DC2626';
+        badgeCount.style.color='#fff';
+        badgeCount.style.borderRadius='999px';
+        badgeCount.style.fontSize='11px';
+        badgeCount.style.padding='2px 6px';
+        badge.appendChild(badgeCount);
         document.body.appendChild(badge);return badge;
       }
       function ensurePanel(){
@@ -150,7 +162,54 @@ function htmlDoc({ body, title, description, head, props, clientSrc, cssHref, de
         panel.style.position='fixed';panel.style.zIndex='99999';panel.style.right='12px';panel.style.bottom='48px';
         panel.style.maxWidth='520px';panel.style.background='rgba(0,0,0,0.85)';panel.style.color='#fff';panel.style.padding='12px 14px';panel.style.borderRadius='12px';panel.style.boxShadow='0 10px 30px rgba(0,0,0,.5)';panel.style.font='13px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial';
         panel.style.display='none';
+        // controls
+        var controls = document.createElement('div');
+        controls.style.display='flex'; controls.style.alignItems='center'; controls.style.gap='6px'; controls.style.marginBottom='8px';
+        var prev = document.createElement('button'); prev.textContent='◀'; prev.style.cssText='background:#111827;color:#fff;border:1px solid #374151;border-radius:6px;padding:2px 6px;cursor:pointer';
+        var next = document.createElement('button'); next.textContent='▶'; next.style.cssText='background:#111827;color:#fff;border:1px solid #374151;border-radius:6px;padding:2px 6px;cursor:pointer';
+        var count = document.createElement('span'); count.id='__indjs_err_count'; count.style.opacity='.8'; count.style.fontSize='12px'; count.textContent='0/0';
+        var copy = document.createElement('button'); copy.textContent='Copy'; copy.style.cssText='margin-left:auto;background:#1F2937;color:#fff;border:1px solid #374151;border-radius:6px;padding:2px 8px;cursor:pointer';
+        controls.appendChild(prev); controls.appendChild(next); controls.appendChild(count); controls.appendChild(copy);
+        var content = document.createElement('div'); content.id='__indjs_err_body';
+        panel.appendChild(controls); panel.appendChild(content);
+        // handlers
+        function render(){
+          var body = document.getElementById('__indjs_err_body');
+          var cspan = document.getElementById('__indjs_err_count');
+          if (!errors.length){ body.innerHTML=''; cspan.textContent='0/0'; panel.style.display='none'; return; }
+          if (idx<0) idx=0; if (idx>=errors.length) idx=errors.length-1;
+          var e = errors[idx];
+          cspan.textContent = (idx+1)+'/'+errors.length;
+          var file = e && e.file ? e.file : '';
+          var loc = (e && e.line) ? (':' + e.line + (e.column?(':'+e.column):'')) : '';
+          var frame = e && e.frame ? e.frame : null;
+          var frameHtml='';
+          if (frame && Array.isArray(frame.lines)){
+            frameHtml = '<div style="font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;background:#0b1020;border-radius:8px;margin-top:8px;overflow:hidden">' +
+              frame.lines.map(function(l){
+                var ln = String(l.n).padStart(4,' ');
+                var code = (l.code||'').replace(/[&<>]/g,function(s){return ({'&':'&amp;','<':'&lt;','>':'&gt;'}[s])});
+                var hl = l.highlight ? 'background:rgba(252,165,165,.15);color:#fff;' : 'color:#cbd5e1;';
+                return '<div style="display:flex"><div style="width:3.5em;padding:.25em .5em;color:#94a3b8;background:#0a0f1e;border-right:1px solid #1f2937">'+ln+'</div><pre style="margin:0;padding:.25em .5em;'+hl+'">'+code+'</pre></div>';
+              }).join('') + '</div>';
+          }
+          body.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+
+            '<strong style="color:#fca5a5">Build Error</strong><span style="opacity:.8;font-size:12px">'+(file?file:'')+loc+'</span></div>'+
+            '<div><pre style="white-space:pre-wrap;margin:6px 0 0;opacity:.95">'+(e.message||'Unknown')+'</pre></div>' + frameHtml;
+          panel.style.display='block';
+        }
+        prev.addEventListener('click', function(){ if(errors.length){ idx=(idx-1+errors.length)%errors.length; render(); }});
+        next.addEventListener('click', function(){ if(errors.length){ idx=(idx+1)%errors.length; render(); }});
+        copy.addEventListener('click', function(){ if(!errors.length) return; try { navigator.clipboard.writeText(formatCopy(errors[idx])); } catch {} });
+        panel.render = render;
         document.body.appendChild(panel);return panel;
+      }
+      function setIssueCount(n){
+        issueCount = n;
+        ensureBadge();
+        if (!badgeCount) return;
+        if (n>0){ badgeCount.textContent = n + ' Issue'; badgeCount.style.display='inline-block'; }
+        else { badgeCount.style.display='none'; }
       }
       function ensureTip(){
         if(tip) return tip;
@@ -179,7 +238,7 @@ function htmlDoc({ body, title, description, head, props, clientSrc, cssHref, de
       }
       function show(type, payload){
         if(type==='build-start'){
-          building = true; setBadge('Building…', true); return;
+          building = true; setBadge('Building…', true); setIssueCount(0); if(panel) panel.style.display='none'; return;
         }
         if(type==='build-end'){
           building = false; setBadge('Ready', false); return;
@@ -190,8 +249,10 @@ function htmlDoc({ body, title, description, head, props, clientSrc, cssHref, de
         }
         if(type==='error'){
           var el = ensurePanel();
-          el.style.display='block';
-          el.innerHTML = '<strong style="color:#fca5a5">Error</strong><pre style="white-space:pre-wrap;margin:6px 0 0;opacity:.9">'+(payload.message||'Unknown')+'</pre>';
+          errors.push(payload||{ message:'Unknown error' });
+          setIssueCount(errors.length);
+          idx = errors.length-1;
+          el.render();
           setBadge('Error', false);
           return;
         }
@@ -213,6 +274,19 @@ function htmlDoc({ body, title, description, head, props, clientSrc, cssHref, de
       // Initial state
       setBadge('Ready', false);
     }catch(e){ /* ignore */ }
+    function formatCopy(e){
+      try {
+        var out = [];
+        out.push('[INDJS Build Error]');
+        if (e.file) out.push(e.file + (e.line?(':'+e.line+(e.column?(':'+e.column):'')) : ''));
+        if (e.message) out.push(e.message);
+        if (e.frame && Array.isArray(e.frame.lines)){
+          out.push(''); out.push('Code frame:');
+          out = out.concat(e.frame.lines.map(function(l){ return (l.highlight?'> ':'  ') + String(l.n).padStart(4,' ') + ' | ' + l.code; }));
+        }
+        return out.join('\n');
+      } catch { return String(e && e.message || ''); }
+    }
   })();
   </script>
   ` : '';
@@ -221,7 +295,6 @@ function htmlDoc({ body, title, description, head, props, clientSrc, cssHref, de
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${escapeHtml(title)}</title>
   ${description ? `<meta name="description" content="${escapeHtml(description)}" />` : ''}
   ${css}
   ${security}
@@ -235,12 +308,7 @@ function htmlDoc({ body, title, description, head, props, clientSrc, cssHref, de
   ${overlay}
 </body>
 </html>`;
-}
-
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[s]));
-}
-
+  }
 function serializeProps(obj) {
   return JSON.stringify(obj)
     .replace(/</g, '\\u003c')

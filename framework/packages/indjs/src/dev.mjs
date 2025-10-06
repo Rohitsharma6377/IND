@@ -185,8 +185,17 @@ export async function dev({ root, port }) {
   // Error handler: emit to SSE and respond
   app.use((err, req, res, next) => {
     try {
-      bus.emit('error', err);
       const msg = String(err && err.message || err || '');
+      const parsed = parseErrorLocation(err);
+      const frame = makeCodeFrame(parsed?.file, parsed?.line, parsed?.column, 3);
+      bus.emit('error', {
+        message: msg,
+        stack: String(err && err.stack || ''),
+        file: parsed?.file || null,
+        line: parsed?.line || null,
+        column: parsed?.column || null,
+        frame
+      });
       const lower = msg.toLowerCase();
       let suggestion = null;
       if (lower.includes('cannot find module') || lower.includes('module not found')) {
@@ -215,6 +224,30 @@ export async function dev({ root, port }) {
     if (res.headersSent) return next(err);
     res.status(500).send('Internal Server Error');
   });
+
+  function parseErrorLocation(e){
+    try {
+      const s = String(e && e.stack || '');
+      // Match C:\path\file.tsx:82:1 or /path/file.tsx:82:1
+      const m = s.match(/\(?([A-Za-z]:\\[^):]+|\/[^):]+):(\d+):(\d+)\)?/);
+      if (m) return { file: m[1].replace(/\\/g,'/'), line: parseInt(m[2],10), column: parseInt(m[3],10) };
+      return null;
+    } catch { return null; }
+  }
+
+  function makeCodeFrame(file, line, column, pad=3){
+    try {
+      if (!file || !fsSync.existsSync(file)) return null;
+      const txt = fsSync.readFileSync(file, 'utf8').split(/\r?\n/);
+      const start = Math.max(1, (line||1) - pad);
+      const end = Math.min(txt.length, (line||1) + pad);
+      const lines = [];
+      for (let i=start;i<=end;i++){
+        lines.push({ n: i, code: txt[i-1], highlight: i === line, column: i===line ? (column||0) : 0 });
+      }
+      return { file, line, column, lines };
+    } catch { return null; }
+  }
 
   // Start server with auto port fallback if needed (try binding directly)
   let listenPort = port;

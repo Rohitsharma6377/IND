@@ -98,7 +98,7 @@ indjs deploy docker
 - **Name**: `indjs`
 - **Version**: `1.0.0`
 - **Description**: A modern, fast, and lightweight full-stack React framework
-- **Author**: INDJS Team
+- **Author**: INDJS Team || Rohit sharma
 - **License**: MIT
 - **Repository**: https://github.com/Rohitsharma6377/IND
 
