@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs/promises';
 import fsSync from 'fs';
 import crypto from 'crypto';
+import { getConfig } from './config.mjs';
 
 function routeToFileSegment(route) {
   if (route === '/') return 'index';
@@ -34,6 +35,23 @@ export async function buildClientBundles({ root, pages }) {
       });
     }
   };
+
+  // Optional Preact aliasing to shrink client bundles
+  const cfg = getConfig();
+  const preactAlias = cfg?.build?.preact === true ? {
+    name: 'preact-alias',
+    setup(build) {
+      const map = new Map([
+        ['react', 'preact/compat'],
+        ['react-dom', 'preact/compat'],
+        ['react/jsx-runtime', 'preact/jsx-runtime']
+      ]);
+      build.onResolve({ filter: /^(react|react-dom|react\/jsx-runtime)$/ }, args => {
+        const target = map.get(args.path);
+        return target ? { path: target, external: false } : null;
+      });
+    }
+  } : null;
 
   const manifest = {};
   for (const p of pages) {
@@ -73,7 +91,7 @@ if (el) {
       jsx: 'automatic',
       loader: { '.js': 'jsx', '.jsx': 'jsx' },
       external: [],
-      plugins: [aliasPlugin]
+      plugins: preactAlias ? [aliasPlugin, preactAlias] : [aliasPlugin]
     });
 
     // Create a content-hashed copy for production use

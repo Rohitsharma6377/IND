@@ -12,6 +12,13 @@ import sharp from 'sharp';
 import net from 'net';
 import fsSync from 'fs';
 import { EventEmitter } from 'events';
+import helmet from 'helmet';
+import compression from 'compression';
+import cors from 'cors';
+import pinoHttp from 'pino-http';
+import rateLimit from 'express-rate-limit';
+import sourceMapSupport from 'source-map-support';
+import { loadConfig, getConfig } from './config.mjs';
 
 async function findAvailablePort(startPort, tries = 20) {
   let p = startPort;
@@ -28,6 +35,9 @@ async function findAvailablePort(startPort, tries = 20) {
 }
 
 export async function dev({ root, port }) {
+  sourceMapSupport.install();
+  await loadConfig(root);
+  const cfg = getConfig();
   const app = express();
   const bus = new EventEmitter();
   const pagesDir = path.join(root, 'pages');
@@ -59,6 +69,17 @@ export async function dev({ root, port }) {
   app.use('/__indjs/client', express.static(outDir));
   app.use(express.json());
 
+  // Security and performance middlewares (dev-friendly)
+  app.use(helmet({ contentSecurityPolicy: false }));
+  app.use(compression());
+  app.use(cors());
+  app.use(pinoHttp({
+    transport: process.env.NODE_ENV !== 'production' ? { target: 'pino-pretty' } : undefined,
+    redact: ['req.headers.authorization']
+  }));
+  const limiter = rateLimit({ windowMs: 30 * 1000, max: 600 });
+  app.use(limiter);
+
   // SSE endpoint for dev events (errors, rebuilds)
   app.get('/__indjs/events', (req, res) => {
     res.writeHead(200, {
@@ -73,13 +94,24 @@ export async function dev({ root, port }) {
     };
     const onError = (e) => send('error', { message: e?.message || String(e), stack: e?.stack || '' });
     const onRebuild = (info) => send('rebuild', info || {});
+    const onBuildStart = (info) => send('build-start', info || {});
+    const onBuildEnd = (info) => send('build-end', info || {});
     bus.on('error', onError);
     bus.on('rebuild', onRebuild);
-    req.on('close', () => { bus.off('error', onError); bus.off('rebuild', onRebuild); });
+    bus.on('build-start', onBuildStart);
+    bus.on('build-end', onBuildEnd);
+    req.on('close', () => {
+      bus.off('error', onError);
+      bus.off('rebuild', onRebuild);
+      bus.off('build-start', onBuildStart);
+      bus.off('build-end', onBuildEnd);
+    });
   });
 
   let { pages, api } = await discoverRoutes(root);
+  try { bus.emit('build-start', { type: 'client' }); } catch {}
   await buildClientBundles({ root, pages });
+  try { bus.emit('build-end', { type: 'client' }); } catch {}
   const cssWatcher = await watchCss({ root, onRebuild: () => { console.log('[indjs] css rebuilt'); bus.emit('rebuild', { type: 'css' }); } });
 
   // Global middleware
@@ -140,9 +172,10 @@ export async function dev({ root, port }) {
       if (!match) return next();
       const mod = await loadModule(match.route.file);
       const clientSrc = `/__indjs/client${routeToClientPath(match.route.route)}`;
-      const html = await renderPageModule({ mod, ctx: { req, res, query: req.query, params: match.params, root, pageFile: match.route.file, route: match.route.route, dev: true }, assets: { clientSrc } });
+      const rendered = await renderPageModule({ mod, ctx: { req, res, query: req.query, params: match.params, root, pageFile: match.route.file, route: match.route.route, dev: true }, assets: { clientSrc } });
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end(html);
+      if (typeof rendered === 'function') return rendered(res);
+      res.end(rendered);
     } catch (e) { bus.emit('error', e); next(e); }
   });
 
@@ -151,7 +184,34 @@ export async function dev({ root, port }) {
 
   // Error handler: emit to SSE and respond
   app.use((err, req, res, next) => {
-    try { bus.emit('error', err); } catch {}
+    try {
+      bus.emit('error', err);
+      const msg = String(err && err.message || err || '');
+      const lower = msg.toLowerCase();
+      let suggestion = null;
+      if (lower.includes('cannot find module') || lower.includes('module not found')) {
+        suggestion = {
+          title: 'Module not found',
+          detail: 'Check import path and that the dependency is installed. If it\'s a local file, ensure the file extension and casing match. For packages, run `npm install <name>`.'
+        };
+      } else if (lower.includes('unexpected token') || lower.includes('syntaxerror')) {
+        suggestion = {
+          title: 'Syntax error',
+          detail: 'Look near the file and line in the stack trace. Common causes: missing closing tag/brace, stray comma, or mixing ESM/CJS syntax.'
+        };
+      } else if (lower.includes('jsx') && lower.includes('not enabled')) {
+        suggestion = {
+          title: 'JSX not enabled',
+          detail: 'Ensure the file uses .jsx or .tsx extension. INDJS configures JSX automatically for those extensions.'
+        };
+      } else if (lower.includes('react') && lower.includes('invalid hook call')) {
+        suggestion = {
+          title: 'Invalid React hook call',
+          detail: 'Hooks must run at the top level of React components and not inside conditions or loops. Ensure a single React copy is used.'
+        };
+      }
+      if (suggestion) bus.emit('suggestion', suggestion);
+    } catch {}
     if (res.headersSent) return next(err);
     res.status(500).send('Internal Server Error');
   });
@@ -186,11 +246,13 @@ export async function dev({ root, port }) {
   watcher.on('all', async () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(async () => {
+      try { bus.emit('build-start', { type: 'client' }); } catch {}
       ({ pages, api } = await discoverRoutes(root));
       await buildClientBundles({ root, pages });
       await loadMiddleware();
       console.log('[indjs] routes updated and client rebuilt');
       bus.emit('rebuild', { type: 'routes' });
+      try { bus.emit('build-end', { type: 'client' }); } catch {}
     }, 100);
   });
 

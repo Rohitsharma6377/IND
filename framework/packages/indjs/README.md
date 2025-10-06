@@ -11,7 +11,7 @@
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue)](https://www.typescriptlang.org/)
 
-[Documentation](https://indjs.dev) • [Examples](https://github.com/Rohitsharma6377/IND/tree/main/examples) • [Community](https://discord.gg/indjs)
+[Documentation](https://netcurion.vercel.app) • [Examples](https://github.com/Rohitsharma6377/IND/tree/main/examples) • [Community](https://discord.gg/indjs)
 
 </div>
 
@@ -467,10 +467,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 📖 [Documentation](https://indjs.dev)
-- 💬 [Discord Community](https://discord.gg/indjs)
+- 📖 [Documentation](https://netcurion.vercel.app)
+<!-- - 💬 [Discord Community](https://discord.gg/indjs) -->
 - 🐛 [Issue Tracker](https://github.com/Rohitsharma6377/IND/issues)
-- 📧 [Email Support](mailto:support@indjs.dev)
+- 📧 [Email Support](mailto:netcurion@outlook.com)
 
 ---
 
@@ -478,6 +478,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Made with ❤️ by the INDJS Team**
 
-[Website](https://indjs.dev) • [GitHub](https://github.com/Rohitsharma6377/IND) • [Twitter](https://twitter.com/indjs)
+[Website](https://netcurion.vercel.app) • [GitHub](https://github.com/Rohitsharma6377/IND) • [Instagram](https://instagram.com/Netcurion)
 
 </div>

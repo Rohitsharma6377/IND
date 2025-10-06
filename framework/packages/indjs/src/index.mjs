@@ -18,6 +18,10 @@ export { buildCss, watchCss, cssHref } from './css.mjs';
 // Module loading
 export { loadModule } from './load.mjs';
 
+// Components
+export { default as Image } from './components/image.mjs';
+export { default as Link } from './components/link.mjs';
+
 // CLI runner
 export { run as runCLI } from './cli.mjs';
 

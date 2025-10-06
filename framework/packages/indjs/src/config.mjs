@@ -14,6 +14,32 @@ const defaultConfig = {
       origin: '*',
       credentials: true
     },
+
+  // Security meta and link tags for <head>
+  securityMeta: {
+    csp: {
+      enabled: false,
+      // Example: default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline'
+      policy: "default-src 'self'"
+    },
+    referrerPolicy: 'strict-origin-when-cross-origin',
+    permissionsPolicy: {
+      enabled: false,
+      // Example: geolocation=(self), microphone=()
+      policy: ''
+    },
+    hsts: {
+      enabled: false,
+      // 6 months
+      maxAge: 15552000,
+      includeSubDomains: true,
+      preload: false
+    },
+    dnsPrefetch: true,
+    preconnect: [], // e.g., ['https://fonts.gstatic.com']
+    crossOriginOpenerPolicy: 'same-origin',
+    crossOriginEmbedderPolicy: 'unsafe-none'
+  },
     helmet: {
       enabled: true,
       contentSecurityPolicy: false
@@ -28,7 +54,8 @@ const defaultConfig = {
     splitting: true,
     outDir: '.indjs',
     publicPath: '/',
-    analyze: false
+    analyze: false,
+    preact: false
   },
 
   // Development configuration
@@ -128,6 +155,25 @@ const defaultConfig = {
     appDir: false,
     serverComponents: false,
     streaming: false
+  }
+};
+
+// Caching and observability (new)
+defaultConfig.caching = {
+  store: 'memory', // 'memory' | 'redis'
+  ttl: 30, // seconds
+  secret: process.env.INDJS_REVALIDATE_SECRET || '',
+  tags: true,
+  redisUrl: process.env.REDIS_URL || ''
+};
+
+defaultConfig.observability = {
+  logToFile: false,
+  filePath: './.indjs/server.log',
+  pinoLevel: 'info',
+  apm: {
+    enabled: false,
+    transport: '' // user-provided pino transport target, e.g. '@logtail/pino'
   }
 };
 
