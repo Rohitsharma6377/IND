@@ -181,7 +181,7 @@ async function createPackageJson(appPath, name, opts) {
       test: 'indjs test'
     },
     dependencies: {
-      indjs: '^1.0.11',
+      indjs: '^1.0.13',
       react: '^18.2.0',
       'react-dom': '^18.2.0',
       ...(useRTK ? { '@reduxjs/toolkit': '^2.3.0', 'react-redux': '^9.1.2' } : {})
@@ -389,7 +389,6 @@ export async function post({ req, res, body }) {
 
   // Layout
   const layout = `import React from 'react';
-${opts?.useTailwind !== false ? "import '../styles/globals.css';" : ''}
 
 export default function Layout({ children }) {
   return (
@@ -426,11 +425,10 @@ export default function Layout({ children }) {
 
 async function createAppShell(appPath, opts) {
   const ext = opts?.language === 'ts' ? 'tsx' : 'jsx';
-  const cssImport = opts?.useTailwind !== false ? "import '../styles/globals.css';\n" : '';
   const app = `import React from 'react';
-${cssImport}
+
 export default function App(props) {
-  return <>{props.children}</>;
+  return <>` + '{' + `props.children` + '}' + `</>;
 }
 `;
   await fs.writeFile(path.join(appPath, 'pages', `_app.${ext}`), app);

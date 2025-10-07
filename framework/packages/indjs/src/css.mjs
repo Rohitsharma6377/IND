@@ -18,7 +18,19 @@ async function runOnce({ root }) {
   try {
     const css = await fs.readFile(inputFile, 'utf8');
     await ensureDir(outDir);
-    const result = await postcss([tailwind(), autoprefixer]).process(css, {
+    // Resolve Tailwind config from app root if present for consistent content scanning
+    const twcCandidates = [
+      'tailwind.config.cjs',
+      'tailwind.config.js',
+      'tailwind.config.mjs',
+      'tailwind.config.ts'
+    ];
+    let twConfigPath = null;
+    for (const f of twcCandidates) {
+      try { await fs.access(path.join(root, f)); twConfigPath = path.join(root, f); break; } catch {}
+    }
+    const twPlugin = twConfigPath ? tailwind({ config: twConfigPath }) : tailwind();
+    const result = await postcss([twPlugin, autoprefixer]).process(css, {
       from: inputFile,
       to: outFile,
       map: { inline: true }

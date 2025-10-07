@@ -104,7 +104,9 @@ if (el) { try { hydrateRoot(el, node); } catch (e) { const r = createRoot(el); r
 `;
       try { await fs.writeFile(entryPath, entryCode, 'utf8'); if (ctx.dev) { try { console.log('[INDJS][DEV] wrote Vite entry:', entryPath); } catch {} } } catch (e) { try { console.error('[INDJS][DEV] failed to write Vite entry', e?.message||e); } catch {} }
       const buster = Date.now();
-      devViteScripts = `\n  <script type="module" src="/@vite/client"></script>\n  <script type="module" src="/__indjs_dev_entry.jsx?t=${buster}"></script>`;
+      // Inject React Refresh preamble required by @vitejs/plugin-react
+      const reactRefreshPreamble = `\n  <script type="module">\n    import RefreshRuntime from '/@react-refresh';\n    RefreshRuntime.injectIntoGlobalHook(window);\n    window.$RefreshReg$ = () => {};\n    window.$RefreshSig$ = () => (type) => type;\n    window.__vite_plugin_react_preamble_installed__ = true;\n  </script>`;
+      devViteScripts = `${reactRefreshPreamble}\n  <script type="module" src="/@vite/client"></script>\n  <script type="module" src="/__indjs_dev_entry.jsx?t=${buster}"></script>`;
     } catch {}
   }
 
