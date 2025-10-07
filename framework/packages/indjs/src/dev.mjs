@@ -75,10 +75,19 @@ export async function dev({ root, port }) {
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(compression());
   app.use(cors());
-  app.use(pinoHttp({
-    transport: process.env.NODE_ENV !== 'production' ? { target: 'pino-pretty' } : undefined,
-    redact: ['req.headers.authorization']
-  }));
+  // Request logging is noisy in dev; keep disabled by default.
+  // Opt-in via INDJS_DEV_REQUEST_LOGS=1 or config.observability.devRequestLogging=true
+  const enableDevReqLogs = process.env.INDJS_DEV_REQUEST_LOGS === '1' || cfg?.observability?.devRequestLogging === true;
+  if (enableDevReqLogs) {
+    app.use(pinoHttp({
+      transport: process.env.NODE_ENV !== 'production' ? { target: 'pino-pretty' } : undefined,
+      redact: [
+        'req.headers.authorization',
+        'req.headers.cookie',
+        'res.headers["set-cookie"]'
+      ]
+    }));
+  }
   const limiter = rateLimit({ windowMs: 30 * 1000, max: 600 });
   app.use(limiter);
 
