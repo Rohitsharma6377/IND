@@ -1,0 +1,8 @@
+node_modules/
+.indjs/
+packages/
+apps/
+indjs-framework-0.0.1.tgz
+.git/
+.gitignore
+package-lock.json

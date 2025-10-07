@@ -1,0 +1,22 @@
+{
+  "name": "create-indjs",
+  "version": "1.0.0",
+  "description": "Create an INDJS application via `npm create indjs` or `npx create-indjs`.",
+  "type": "module",
+  "bin": {
+    "create-indjs": "bin/create-indjs.js"
+  },
+  "keywords": ["indjs", "create", "scaffold", "react", "ssr", "full-stack"],
+  "author": "INDJS Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "indjs": ">=1.0.21"
+  },
+  "files": [
+    "bin/**/*",
+    "README.md"
+  ]
+}

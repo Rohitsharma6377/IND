@@ -35,8 +35,25 @@
 
 ### Installation
 
+Choose one of the following:
+
+1) npx (recommended, no global install)
 ```bash
-npm install -g indjs
+npx indjs@latest --help
+npx indjs@latest create my-app
+```
+
+2) Global install
+```bash
+npm i -g indjs
+indjs --help
+indjs create my-app
+```
+
+3) Local dev (from monorepo checkout)
+```bash
+node framework/packages/indjs/bin/indjs.js --help
+node framework/packages/indjs/bin/indjs.js create my-app
 ```
 
 ### Create a New Project
@@ -225,10 +242,20 @@ indjs start --port 8080     # Custom port
 ### Code Generation
 
 ```bash
-indjs create my-app          # Create new app
-indjs generate page about    # Generate page
-indjs generate component Button  # Generate component
-indjs generate api users     # Generate API route
+# Create new app
+indjs create my-app
+
+# Generate page (long form and alias)
+indjs generate page about
+indjs g page about
+
+# Generate component with no prompts / quick mode
+indjs generate component Button --noPrompt
+indjs g component Button --quick
+
+# Generate API route (interactive)
+indjs generate api users
+indjs g api users
 ```
 
 ### Deployment
@@ -483,6 +510,41 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [Website](https://netcurion.vercel.app) • [GitHub](https://github.com/Rohitsharma6377/IND) • [Instagram](https://instagram.com/Netcurion)
 
 </div>
+
+## 🛠️ Troubleshooting
+
+- **npx says "could not determine executable to run"**
+  - Ensure the latest `indjs` is published from the CLI package (has a `bin` field). Then run:
+    ```bash
+    npx --clear-cache
+    npx indjs@latest --help
+    ```
+
+- **Global install not found on Windows ("indjs is not recognized")**
+  - Add the global npm bin to PATH: `C:\Users\<YOU>\AppData\Roaming\npm`
+  - New PowerShell:
+    ```powershell
+    where indjs
+    indjs --help
+    ```
+  - For the current session:
+    ```powershell
+    $env:Path = "$env:AppData\npm;$env:Path"
+    ```
+
+- **Execution policy blocks PowerShell shim**
+  - Use `.cmd` shim or set policy for current user:
+    ```powershell
+    Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+    ```
+
+- **Path mistakes when running from a generated app**
+  - Use local binary via `npx indjs` or project scripts (`npm run dev`).
+  - If calling the repo binary by path from inside `my-app/`, use `..\\framework\\packages\\indjs\\bin\\indjs.js`.
+
+- **Build error: Unterminated regular expression**
+  - Check the referenced file/line for a stray `/` or unfinished regex literal.
+  - In JSX, ensure attributes/strings are properly closed and no accidental `/` is interpreted as regex.
 
 ## 🖥️ Desktop (Electron)
 

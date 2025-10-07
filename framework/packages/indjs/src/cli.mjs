@@ -53,13 +53,56 @@ function showHelp() {
   console.log('  --port <number>   Specify the port number');
   console.log('  --baseUrl <url>   Specify the base URL for production');
   console.log('  --webDir <path>   Optional output dir for built static assets (e.g. for Capacitor)');
+  console.log('  --noPrompt        Skip interactive prompts in generators (use sensible defaults)');
+  console.log('  --quick           Alias of --noPrompt');
   console.log('  --help            Show help for specific command\n');
   console.log('Examples:');
   console.log('  indjs dev --port 4000');
   console.log('  indjs create my-app');
   console.log('  indjs generate page about');
+  console.log('  indjs g component Button --noPrompt');
   console.log('  indjs build --baseUrl https://myapp.com');
   console.log('  indjs deploy vercel\n');
+}
+
+async function tryOllama(prompt) {
+  try {
+    const model = process.env.OLLAMA_MODEL || 'llama3.1:8b';
+    const payload = JSON.stringify({ model, prompt, stream: false });
+    const options = {
+      hostname: 'localhost',
+      port: 11434,
+      path: '/api/generate',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload)
+      },
+      timeout: 8000
+    };
+    const text = await new Promise((resolve, reject) => {
+      const req = http.request(options, (res) => {
+        let data = '';
+        res.setEncoding('utf8');
+        res.on('data', (chunk) => { data += chunk; });
+        res.on('end', () => {
+          try {
+            const j = JSON.parse(data);
+            // Ollama returns { response: string, done: boolean, ... }
+            if (j && typeof j.response === 'string') return resolve(j.response);
+          } catch {}
+          return resolve(null);
+        });
+      });
+      req.on('error', () => resolve(null));
+      req.on('timeout', () => { try { req.destroy(); } catch {}; resolve(null); });
+      req.write(payload);
+      req.end();
+    });
+    return text;
+  } catch {
+    return null;
+  }
 }
 
 function runShell(command, { cwd }) {
@@ -119,7 +162,7 @@ export async function run() {
           console.log('Types: page, component, api, layout');
           process.exit(1);
         }
-        return generate({ type, name, root });
+        return generate({ type, name, root, noPrompt: !!(args.noPrompt || args.quick) });
       
       case 'deploy':
         const platform = args._[1] || 'vercel';

@@ -1,8 +1,8 @@
 {
-  "name": "indjs",
+  "name": "indjs-monorepo",
   "private": false,
   "workspaces": [
-    "packages/*",
+    "packages/*", 
     "apps/*"
   ],
   "scripts": {
@@ -10,5 +10,5 @@
     "dev": "npm --workspace apps/hello run dev",
     "start": "npm --workspace apps/hello run start"
   },
-  "version": "1.0.16"
+  "version": "0.0.2"
 }

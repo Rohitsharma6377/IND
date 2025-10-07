@@ -101,7 +101,7 @@ export async function create({ name, template, root, language, state, useTailwin
     await createPackageJson(appPath, name, opts, template);
     await createConfigFiles(appPath, opts);
     await createPages(appPath, template, opts);
-    await createComponents(appPath, template);
+    await createComponents(appPath, template, opts);
     if (opts.useTailwind !== false) {
       await createStyles(appPath);
     }
@@ -698,9 +698,52 @@ Thumbs.db
   await fs.writeFile(path.join(appPath, '.gitignore'), gitignore);
 }
 
-async function createComponents(appPath, template) {
+async function createComponents(appPath, template, opts) {
+  const isTS = opts?.language === 'ts';
+  const ext = isTS ? 'tsx' : 'jsx';
   // Button component
-  const button = `import React from 'react';
+  const button = isTS ? `import React from 'react';
+
+type Variant = 'primary' | 'secondary' | 'outline';
+type Size = 'sm' | 'md' | 'lg';
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: Variant;
+  size?: Size;
+  className?: string;
+  children?: React.ReactNode;
+}
+
+export default function Button({ 
+  children, 
+  variant = 'primary', 
+  size = 'md', 
+  className = '',
+  ...props 
+}: ButtonProps) {
+  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
+  
+  const variants: Record<Variant, string> = {
+    primary: 'bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500',
+    secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
+    outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-indigo-500'
+  };
+  
+  const sizes: Record<Size, string> = {
+    sm: 'px-3 py-2 text-sm',
+    md: 'px-4 py-2 text-base',
+    lg: 'px-6 py-3 text-lg'
+  };
+  
+  const classes = \`${'${'}baseClasses{'}'} ${'${'}variants[variant]{'}'} ${'${'}sizes[size]{'}'} ${'${'}className{'}'}\`;
+  
+  return (
+    <button className={classes} {...props}>
+      {children}
+    </button>
+  );
+}
+` : `import React from 'react';
 
 export default function Button({ 
   children, 
@@ -723,16 +766,17 @@ export default function Button({
     lg: 'px-6 py-3 text-lg'
   };
   
-  const classes = \`\${baseClasses} \${variants[variant]} \${sizes[size]} \${className}\`;
+  const classes = \`${'${'}baseClasses{'}'} ${'${'}variants[variant]{'}'} ${'${'}sizes[size]{'}'} ${'${'}className{'}'}\`;
   
   return (
     <button className={classes} {...props}>
       {children}
     </button>
   );
-}`;
+}
+`;
 
-  await fs.writeFile(path.join(appPath, 'components', 'Button.jsx'), button);
+  await fs.writeFile(path.join(appPath, 'components', `Button.${ext}`), button);
 }
 
 async function createStyles(appPath) {
