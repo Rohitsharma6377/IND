@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
-import Page from "/pages/index.jsx";
+import Page from "/pages/docs/index.jsx";
 import '/styles/globals.css';
 import App from "/pages/_app.jsx";
 const el = document.getElementById('__ind');

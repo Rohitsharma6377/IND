@@ -16,6 +16,9 @@ export default function Layout({ children }) {
               <a href="/about" className="text-gray-600 hover:text-gray-900">
                 About
               </a>
+              <a href="/docs" className="text-gray-600 hover:text-gray-900">
+                Docs
+              </a>
             </div>
           </div>
         </div>
