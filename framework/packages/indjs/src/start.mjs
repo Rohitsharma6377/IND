@@ -26,6 +26,26 @@ export async function start({ root, port }) {
   const plugins = await loadPlugins(cfg, { root, mode: 'start' });
 
   const app = express();
+  // Basic in-memory metrics
+  const metrics = {
+    startedAt: Date.now(),
+    requests: 0,
+    errors: 0,
+    cacheHits: 0,
+    cacheMisses: 0,
+    avgLatencyMs: 0
+  };
+  app.use((req, res, next) => {
+    const t0 = Date.now();
+    metrics.requests++;
+    res.on('finish', () => {
+      const dt = Date.now() - t0;
+      // incremental average
+      metrics.avgLatencyMs += (dt - metrics.avgLatencyMs) / Math.max(1, metrics.requests);
+      if (res.statusCode >= 500) metrics.errors++;
+    });
+    next();
+  });
   const publicDir = path.join(root, 'public');
   const outDir = path.join(root, '.indjs', 'client');
   const staticOut = path.join(root, '.indjs', 'static');
@@ -83,6 +103,41 @@ export async function start({ root, port }) {
       if (result === false || res.headersSent) return;
       return next();
     } catch (e) { return next(e); }
+  });
+
+  // Metrics JSON
+  app.get('/__indjs/metrics', (req, res) => {
+    res.json({
+      uptimeMs: Date.now() - metrics.startedAt,
+      requests: metrics.requests,
+      errors: metrics.errors,
+      cacheHits: metrics.cacheHits,
+      cacheMisses: metrics.cacheMisses,
+      avgLatencyMs: Math.round(metrics.avgLatencyMs)
+    });
+  });
+
+  // Simple dashboard page
+  app.get('/__indjs/dashboard', (req, res) => {
+    const uptime = Math.round((Date.now() - metrics.startedAt) / 1000);
+    const html = `<!doctype html>
+    <html><head><meta charset="utf-8"/>
+    <title>INDJS Dashboard</title>
+    <style>body{font-family:system-ui,Arial;margin:2rem} .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem} .card{border:1px solid #e5e7eb;border-radius:12px;padding:1rem} h1{margin-bottom:1rem}</style>
+    </head><body>
+    <h1>INDJS Dashboard</h1>
+    <div class="grid">
+      <div class="card"><b>Uptime</b><div>${uptime}s</div></div>
+      <div class="card"><b>Requests</b><div>${metrics.requests}</div></div>
+      <div class="card"><b>Errors</b><div>${metrics.errors}</div></div>
+      <div class="card"><b>Cache Hits</b><div>${metrics.cacheHits}</div></div>
+      <div class="card"><b>Cache Misses</b><div>${metrics.cacheMisses}</div></div>
+      <div class="card"><b>Avg Latency</b><div>${Math.round(metrics.avgLatencyMs)} ms</div></div>
+    </div>
+    <p style="margin-top:1rem;font-size:12px;color:#6b7280">Endpoints: <code>/__indjs/metrics</code>, <code>/__indjs/revalidate</code>, <code>/__indjs/ai/*</code></p>
+    </body></html>`;
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.end(html);
   });
 
   // AI stubs: suggestions and debugging (prod)
@@ -164,9 +219,12 @@ export async function start({ root, port }) {
   async function cacheGet(key) {
     if (redis) {
       const v = await redis.get(`indjs:html:${key}`);
+      if (v != null) metrics.cacheHits++; else metrics.cacheMisses++;
       return v;
     }
-    return htmlCache.get(key);
+    const v = htmlCache.get(key);
+    if (v != null) metrics.cacheHits++; else metrics.cacheMisses++;
+    return v;
   }
   async function cacheSet(key, value, tags = []) {
     if (redis) {

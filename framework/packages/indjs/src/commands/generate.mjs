@@ -369,6 +369,55 @@ export default {
   console.log(chalk.blue(`🔧 Created utility: utils/${name}.js`));
 }
 
+async function generateWorker(name, root) {
+  const workersDir = path.join(root, 'workers');
+  const pagesApiDir = path.join(root, 'pages', 'api');
+  await fs.mkdir(workersDir, { recursive: true });
+  await fs.mkdir(pagesApiDir, { recursive: true });
+
+  const workerPath = path.join(workersDir, `${name}.js`);
+  const enqueueApiPath = path.join(pagesApiDir, `${name}-enqueue.js`);
+
+  // Worker file
+  const workerContent = `// Worker: ${name}
+export async function run(payload) {
+  // Do background work here
+  console.log('[worker:${name}] payload:', payload);
+  return { ok: true };
+}
+`;
+  // Simple enqueue API stub
+  const apiContent = `// POST /api/${name}-enqueue
+export async function post({ body }) {
+  // In a real app, push to a queue or trigger a background job
+  return { ok: true, queued: true, received: body || {} };
+}
+`;
+
+  // Write files if not exist
+  try { await fs.access(workerPath); } catch { await fs.writeFile(workerPath, workerContent); }
+  try { await fs.access(enqueueApiPath); } catch { await fs.writeFile(enqueueApiPath, apiContent); }
+
+  console.log(chalk.blue(`🛠️  Created worker: workers/${name}.js`));
+  console.log(chalk.blue(`🔔 Created enqueue API: pages/api/${name}-enqueue.js`));
+}
+
+async function generateTest(name, root) {
+  const testsDir = path.join(root, 'tests');
+  await fs.mkdir(testsDir, { recursive: true });
+  const testPath = path.join(testsDir, `${name}.test.js`);
+  const body = `import { describe, it, expect } from 'vitest';
+
+describe('${name} generator test', () => {
+  it('runs', () => {
+    expect(true).toBe(true);
+  });
+});
+`;
+  try { await fs.access(testPath); } catch { await fs.writeFile(testPath, body); }
+  console.log(chalk.blue(`✅ Created test: tests/${name}.test.js`));
+}
+
 // Helper functions
 function toPascalCase(str) {
   return str

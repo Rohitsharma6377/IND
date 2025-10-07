@@ -636,3 +636,57 @@ npm i ioredis
 
 # Firebase (Firestore)
 npm i firebase
+
+## ⚡ Development: Vite HMR (Default)
+
+New projects scaffolded with `indjs create` default to Vite for dev HMR.
+
+- Config file: `indjs.config.js`
+  ```js
+  export default {
+    experimental: { devBundler: 'vite' }
+  };
+  ```
+- To turn off Vite HMR (use built-in dev):
+  ```js
+  export default {
+    experimental: { devBundler: 'builtin' }
+  };
+  ```
+
+## 📊 Metrics & Dashboard
+
+In production (`indjs start`), the server exposes:
+- `GET /__indjs/metrics` → JSON: uptime, requests, errors, cache hits/misses, avg latency
+- `GET /__indjs/dashboard` → Minimal HTML dashboard with the above metrics
+
+Cache metrics are automatically tracked for HTML cache (LRU or Redis store when configured).
+
+## 🤖 AI CLI with Local Ollama
+
+The AI CLI tries a local Ollama instance first. If unavailable, it falls back to built-in stubs.
+
+Commands:
+- Scaffold from prompt preview:
+  ```bash
+  indjs ai scaffold component Button
+  # Output written to AI-OUTPUT.md (no files are changed)
+  ```
+- Generate docs preview:
+  ```bash
+  indjs ai docs
+  # Output written to AI-DOCS.md
+  ```
+- Refactor suggestions in console:
+  ```bash
+  indjs ai refactor
+  ```
+
+Local Ollama expected endpoint: `http://localhost:11434/api/generate`
+
+Optional: set a model
+```bash
+set OLLAMA_MODEL=llama3.1:8b  # Windows PowerShell: $env:OLLAMA_MODEL="llama3.1:8b"
+```
+
+Security note: production AI endpoints (`/__indjs/ai/*`) should be protected via `ai.secret` in `indjs.config.js`.

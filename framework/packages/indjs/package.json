@@ -90,9 +90,15 @@
     "vite": "^5.4.0",
     "@vitejs/plugin-react": "^4.3.0"
   },
+  "devDependencies": {
+    "vitest": "^1.6.0",
+    "@playwright/test": "^1.47.2"
+  },
   "scripts": {
     "build": "echo 'No build step required'",
-    "test": "echo 'Tests not implemented yet'",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "playwright test",
     "prepublishOnly": "echo 'Ready for NPM publication'"
   }
 }

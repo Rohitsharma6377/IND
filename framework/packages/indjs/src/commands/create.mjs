@@ -15,6 +15,18 @@ const templates = {
     name: 'Blog Starter',
     description: 'Blog structure with content folder'
   },
+  admin: {
+    name: 'Admin Dashboard',
+    description: 'Admin layout with charts/tables placeholders'
+  },
+  ecommerce: {
+    name: 'E-commerce Starter',
+    description: 'Products listing, product detail, and basic cart placeholder'
+  },
+  'ai-app': {
+    name: 'AI App Starter',
+    description: 'Example AI pages and API usage integrated with INDJS AI stubs'
+  },
   'desktop-electron': {
     name: 'Desktop (Electron)',
     description: 'Run your INDJS app as a desktop app with Electron'
@@ -149,8 +161,12 @@ async function createDirectoryStructure(appPath, template) {
     dirs.push('lib', 'lib/stripe', 'components/ui', 'components/product');
   }
 
-  if (template === 'dashboard') {
+  if (template === 'admin') {
     dirs.push('components/charts', 'components/tables', 'lib/auth');
+  }
+
+  if (template === 'ai-app') {
+    dirs.push('ai', 'pages/api/ai');
   }
 
   for (const dir of dirs) {
@@ -388,7 +404,8 @@ export default function About() {
             <li>Image optimization</li>
           </ul>
         </div>
-      </div>
+        </div>
+    </div>
     </div>
   );
 }`;
@@ -449,6 +466,200 @@ export default function Layout({ children }) {
 }`;
 
   await fs.writeFile(path.join(appPath, 'pages', `_layout.${ext}`), layout);
+
+  // Template-specific additions
+  if (template === 'admin') {
+    const adminPage = `import React, { useEffect, useState } from 'react';
+
+export default function AdminDashboard() {
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    fetch('/api/users').then(r=>r.json()).then(j=>setUsers(j.users||[])).catch(()=>{});
+  }, []);
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-16">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <a href="/" className="btn btn-secondary">Back to site</a>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="border rounded-lg p-4 bg-white shadow-sm">
+            <h2 className="font-semibold mb-2">Traffic (Last 7 days)</h2>
+            <svg viewBox="0 0 300 120" className="w-full h-40">
+              <polyline fill="none" stroke="#4F46E5" strokeWidth="3" points="0,90 40,80 80,60 120,70 160,50 200,40 240,45 280,30" />
+              <line x1="0" y1="100" x2="300" y2="100" stroke="#e5e7eb" />
+              <line x1="0" y1="60" x2="300" y2="60" stroke="#f3f4f6" />
+            </svg>
+          </div>
+          <div className="border rounded-lg p-4 bg-white shadow-sm overflow-x-auto">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="font-semibold">Recent Users</h2>
+              <a href="/api/users" className="text-indigo-600 text-sm">API</a>
+            </div>
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="text-left text-gray-500">
+                  <th className="py-2 pr-4">Name</th>
+                  <th className="py-2 pr-4">Email</th>
+                  <th className="py-2">Role</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((u)=> (
+                  <tr key={String(u.id)} className="border-t">
+                    <td className="py-2 pr-4">{'${'}u.name{'}'}</td>
+                    <td className="py-2 pr-4">{'${'}u.email{'}'}</td>
+                    <td className="py-2">{'${'}u.role{'}'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}`;
+    await fs.writeFile(path.join(appPath, 'pages', `admin.${ext}`), adminPage);
+    // Users API stub to complement table
+    const apiUsers = `export async function get() {
+  return {
+    users: [
+      { id: 1, name: 'Alice', email: 'alice@example.com', role: 'Admin' },
+      { id: 2, name: 'Bob', email: 'bob@example.com', role: 'Editor' }
+    ]
+  };
+}`;
+    await fs.writeFile(path.join(appPath, 'pages', 'api', 'users.js'), apiUsers);
+  }
+
+  if (template === 'ecommerce') {
+    const productsPage = `import React, { useEffect, useState } from 'react';
+
+export default function Products() {
+  const items = [
+    { id: 1, name: 'Product A', price: 19.99 },
+    { id: 2, name: 'Product B', price: 29.99 }
+  ];
+  const [cart, setCart] = useState([]);
+  useEffect(() => {
+    try { const saved = JSON.parse(localStorage.getItem('cart') || '[]'); setCart(saved); } catch {}
+  }, []);
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+  function addToCart(item){
+    setCart(prev => [...prev, { ...item, qty: 1 }]);
+  }
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-16">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">Products</h1>
+        <a href="/cart" className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">View Cart ({'${'}cart.length{'}'})</a>
+      </div>
+      <ul className="space-y-2">
+        {items.map(i => (
+          <li key={i.id} className="flex items-center justify-between">
+            <div>
+              <a className="text-indigo-600" href={'/product/' + i.id}>{i.name}</a>
+              <span className="ml-2 text-gray-600">${'{'}i.price.toFixed(2){'}'}</span>
+            </div>
+            <button className="btn btn-primary" onClick={() => addToCart(i)}>Add to cart</button>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-8 border rounded-lg p-4 bg-white shadow-sm">
+        <h2 className="font-semibold mb-2">Cart ({'${'}cart.length{'}'})</h2>
+        {cart.length === 0 ? (
+          <p className="text-gray-600">Your cart is empty.</p>
+        ) : (
+          <>
+            <ul className="space-y-1">
+              {cart.map((c, idx) => (
+                <li key={idx} className="flex justify-between">
+                  <span>{'${'}c.name{'}'}</span>
+                  <span>${'${'}c.price.toFixed(2){'}'}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-2 font-semibold">Total: ${'${'}total.toFixed(2){'}'}</div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}`;
+    const productDynamic = `export default function Product({ params }) {
+  return (
+    <div className="container mx-auto px-4 py-16">
+      Product ID: {params?.id}
+    </div>
+  );
+}`;
+    await fs.writeFile(path.join(appPath, 'pages', `products.${ext}`), productsPage);
+    await fs.writeFile(path.join(appPath, 'pages', 'product', `[id].${ext}`), productDynamic);
+    // Cart page reading from localStorage
+    const cartPage = `import React, { useEffect, useState } from 'react';
+
+export default function Cart(){
+  const [cart, setCart] = useState([]);
+  useEffect(() => {
+    try { const saved = JSON.parse(localStorage.getItem('cart') || '[]'); setCart(saved); } catch {}
+  }, []);
+  const total = cart.reduce((s, i) => s + i.price * (i.qty||1), 0);
+  return (
+    <div className="container mx-auto px-4 py-16">
+      <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
+      {cart.length === 0 ? (
+        <p className="text-gray-600">Your cart is empty.</p>
+      ) : (
+        <>
+          <ul className="space-y-1">
+            {cart.map((c, idx) => (
+              <li key={idx} className="flex justify-between">
+                <span>{'${'}c.name{'}'}</span>
+                <span>${'${'}(c.price * (c.qty||1)).toFixed(2){'}'}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-2 font-semibold">Total: ${'${'}total.toFixed(2){'}'}</div>
+        </>
+      )}
+    </div>
+  );
+}`;
+    await fs.writeFile(path.join(appPath, 'pages', `cart.${ext}`), cartPage);
+  }
+
+  if (template === 'ai-app') {
+    const aiPage = `import React, { useState } from 'react';
+
+export default function AIPlayground(){
+  const [text, setText] = useState('');
+  const [out, setOut] = useState('');
+  async function suggest(){
+    const res = await fetch('/__indjs/ai/suggest', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text }) });
+    const j = await res.json(); setOut(JSON.stringify(j, null, 2));
+  }
+  return (
+    <div className="container mx-auto px-4 py-16">
+      <h1 className="text-3xl font-bold mb-6">AI Playground</h1>
+      <textarea className="w-full border rounded p-2" rows={6} value={text} onChange={e=>setText(e.target.value)} />
+      <div className="mt-4 flex gap-2">
+        <button className="btn btn-primary" onClick={suggest}>Suggest</button>
+      </div>
+      <pre className="mt-4 bg-gray-100 p-3 rounded">{out}</pre>
+    </div>
+  );
+}`;
+    const aiApi = `export async function post({ body }) { return { ok: true, echo: body||{} }; }`;
+    await fs.mkdir(path.join(appPath, 'pages', 'api', 'ai'), { recursive: true });
+    await fs.writeFile(path.join(appPath, 'pages', `ai.${ext}`), aiPage);
+    await fs.writeFile(path.join(appPath, 'pages', 'api', 'ai', 'echo.js'), aiApi);
+  }
 }
 
 async function createAppShell(appPath, opts) {
