@@ -16,9 +16,9 @@ export default function Link({ href, children, prefetch = false, className, styl
     } catch {}
   }, [href, prefetch]);
 
-  return (
-    <a href={href} className={className} style={style} {...rest}>
-      {children}
-    </a>
+  return React.createElement(
+    'a',
+    { href, className, style, ...rest },
+    children
   );
 }
