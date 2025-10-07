@@ -30,6 +30,15 @@ export async function connect(customConfig = null) {
       case 'postgres':
         currentAdapter = await createPostgresAdapter(dbConfig);
         break;
+      case 'mysql':
+        currentAdapter = await createMySQLAdapter(dbConfig);
+        break;
+      case 'redis':
+        currentAdapter = await createRedisAdapter(dbConfig);
+        break;
+      case 'firebase':
+        currentAdapter = await createFirebaseAdapter(dbConfig);
+        break;
       case 'sqlite':
         currentAdapter = await createSQLiteAdapter(dbConfig);
         break;
@@ -39,8 +48,23 @@ export async function connect(customConfig = null) {
       default:
         throw new Error(`Unsupported database type: ${dbConfig.type}`);
     }
-    
-    await currentAdapter.connect();
+    // Optional retries
+    const retries = Number(dbConfig.options?.retries || 1);
+    const delayMs = Number(dbConfig.options?.retryDelayMs || 500);
+    let lastErr = null;
+    for (let attempt = 1; attempt <= Math.max(1, retries); attempt++) {
+      try {
+        await currentAdapter.connect();
+        lastErr = null;
+        break;
+      } catch (e) {
+        lastErr = e;
+        if (attempt < Math.max(1, retries)) {
+          await new Promise(r => setTimeout(r, delayMs));
+        }
+      }
+    }
+    if (lastErr) throw lastErr;
     isConnected = true;
     console.log(`✅ Connected to ${dbConfig.type} database`);
     
@@ -48,6 +72,17 @@ export async function connect(customConfig = null) {
   } catch (error) {
     console.error('❌ Database connection failed:', error.message);
     throw error;
+  }
+}
+
+// Minimal health check
+export async function healthCheck() {
+  try {
+    if (!currentAdapter || !isConnected) return { ok: false };
+    try { await query('SELECT 1'); return { ok: true }; } catch {}
+    return { ok: true };
+  } catch {
+    return { ok: false };
   }
 }
 

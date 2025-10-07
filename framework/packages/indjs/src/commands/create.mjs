@@ -12,122 +12,115 @@ const templates = {
     description: 'A minimal INDJS application with essential files'
   },
   blog: {
-    name: 'Blog Template',
-    description: 'A blog application with posts, categories, and comments'
+    name: 'Blog Starter',
+    description: 'Blog structure with content folder'
   },
-  ecommerce: {
-    name: 'E-commerce Template',
-    description: 'An e-commerce application with products, cart, and checkout'
+  'desktop-electron': {
+    name: 'Desktop (Electron)',
+    description: 'Run your INDJS app as a desktop app with Electron'
   },
-  dashboard: {
-    name: 'Admin Dashboard',
-    description: 'An admin dashboard with authentication and data visualization'
+  'mobile-capacitor': {
+    name: 'Mobile (Capacitor)',
+    description: 'Build iOS/Android apps wrapping your INDJS web build'
   }
 };
 
-async function createHead(appPath) {
-  const head = `import React from 'react';
+export async function create({ name, template, root, language, state, useTailwind } = {}) {
+  // Prompt for missing inputs
+  const answers = await inquirer.prompt([
+    ...(name ? [] : [{
+      type: 'input',
+      name: 'name',
+      message: 'Project name:',
+      default: 'my-indjs-app',
+      validate: (v) => v.trim() ? true : 'Name is required'
+    }]),
+    ...(template ? [] : [{
+      type: 'list',
+      name: 'template',
+      message: 'Select a template:',
+      choices: Object.keys(templates)
+    }]),
+    ...(language ? [] : [{
+      type: 'list',
+      name: 'language',
+      message: 'Language:',
+      choices: [
+        { name: 'JavaScript', value: 'js' },
+        { name: 'TypeScript', value: 'ts' }
+      ],
+      default: 'js'
+    }]),
+    ...(state ? [] : [{
+      type: 'list',
+      name: 'state',
+      message: 'State management:',
+      choices: [
+        { name: 'None', value: 'none' },
+        { name: 'Redux Toolkit', value: 'rtk' }
+      ],
+      default: 'none'
+    }]),
+    ...(useTailwind !== undefined ? [] : [{
+      type: 'confirm',
+      name: 'useTailwind',
+      message: 'Include Tailwind CSS?',
+      default: true
+    }])
+  ]);
 
-export default function Head() {
-  return (
-    <>
-      <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-      <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
-      <link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png" />
-      <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
-      <link rel="manifest" href="/site.webmanifest" />
-      <meta name="theme-color" content="#4F46E5" />
-    </>
-  );
-}
-`;
-  await fs.writeFile(path.join(appPath, 'pages', '_head.jsx'), head);
-}
- 
+  name = name ?? answers.name;
+  template = template ?? answers.template;
+  const opts = {
+    language: language ?? answers.language,
+    state: state ?? answers.state,
+    useTailwind: useTailwind ?? answers.useTailwind
+  };
+  const projectRoot = root ?? process.cwd();
+  const appPath = path.resolve(projectRoot, name);
 
-export async function create({ name, template }) {
-  const spinner = ora('Creating INDJS application...').start();
-  
+  const spinner = ora(`Creating ${templates[template]?.name || template}: ${name}...`).start();
   try {
-    // Check if directory already exists
-    const appPath = path.resolve(process.cwd(), name);
-    try {
-      await fs.access(appPath);
-      spinner.fail(chalk.red(`Directory ${name} already exists`));
-      return;
-    } catch {
-      // Directory doesn't exist, which is good
-    }
-
-    // Select template and options
-    if (!template) {
-      spinner.stop();
-      const answers = await inquirer.prompt([
-        {
-          type: 'list',
-          name: 'selectedTemplate',
-          message: 'Choose a template:',
-          choices: Object.entries(templates).map(([key, value]) => ({
-            name: `${value.name} - ${value.description}`,
-            value: key
-          }))
-        },
-        {
-          type: 'list',
-          name: 'language',
-          message: 'Language:',
-          choices: [
-            { name: 'JavaScript', value: 'js' },
-            { name: 'TypeScript', value: 'ts' }
-          ],
-          default: 'js'
-        },
-        {
-          type: 'confirm',
-          name: 'useTailwind',
-          message: 'Include Tailwind CSS?',
-          default: true
-        },
-        {
-          type: 'list',
-          name: 'state',
-          message: 'State management:',
-          choices: [
-            { name: 'None', value: 'none' },
-            { name: 'Redux Toolkit', value: 'rtk' }
-          ],
-          default: 'none'
-        }
-      ]);
-      template = answers.selectedTemplate;
-      var opts = { language: answers.language, useTailwind: answers.useTailwind, state: answers.state };
-      spinner.start('Creating INDJS application...');
-    } else {
-      var opts = { language: 'js', useTailwind: true, state: 'none' };
-    }
-
-    // Create directory structure
+    // Create root dir
     await fs.mkdir(appPath, { recursive: true });
+
+    // Basic structure and files
     await createDirectoryStructure(appPath, template);
-    await createGitignore(appPath);
-    await createPackageJson(appPath, name, opts);
+    await createPackageJson(appPath, name, opts, template);
     await createConfigFiles(appPath, opts);
     await createPages(appPath, template, opts);
     await createComponents(appPath, template);
-    if (opts.useTailwind) { await createStyles(appPath); }
+    if (opts.useTailwind !== false) {
+      await createStyles(appPath);
+    }
     await createAppShell(appPath, opts);
+    await createGitignore(appPath);
     await createPublicAssets(appPath);
-    await createHead(appPath);
+
+    if (template === 'desktop-electron') {
+      const mainCjs = `const { app, BrowserWindow } = require('electron');
+function createWindow() {
+  const win = new BrowserWindow({ width: 1200, height: 800 });
+  const port = process.env.PORT || 3005;
+  win.loadURL('http://localhost:' + port);
+}
+app.whenReady().then(createWindow);
+app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
+`;
+      await fs.writeFile(path.join(appPath, 'main.cjs'), mainCjs);
+    }
+
+    if (template === 'mobile-capacitor') {
+      await createMobileConfigs(appPath, opts);
+    }
 
     spinner.succeed(chalk.green(`✅ Successfully created ${name}`));
-    
     console.log('\n' + chalk.blue.bold('🎉 Your INDJS application is ready!'));
     console.log('\nNext steps:');
     console.log(chalk.cyan(`  cd ${name}`));
     console.log(chalk.cyan('  npm install'));
     console.log(chalk.cyan('  npm run dev'));
     console.log('\nHappy coding! 🚀\n');
-
   } catch (error) {
     spinner.fail(chalk.red('Failed to create application'));
     console.error(error.message);
@@ -165,7 +158,7 @@ async function createDirectoryStructure(appPath, template) {
   }
 }
 
-async function createPackageJson(appPath, name, opts) {
+async function createPackageJson(appPath, name, opts, template) {
   const isTS = opts?.language === 'ts';
   const useTailwind = opts?.useTailwind !== false;
   const useRTK = opts?.state === 'rtk';
@@ -193,6 +186,41 @@ async function createPackageJson(appPath, name, opts) {
       ...(useTailwind ? { tailwindcss: '^3.4.18', autoprefixer: '^10.4.21' } : {})
     }
   };
+
+  // Extend scripts/deps for cross-platform targets
+  if (template === 'desktop-electron') {
+    packageJson.main = 'main.cjs';
+    packageJson.devDependencies = {
+      ...packageJson.devDependencies,
+      electron: '^31.0.2',
+      concurrently: '^9.0.1',
+      'wait-on': '^7.2.0',
+      'cross-env': '^7.0.3'
+    };
+    packageJson.scripts = {
+      ...packageJson.scripts,
+      'desktop:dev': 'cross-env PORT=3005 concurrently "indjs dev --port %PORT%" "wait-on http://localhost:%PORT% && electron ."',
+      'desktop:start': 'cross-env PORT=3005 concurrently "indjs start --port %PORT%" "electron ."'
+    };
+  }
+  if (template === 'mobile-capacitor') {
+    packageJson.devDependencies = {
+      ...packageJson.devDependencies,
+      '@capacitor/cli': '^6.1.2'
+    };
+    packageJson.dependencies = {
+      ...packageJson.dependencies,
+      '@capacitor/core': '^6.1.2'
+    };
+    // optional native platforms are added by user later
+    packageJson.scripts = {
+      ...packageJson.scripts,
+      'mobile:build': 'indjs build && npx cap copy',
+      'mobile:sync': 'npx cap sync',
+      'mobile:android': 'npx cap open android',
+      'mobile:ios': 'npx cap open ios'
+    };
+  }
 
   await fs.writeFile(
     path.join(appPath, 'package.json'),
@@ -577,4 +605,51 @@ Sitemap: https://yoursite.com/sitemap.xml`;
       }
     } catch {}
   } catch {}
+}
+
+// Extra platform configs
+async function createMobileConfigs(appPath, opts) {
+  const isTS = opts?.language === 'ts';
+  // Capacitor config
+  if (isTS) {
+    const capTs = `import { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  appId: 'com.example.indjsapp',
+  appName: 'INDJS App',
+  webDir: '.indjs/static',
+  server: {
+    androidScheme: 'https'
+  }
+};
+
+export default config;
+`;
+    await fs.writeFile(path.join(appPath, 'capacitor.config.ts'), capTs);
+  } else {
+    const capJson = {
+      appId: 'com.example.indjsapp',
+      appName: 'INDJS App',
+      webDir: '.indjs/static',
+      server: { androidScheme: 'https' }
+    };
+    await fs.writeFile(path.join(appPath, 'capacitor.config.json'), JSON.stringify(capJson, null, 2));
+  }
+
+  // Quickstart README for Capacitor
+  const readme = `# Mobile (Capacitor) Quickstart
+
+This project is scaffolded for Capacitor mobile builds.
+
+Steps:
+1. Build web assets: \`npm run build\`
+2. Copy to native platforms: \`npm run mobile:build\` (runs build + \`npx cap copy\`)
+3. Add a platform (once): \`npx cap add android\` or \`npx cap add ios\`
+4. Open in IDE: \`npm run mobile:android\` or \`npm run mobile:ios\`
+
+Notes:
+- Web assets are output to \`.indjs/static\`.
+- Update appId/appName in capacitor.config.* before publishing.
+`;
+  await fs.writeFile(path.join(appPath, 'CAPACITOR.md'), readme);
 }

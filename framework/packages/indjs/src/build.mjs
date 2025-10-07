@@ -6,7 +6,7 @@ import { loadModule } from './load.mjs';
 import path from 'path';
 import fs from 'fs/promises';
 
-export async function build({ root, baseUrl }) {
+export async function build({ root, baseUrl, webDir }) {
   const { pages, api } = await discoverRoutes(root);
   console.log('Discovered page routes:');
   for (const r of pages) console.log(` - ${r.route} -> ${r.file}`);
@@ -48,6 +48,17 @@ export async function build({ root, baseUrl }) {
     console.warn('Failed to generate sitemap.xml:', e.message);
   }
   console.log('Client bundles and CSS built. Build complete.');
+
+  // Optional: emit to custom webDir (e.g., for Capacitor)
+  if (webDir) {
+    try {
+      const dest = path.isAbsolute(webDir) ? webDir : path.join(root, webDir);
+      await copyDir(staticOut, dest);
+      console.log(`[indjs] Copied static output to ${dest}`);
+    } catch (e) {
+      console.warn(`[indjs] Failed to copy static output to webDir (${webDir}):`, e?.message || e);
+    }
+  }
 }
 
 function routeToFsPath(route) {
@@ -60,4 +71,15 @@ function routeToFsPath(route) {
 function materializeRoute(template, params) {
   // replace /blog/[slug] with /blog/value
   return template.replace(/\[(.+?)\]/g, (_, k) => encodeURIComponent(params[k] ?? ''));
+}
+
+async function copyDir(src, dest) {
+  await fs.mkdir(dest, { recursive: true });
+  const entries = await fs.readdir(src, { withFileTypes: true });
+  for (const ent of entries) {
+    const s = path.join(src, ent.name);
+    const d = path.join(dest, ent.name);
+    if (ent.isDirectory()) await copyDir(s, d);
+    else await fs.copyFile(s, d);
+  }
 }

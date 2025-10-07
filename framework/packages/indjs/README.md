@@ -483,3 +483,156 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [Website](https://netcurion.vercel.app) • [GitHub](https://github.com/Rohitsharma6377/IND) • [Instagram](https://instagram.com/Netcurion)
 
 </div>
+
+## 🖥️ Desktop (Electron)
+
+Start Electron alongside the web server:
+
+```bash
+indjs desktop dev      # runs dev server + Electron (auto waits for port)
+indjs desktop start    # runs production server + Electron
+```
+
+Ensure your Electron entry (e.g., `main.cjs`) loads the app at `http://localhost:PORT`.
+
+## 📱 Mobile (Capacitor)
+
+Scaffold using the mobile template or add Capacitor config manually. Build and sync:
+
+```bash
+indjs mobile build     # runs indjs build then npx cap copy
+indjs mobile sync      # npx cap sync
+indjs mobile android   # open Android Studio
+indjs mobile ios       # open Xcode
+```
+
+Use a custom Capacitor `webDir` if desired:
+
+```bash
+indjs build --webDir www   # copies .indjs/static to ./www after build
+```
+
+## 🌊 Streaming SSR (Experimental)
+
+Enable streaming responses from the server for ultra-fast TTFB:
+
+```js
+// indjs.config.js
+export default {
+  experimental: { streaming: true }
+};
+```
+
+When enabled, pages render as a stream where supported. See `src/ssr.mjs` and `src/start.mjs`.
+
+## 🔄 Incremental Static Regeneration (ISR)
+
+- Time-based revalidation per page:
+
+```jsx
+// pages/blog/[slug].jsx
+export const revalidateSeconds = 60; // re-render after 60 seconds
+```
+
+- Tag-based revalidation endpoint:
+
+```bash
+curl -X POST 'http://localhost:3000/__indjs/revalidate?tag=blog' \
+  -H 'Content-Type: application/json' -d '{"secret":"<your-secret>"}'
+```
+
+- Path-based revalidation endpoint:
+
+```bash
+curl -X POST 'http://localhost:3000/__indjs/revalidatePath' \
+  -H 'Content-Type: application/json' \
+  -d '{"secret":"<your-secret>", "path":"/blog/hello"}'
+```
+
+Configure a secret in `indjs.config.js` under `caching.secret`.
+
+## 🧩 Plugin System
+
+Register plugins in `indjs.config.js`. Hooks include `onRequest`, `onApiCall`, `onRouteMatch`, `onResponse`.
+
+```js
+export default {
+  plugins: [
+    async (hook) => ({
+      onRequest: async ({ req }) => {},
+      onApiCall: async ({ route }) => {},
+      onRouteMatch: async ({ route }) => {},
+      onResponse: async ({ res }) => {}
+    }[hook])
+  ]
+};
+```
+
+## ⚡ Realtime (WebSocket)
+
+Install `ws` and attach a basic WebSocket server:
+
+```bash
+npm i ws
+```
+
+```js
+// after creating the HTTP server
+import { attachWebSocket } from 'indjs/src/realtime/ws.mjs';
+const { wss, broadcast } = await attachWebSocket({ server });
+```
+
+## 🗄️ Database Configuration
+
+Set database in `indjs.config.js`:
+
+```js
+export default {
+  database: {
+    type: 'postgresql',
+    url: process.env.DATABASE_URL
+  }
+};
+```
+
+Use the database API from `src/database/index.mjs`:
+
+Endpoints:
+- `POST /__indjs/ai/suggest`
+- `POST /__indjs/ai/debug`
+
+## 🌐 Edge Adapters (Vercel/Cloudflare)
+
+Use built-in adapter stubs for serverless/edge runtimes.
+
+- Vercel (Edge/Functions): `src/adapters/vercel.mjs`
+  - Export default handler in your function entry:
+  ```js
+  import handler from 'indjs/src/adapters/vercel.mjs';
+  export default handler;
+  ```
+  - Configure `vercel.json` routes to point to this entry.
+
+- Cloudflare Workers: `src/adapters/cloudflare-workers.mjs`
+  - Export a `fetch` handler via default export:
+  ```js
+  import worker from 'indjs/src/adapters/cloudflare-workers.mjs';
+  export default worker;
+  ```
+  - Use Wrangler to build/deploy.
+
+Note: These are stubs intended for customization (asset paths, bundling, env integration).
+
+## 📦 Installing Optional DB Adapters
+
+Install packages as needed:
+
+```bash
+# MySQL
+npm i mysql2
+
+# Redis
+npm i ioredis
+
+# Firebase (Firestore)
+npm i firebase

@@ -9,7 +9,9 @@ const generators = {
   api: generateAPI,
   layout: generateLayout,
   hook: generateHook,
-  util: generateUtil
+  util: generateUtil,
+  worker: generateWorker,
+  test: generateTest
 };
 
 export async function generate({ type, name, root }) {
@@ -18,7 +20,7 @@ export async function generate({ type, name, root }) {
   try {
     if (!generators[type]) {
       spinner.fail(chalk.red(`Unknown generator type: ${type}`));
-      console.log('Available types: page, component, api, layout, hook, util');
+      console.log('Available types: page, component, api, layout, hook, util, worker, test');
       return;
     }
 

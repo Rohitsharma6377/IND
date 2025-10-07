@@ -15,6 +15,7 @@ import { LRUCache } from 'lru-cache';
 import rateLimit from 'express-rate-limit';
 import sourceMapSupport from 'source-map-support';
 import { loadConfig, getConfig } from './config.mjs';
+import { loadPlugins, applyHook } from './plugins.mjs';
 import pino from 'pino';
 import IORedis from 'ioredis';
 
@@ -22,6 +23,7 @@ export async function start({ root, port }) {
   sourceMapSupport.install();
   await loadConfig(root);
   const cfg = getConfig();
+  const plugins = await loadPlugins(cfg, { root, mode: 'start' });
 
   const app = express();
   const publicDir = path.join(root, 'public');
@@ -74,12 +76,44 @@ export async function start({ root, port }) {
     try { await fs.access(f); middleware = await loadModule(f); break; } catch {}
   }
   app.use(async (req, res, next) => {
+    try { await applyHook(plugins, 'onRequest', { req, res, root }); } catch {}
     if (!middleware?.default) return next();
     try {
       const result = await middleware.default({ req, res, root });
       if (result === false || res.headersSent) return;
       return next();
     } catch (e) { return next(e); }
+  });
+
+  // AI stubs: suggestions and debugging (prod)
+  app.post('/__indjs/ai/suggest', async (req, res) => {
+    try {
+      const secretReq = req.query.secret || req.body?.secret || req.headers['x-indjs-ai-secret'];
+      if ((cfg?.ai?.secret || '') && secretReq !== cfg.ai.secret) return res.status(401).json({ ok: false, error: 'Unauthorized' });
+      const body = req.body || {};
+      const suggestions = [
+        'Enable experimental.streaming for SSR streaming',
+        'Add revalidateSeconds to dynamic pages to enable ISR',
+        'Use Redis cache for HTML when running multiple instances',
+        'Enable structured logging to file via observability.logToFile'
+      ];
+      return res.json({ ok: true, suggestions, input: body });
+    } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+  });
+
+  app.post('/__indjs/ai/debug', async (req, res) => {
+    try {
+      const secretReq = req.query.secret || req.body?.secret || req.headers['x-indjs-ai-secret'];
+      if ((cfg?.ai?.secret || '') && secretReq !== cfg.ai.secret) return res.status(401).json({ ok: false, error: 'Unauthorized' });
+      const { error } = req.body || {};
+      if (!error) return res.status(400).json({ ok: false, error: 'Missing error' });
+      const hints = [
+        'Check server logs for stack trace and module paths',
+        'Verify environment variables and production config values',
+        'If ISR failed, ensure revalidateSeconds or revalidate() is exported correctly'
+      ];
+      return res.json({ ok: true, analysis: { message: String(error).slice(0, 500) }, hints });
+    } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
   });
 
   // Image optimization: /_image?src=/path&w=600&q=80
@@ -109,8 +143,10 @@ export async function start({ root, port }) {
     const handler = mod[req.method.toLowerCase()] || mod[req.method.toUpperCase()] || mod.default;
     if (!handler) return res.status(405).json({ error: 'Method Not Allowed' });
     try {
+      await applyHook(plugins, 'onApiCall', { req, res, route: match.route, params: match.params });
       const result = await handler({ req, res, params: match.params, query: req.query, body: req.body });
       if (!res.headersSent && result !== undefined) res.json(result);
+      await applyHook(plugins, 'onResponse', { req, res });
     } catch (e) { next(e); }
   });
 
@@ -118,6 +154,7 @@ export async function start({ root, port }) {
   // Memory cache by default; optional Redis
   const ttlMs = (cfg?.caching?.ttl || 30) * 1000;
   const htmlCache = new LRUCache({ max: 500, ttl: ttlMs });
+  const tsCache = new LRUCache({ max: 1000, ttl: 0 }); // track render timestamps per path
   const tagMap = new Map(); // tag -> Set(keys)
   let redis = null;
   if (cfg?.caching?.store === 'redis' && cfg?.caching?.redisUrl) {
@@ -165,22 +202,34 @@ export async function start({ root, port }) {
   app.get(/.*/, async (req, res, next) => {
     try {
       const cacheKey = req.originalUrl || req.url;
-      const cached = await cacheGet(cacheKey);
-      if (cached) {
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        return res.end(cached);
-      }
+      let cached = await cacheGet(cacheKey);
       const match = matchDynamic(req.path, pages);
       if (!match) return next();
       const mod = await loadModule(match.route.file);
+      // Time-based ISR: if revalidateSeconds is set, validate staleness
+      const revalidateSeconds = typeof mod.revalidateSeconds === 'number' ? Math.max(0, mod.revalidateSeconds) : null;
+      if (cached && revalidateSeconds !== null) {
+        const last = tsCache.get(cacheKey) || 0;
+        const age = Date.now() - last;
+        if (age < revalidateSeconds * 1000) {
+          res.setHeader('Content-Type', 'text/html; charset=utf-8');
+          return res.end(cached);
+        }
+      } else if (cached) {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        return res.end(cached);
+      }
       const fallback = `/__indjs/client${routeToClientPath(match.route.route)}`;
       const mapped = manifest[match.route.route];
       const clientSrc = mapped || fallback;
+      await applyHook(plugins, 'onRouteMatch', { req, res, route: match.route, params: match.params });
       const rendered = await renderPageModule({ mod, ctx: { req, res, query: req.query, params: match.params, root, pageFile: match.route.file, route: match.route.route }, assets: { clientSrc, manifest: JSON.stringify(manifest) } });
       // Support streaming: if a function is returned, stream and skip caching
       if (typeof rendered === 'function') {
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        return rendered(res);
+        const ret = rendered(res);
+        try { await applyHook(plugins, 'onResponse', { req, res }); } catch {}
+        return ret;
       }
       const html = rendered;
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -191,7 +240,9 @@ export async function start({ root, port }) {
         try { const t = await mod.revalidate({ params: match.params, query: req.query }); if (Array.isArray(t)) tags = t; } catch {}
       }
       await cacheSet(cacheKey, html, tags);
+      tsCache.set(cacheKey, Date.now());
       res.end(html);
+      try { await applyHook(plugins, 'onResponse', { req, res }); } catch {}
     } catch (e) { next(e); }
   });
 

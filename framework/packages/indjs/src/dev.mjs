@@ -19,6 +19,7 @@ import pinoHttp from 'pino-http';
 import rateLimit from 'express-rate-limit';
 import sourceMapSupport from 'source-map-support';
 import { loadConfig, getConfig } from './config.mjs';
+import { loadPlugins, applyHook } from './plugins.mjs';
 
 async function findAvailablePort(startPort, tries = 20) {
   let p = startPort;
@@ -38,6 +39,7 @@ export async function dev({ root, port }) {
   sourceMapSupport.install();
   await loadConfig(root);
   const cfg = getConfig();
+  const plugins = await loadPlugins(cfg, { root, mode: 'dev' });
   const app = express();
   const bus = new EventEmitter();
   const pagesDir = path.join(root, 'pages');
@@ -139,6 +141,7 @@ export async function dev({ root, port }) {
   await loadMiddleware();
 
   app.use(async (req, res, next) => {
+    try { await applyHook(plugins, 'onRequest', { req, res, root }); } catch {}
     if (!middleware?.default) return next();
     try {
       const result = await middleware.default({ req, res, root });
@@ -172,8 +175,10 @@ export async function dev({ root, port }) {
     const handler = mod[req.method.toLowerCase()] || mod[req.method.toUpperCase()] || mod.default;
     if (!handler) return res.status(405).json({ error: 'Method Not Allowed' });
     try {
+      await applyHook(plugins, 'onApiCall', { req, res, route: match.route, params: match.params });
       const result = await handler({ req, res, params: match.params, query: req.query, body: req.body });
       if (!res.headersSent && result !== undefined) res.json(result);
+      await applyHook(plugins, 'onResponse', { req, res });
     } catch (e) { bus.emit('error', e); next(e); }
   });
 
@@ -184,10 +189,12 @@ export async function dev({ root, port }) {
       if (!match) return next();
       const mod = await loadModule(match.route.file);
       const clientSrc = `/__indjs/client${routeToClientPath(match.route.route)}`;
+      await applyHook(plugins, 'onRouteMatch', { req, res, route: match.route, params: match.params });
       const rendered = await renderPageModule({ mod, ctx: { req, res, query: req.query, params: match.params, root, pageFile: match.route.file, route: match.route.route, dev: true }, assets: { clientSrc } });
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       if (typeof rendered === 'function') return rendered(res);
       res.end(rendered);
+      try { await applyHook(plugins, 'onResponse', { req, res }); } catch {}
     } catch (e) { bus.emit('error', e); next(e); }
   });
 
