@@ -15,7 +15,7 @@ export async function startVite({ app, root, bus }) {
 
   const vite = await createServer({
     root: appRoot,
-    plugins: [reactPlugin()],
+    plugins: [reactPlugin({ include: [/\.(jsx|tsx|mjs|js)$/] })],
     server: { middlewareMode: true },
     appType: 'custom',
     clearScreen: false,

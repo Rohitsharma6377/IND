@@ -96,11 +96,15 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import Page from ${JSON.stringify(pageRel)};
 import '/styles/globals.css';
 ${appRel ? `import App from ${JSON.stringify(appRel)};` : ''}
-const el = document.getElementById('__ind');
-const props = window.__IND_PROPS__ || {};
-let node = React.createElement(Page, props);
-${appRel ? 'node = React.createElement(App, props, node);' : ''}
-if (el) { try { hydrateRoot(el, node); } catch (e) { const r = createRoot(el); r.render(node); } }
+function __ind_boot(){
+  const el = document.getElementById('__ind');
+  const props = window.__IND_PROPS__ || {};
+  let node = React.createElement(Page, props);
+  ${appRel ? 'node = React.createElement(App, props, node);' : ''}
+  if (el) { try { hydrateRoot(el, node); } catch (e) { const r = createRoot(el); r.render(node); } }
+}
+try { window.__IND_BOOT__ = __ind_boot; } catch {}
+__ind_boot();
 `;
       try { await fs.writeFile(entryPath, entryCode, 'utf8'); if (ctx.dev) { try { console.log('[INDJS][DEV] wrote Vite entry:', entryPath); } catch {} } } catch (e) { try { console.error('[INDJS][DEV] failed to write Vite entry', e?.message||e); } catch {} }
       const buster = Date.now();
@@ -342,6 +346,47 @@ function htmlDoc({ body, title, description, head, props, clientSrc, cssHref, de
 <body>
   <div id="__ind">${body}</div>
   ${overlay}
+  <script>
+  (function(){
+    // Minimal client navigation to avoid full-page reloads
+    if (window.__IND_NAV_INSTALLED__) return; window.__IND_NAV_INSTALLED__ = true;
+    function swapFromDoc(doc){
+      try {
+        var nextTitle = doc.querySelector('title');
+        if (nextTitle) document.title = nextTitle.textContent || document.title;
+        var nextRoot = doc.getElementById('__ind');
+        var root = document.getElementById('__ind');
+        if (root && nextRoot) {
+          root.innerHTML = nextRoot.innerHTML;
+        }
+      } catch {}
+    }
+    async function navigateTo(href){
+      try {
+        var res = await fetch(href, { credentials: 'same-origin' });
+        var text = await res.text();
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(text, 'text/html');
+        swapFromDoc(doc);
+        // rehydrate if client bundle exposes boot
+        try { if (typeof window.__IND_BOOT__ === 'function') window.__IND_BOOT__(); } catch {}
+      } catch (e) {
+        // Fallback to hard navigation on failure
+        try { window.location.assign(href); } catch {}
+      }
+    }
+    window.addEventListener('ind:navigate', function(ev){
+      try {
+        var href = ev && ev.detail && ev.detail.href ? ev.detail.href : null;
+        if (!href) return;
+        navigateTo(href);
+      } catch {}
+    });
+    window.addEventListener('popstate', function(){
+      try { navigateTo(window.location.pathname + window.location.search + window.location.hash); } catch {}
+    });
+  })();
+  </script>
 </body>
 </html>`;
 }

@@ -1,6 +1,6 @@
 {
   "name": "indjs",
-  "version": "2.0.2",
+  "version": "2.0.6",
   "description": "A modern, fast, and lightweight full-stack React framework with file-based routing, SSR, and built-in optimizations",
   "type": "module",
   "author": "INDJS Team || Rohit sharma",
@@ -31,8 +31,12 @@
     "indjs": "bin/indjs.js"
   },
   "main": "src/index.mjs",
+  "types": "src/types.d.ts",
   "exports": {
-    ".": "./src/index.mjs",
+    ".": {
+      "browser": "./src/index.web.mjs",
+      "default": "./src/index.mjs"
+    },
     "./auth": "./src/auth/index.mjs",
     "./database": "./src/database/index.mjs",
     "./testing": "./src/testing/index.mjs",

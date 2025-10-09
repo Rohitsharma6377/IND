@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ReactNode, ComponentType } from 'react';
+import * as React from 'react';
 
 // Core INDJS Types
 export interface INDJSConfig {
@@ -247,3 +248,67 @@ export declare namespace Testing {
   export function mockRequest(options?: any): Request;
   export function mockResponse(options?: any): Response;
 }
+
+// -----------------------------
+// UI Components and Utilities
+// -----------------------------
+
+// Image component
+export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+  src: string;
+  alt?: string;
+  width?: number | string;
+  height?: number | string;
+  quality?: number;
+  sizes?: string;
+  widths?: Array<number>;
+  unoptimized?: boolean;
+  priority?: boolean; // eager + fetchPriority=high
+}
+export declare const Image: React.ComponentType<ImageProps>;
+
+// Link component
+export interface LinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'onClick' | 'href'> {
+  href: string;
+  prefetch?: boolean;
+  replace?: boolean;
+  scroll?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+}
+export declare const Link: React.ComponentType<React.PropsWithChildren<LinkProps>>;
+
+// Script component
+export type ScriptStrategy = 'beforeInteractive' | 'afterInteractive' | 'lazyOnload';
+export interface ScriptProps extends React.ScriptHTMLAttributes<HTMLScriptElement> {
+  strategy?: ScriptStrategy;
+  children?: string;
+}
+export declare const Script: React.ComponentType<ScriptProps>;
+
+// Head component (client helper)
+export interface HeadProps {
+  title?: string;
+  metas?: Array<Record<string, string>>;
+  links?: Array<Record<string, string>>;
+}
+export declare const Head: React.ComponentType<HeadProps>;
+
+// dynamic import helper
+export interface DynamicOptions {
+  loading?: React.ComponentType<any>;
+  ssr?: boolean;
+}
+export default function dynamic<T = any>(loader: () => Promise<{ default: React.ComponentType<T> } | React.ComponentType<T>>, options?: DynamicOptions): React.ComponentType<T>;
+
+// Router utilities
+export interface RouterLike {
+  pathname: string;
+  query: Record<string, string | string[]>;
+  asPath: string;
+  push: (url: string) => void;
+  replace: (url: string) => void;
+  back: () => void;
+  reload: () => void;
+}
+export function useRouter(): RouterLike;
+export const Router: { useRouter: typeof useRouter };

@@ -86,6 +86,66 @@ export default function Home() {
 }
 ```
 
+## 🧭 Step-by-Step Hinglish Guide (500 words)
+
+Ye guide aapko INDJS ko jaldi aur sahi tarike se use karna sikhayega—setup se leke deploy tak.
+
+- **1) Install & Project Setup**
+  - Global ya npx se install karein: `npm i -g indjs` ya `npx indjs@latest create my-app`.
+  - Project me jaake `npm install` run karein.
+
+- **2) Dev Server (HMR enabled)**
+  - `npm run dev` se development server start hota hai (default port 3000). Pages hot-reload hote rehte hain.
+  - Aapke pages `pages/` folder me hote hain. Example: `pages/index.jsx` → `/` route.
+
+- **3) File-based Routing**
+  - Simple rule: file ka path hi URL ban jata hai.
+  - `pages/about.jsx` → `/about`
+  - Dynamic routes: `pages/blog/[slug].jsx` → `/blog/:slug`
+  - API routes: `pages/api/users.js` → `/api/users` (GET/POST methods supported).
+
+- **4) SSR, SSG & ISR**
+  - SSR default hai—server par render hota hai for SEO & fast first paint.
+  - SSG ke liye build time par pre-render hota hai (static pages).
+  - ISR (Incremental Static Regeneration): page par `export const revalidateSeconds = 60;` laga do—60s baad page fresh render ho jayega.
+
+- **5) Client Hydration & SPA Navigation**
+  - INDJS ab client bundles me global boot function expose karta hai: `window.__IND_BOOT__`.
+  - SPA-style navigation ke baad DOM swap hota hai aur boot rehydrate karta hai, taaki page bina full reload ke interactive rahe.
+  - Hydration ko safe banane ke liye Error Boundary wrap kiya gaya hai (dev/prod). Agar error aaya toh ek friendly error box dikhega.
+
+- **6) Telemetry (Client Error Intake)**
+  - Client hydration errors beacon ke through `/__indjs/client-error` endpoint ko bheje ja sakte hai.
+  - Dev mode me console par log hota hai, prod me `pino` logger through structured log aata hai.
+
+- **7) Components & Types**
+  - Built-ins: `Image`, `Link`, `Script`, `Head`, `ErrorBoundary`, `dynamic()`.
+  - TypeScript consumers ke liye `types.d.ts` publish hota hai. `package.json` me `"types": "src/types.d.ts"` set hai.
+
+- **8) Styling**
+  - Tailwind pre-configured hai. `styles/globals.css` me Tailwind layers add karke classes use karein.
+
+- **9) Testing (Unit + E2E)**
+  - Unit: Vitest config `vitest.config.mjs`—`npm run test` use karein.
+  - E2E: Playwright config `playwright.config.mjs`—`npx playwright install` aur `npm run e2e`.
+  - E2E default home page par “Welcome to INDJS” aur basic links verify karta hai.
+
+- **10) Build & Start (Production)**
+  - `npm run build` se production assets ready ho jate hain.
+  - `npm run start` se prod server (Express + security middlewares) run hota hai.
+  - Hashed client assets cache-friendly serve hote hain; SSR HTML optional LRU/Redis cache ke sath.
+
+- **11) Deployment**
+  - CLI helpers: `indjs deploy vercel|netlify|docker` etc.
+  - Observability: `/__indjs/metrics` aur `/__indjs/dashboard` se basic metrics dekh sakte hain.
+
+- **12) Config & Plugins**
+  - `indjs.config.js` me experimental features (e.g., Vite dev bundler, streaming SSR), observability, caching, auth, DB, plugins configure karein.
+  - Hooks: `onRequest`, `onApiCall`, `onRouteMatch`, `onResponse` aapki needs ke hisaab se extend kiye ja sakte hain.
+
+In short: INDJS aapko Next.js style DX deta hai, lekin lightweight aur express-style control ke sath. Start karein, pages banayein, APIs likhein, aur ek hi repo me full-stack app ship karein—fast!
+
+
 Add scripts to your `package.json`:
 
 ```json

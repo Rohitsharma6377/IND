@@ -8,13 +8,17 @@ export default function Image(props) {
     src,
     alt,
     width,
+    height,
     quality = 80,
     sizes = '100vw',
     className,
     style,
-    loading,
-    decoding,
-    widths
+    loading = 'lazy',
+    decoding = 'async',
+    widths,
+    unoptimized = false,
+    // When priority is true, hint browser to fetch with higher priority and avoid lazy-loading
+    priority = false,
   } = props;
 
   if (!src) return null;
@@ -27,10 +31,28 @@ export default function Image(props) {
     return `/_image?${params.toString()}`;
   };
 
+  // If unoptimized, pass through original src and attributes
+  if (unoptimized) {
+    return (
+      <img
+        src={src}
+        alt={alt || ''}
+        width={width}
+        height={height}
+        className={className}
+        style={style}
+        loading={priority ? 'eager' : loading}
+        decoding={decoding}
+        fetchPriority={priority ? 'high' : undefined}
+      />
+    );
+  }
+
   let finalSrc = buildUrl(width);
   let srcSet;
   if (Array.isArray(widths) && widths.length) {
-    srcSet = widths.map(w => `${buildUrl(w)} ${w}w`).join(', ');
+    const unique = Array.from(new Set(widths.filter(Boolean).map(Number))).sort((a,b)=>a-b);
+    if (unique.length) srcSet = unique.map(w => `${buildUrl(w)} ${w}w`).join(', ');
   }
 
   return (
@@ -40,10 +62,14 @@ export default function Image(props) {
       srcSet={srcSet}
       sizes={srcSet ? sizes : undefined}
       width={width}
+      height={height}
       className={className}
       style={style}
-      loading={loading}
+      loading={priority ? 'eager' : loading}
       decoding={decoding}
+      fetchPriority={priority ? 'high' : undefined}
     />
   );
 }
+
+
