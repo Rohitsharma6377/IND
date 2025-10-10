@@ -77,8 +77,8 @@ export async function renderPageModule({ mod, ctx, assets }) {
   const title = meta.title || props?.title || 'INDJS App';
   const description = meta.description || '';
 
-  // Include client CSS (built by Tailwind/PostCSS watcher)
-  const cssHref = '/__indjs/client/styles.css';
+  // Include client CSS (built by Tailwind/PostCSS watcher) - only for dev mode
+  const cssHref = ctx.dev ? '/__indjs/client/styles.css' : null;
 
   // Build Vite dev scripts if Vite dev bundler is enabled
   let devViteScripts = '';

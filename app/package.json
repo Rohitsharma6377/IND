@@ -9,7 +9,9 @@
     "start": "indjs start",
     "test": "indjs test",
     "preview": "cd .indjs/static && npx serve .",
-    "deploy": "npm run build && vercel --prod"
+    "deploy:vercel": "npm run build && npx vercel --prod",
+    "deploy:netlify": "npm run build && npx netlify deploy --prod --dir .indjs/static",
+    "deploy": "npm run build && echo 'Build complete! Deploy the .indjs/static folder to your hosting provider.'"
   },
   "dependencies": {
     "react": "^18.2.0",
