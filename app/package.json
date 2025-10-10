@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "indjs dev",
-    "build": "npm run build",
+    "build": "node build-vercel.js",
     "start": "indjs start",
     "test": "indjs test",
     "preview": "cd .indjs/static && npx serve .",
