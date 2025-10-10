@@ -10,30 +10,18 @@
       }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "source": "/learn",
+      "destination": "/learn.html"
     },
     {
-      "src": "/learn",
-      "dest": "/learn.html"
+      "source": "/docs",
+      "destination": "/docs.html"
     },
     {
-      "src": "/docs",
-      "dest": "/docs.html"
-    },
-    {
-      "src": "/about",
-      "dest": "/about.html"
-    },
-    {
-      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/about",
+      "destination": "/about.html"
     }
   ],
   "headers": [
