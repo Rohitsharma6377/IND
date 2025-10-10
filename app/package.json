@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "indjs dev",
-    "build": "indjs build",
+    "build": "npx indjs build",
     "start": "indjs start",
     "test": "indjs test",
     "preview": "cd .indjs/static && npx serve .",
