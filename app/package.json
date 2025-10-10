@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "indjs dev",
-    "build": "indjs build",
+    "build": "npm install -g indjs && indjs build",
     "start": "indjs start",
     "test": "indjs test"
   },
