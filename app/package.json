@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "indjs dev",
-    "build": "node build-static.js",
-    "build:indjs": "npx indjs build",
+    "build": "indjs build",
     "start": "indjs start",
-    "test": "indjs test"
+    "test": "indjs test",
+    "preview": "cd .indjs/static && npx serve .",
+    "deploy": "npm run build && vercel --prod"
   },
   "dependencies": {
     "react": "^18.2.0",
