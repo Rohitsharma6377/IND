@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "indjs dev",
-    "build": "npm install -g indjs && indjs build",
+    "build": "node build-static.js",
+    "build:indjs": "npx indjs build",
     "start": "indjs start",
     "test": "indjs test"
   },
