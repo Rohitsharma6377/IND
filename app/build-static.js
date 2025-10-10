@@ -8,6 +8,13 @@ async function buildStatic() {
   console.log('🔨 Building static site...');
   
   const outputDir = '.indjs/static';
+  
+  // Clean and create output directory
+  try {
+    await fs.rm(outputDir, { recursive: true, force: true });
+  } catch (e) {
+    // Directory might not exist, ignore
+  }
   await fs.mkdir(outputDir, { recursive: true });
   
   // Copy public assets
