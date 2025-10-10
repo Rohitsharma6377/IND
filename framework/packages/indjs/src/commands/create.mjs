@@ -404,8 +404,7 @@ export default function About() {
             <li>Image optimization</li>
           </ul>
         </div>
-        </div>
-    </div>
+      </div>
     </div>
   );
 }`;
@@ -666,8 +665,8 @@ async function createAppShell(appPath, opts) {
   const ext = opts?.language === 'ts' ? 'tsx' : 'jsx';
   const app = `import React from 'react';
 
-export default function App(props) {
-  return <>` + '{' + `props.children` + '}' + `</>;
+export default function App({ children }) {
+  return <>{children}</>;
 }
 `;
   await fs.writeFile(path.join(appPath, 'pages', `_app.${ext}`), app);

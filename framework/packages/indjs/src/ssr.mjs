@@ -55,8 +55,12 @@ export async function renderPageModule({ mod, ctx, assets }) {
 
   // Compose content: page -> nested layouts (deepest first) -> _app outermost
   let content = React.createElement(Component, props);
-  for (const L of layoutComponents) content = React.createElement(L, props, content);
-  if (appMod?.default) content = React.createElement(appMod.default, props, content);
+  for (const L of layoutComponents) {
+    content = React.createElement(L, { ...props }, content);
+  }
+  if (appMod?.default) {
+    content = React.createElement(appMod.default, { ...props }, content);
+  }
 
   const cfg = getConfig();
   const enableStreaming = !!cfg?.experimental?.streaming;
