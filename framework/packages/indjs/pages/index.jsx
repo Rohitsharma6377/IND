@@ -76,42 +76,138 @@ export default function Home() {
     <main style={ui.page}>
       <div style={ui.wrap}>
         <section style={ui.hero}>
-          <div style={ui.tag}>Full‑stack React • SSR • SSG • API</div>
+          <div style={ui.tag}>Full‑stack React • SSR • SSG • API • TypeScript</div>
           <h1 style={ui.h1}>Welcome to INDJS</h1>
-          <p style={ui.lead}>A modern, fast, and lightweight framework with file‑based routing, SSR/SSG, API routes, Tailwind integration and more.</p>
+          <p style={ui.lead}>The modern full-stack React framework that combines the best of Next.js simplicity with powerful built-in features. Build, deploy, and scale web applications with zero configuration.</p>
           <nav style={ui.ctas}>
             <a href="/learn" style={ui.btnPrimary}>Get Started</a>
-            <a href="/api/test" style={ui.btnSecondary}>Test API</a>
-            <a href="/docs" style={ui.btnSecondary}>Docs</a>
+            <a href="/docs" style={ui.btnSecondary}>Documentation</a>
+            <a href="https://github.com/indjs/indjs" style={ui.btnSecondary}>GitHub</a>
           </nav>
+          
+          <div style={{ 
+            display: 'flex', 
+            gap: 24, 
+            marginTop: 20, 
+            fontSize: 14, 
+            color: '#64748b',
+            flexWrap: 'wrap',
+            justifyContent: 'center'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ color: '#10b981' }}>✓</span> Zero Configuration
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ color: '#10b981' }}>✓</span> Built-in Authentication
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ color: '#10b981' }}>✓</span> Database Integration
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ color: '#10b981' }}>✓</span> One-Click Deploy
+            </div>
+          </div>
 
           <div style={ui.grid}>
             <article style={ui.card}>
-              <div style={{ fontSize: 12, color: '#0369a1' }}>Server‑Side Rendering</div>
+              <div style={{ fontSize: 12, color: '#0369a1', fontWeight: 600 }}>🚀 PERFORMANCE</div>
               <h3 style={ui.cardTitle}>React 18 SSR + SSG</h3>
-              <p style={ui.cardDesc}>Render on the server for SEO and speed, with static generation for blazing fast pages.</p>
+              <p style={ui.cardDesc}>Lightning-fast server-side rendering with static generation, streaming, and incremental regeneration for optimal performance.</p>
             </article>
             <article style={ui.card}>
-              <div style={{ fontSize: 12, color: '#0369a1' }}>Routing</div>
+              <div style={{ fontSize: 12, color: '#0369a1', fontWeight: 600 }}>🛣️ ROUTING</div>
               <h3 style={ui.cardTitle}>File‑based Routes</h3>
-              <p style={ui.cardDesc}>Drop a file in <code>pages/</code> and it’s instantly available. Dynamic routes supported.</p>
+              <p style={ui.cardDesc}>Intuitive file-based routing with dynamic routes, layouts, middleware, and advanced patterns. No configuration needed.</p>
             </article>
             <article style={ui.card}>
-              <div style={{ fontSize: 12, color: '#0369a1' }}>Assets</div>
-              <h3 style={ui.cardTitle}>Image Optimization</h3>
-              <p style={ui.cardDesc}>Built‑in on‑the‑fly resizing and quality control with sharp for fast, crisp media.</p>
+              <div style={{ fontSize: 12, color: '#0369a1', fontWeight: 600 }}>🔌 FULL-STACK</div>
+              <h3 style={ui.cardTitle}>API Routes + Database</h3>
+              <p style={ui.cardDesc}>Built-in serverless API routes with database integration, authentication, and real-time features out of the box.</p>
             </article>
             <article style={ui.card}>
-              <div style={{ fontSize: 12, color: '#0369a1' }}>DX</div>
-              <h3 style={ui.cardTitle}>TypeScript Ready</h3>
-              <p style={ui.cardDesc}>Shipped with rich type definitions for components, router, and utilities.</p>
+              <div style={{ fontSize: 12, color: '#0369a1', fontWeight: 600 }}>🎨 STYLING</div>
+              <h3 style={ui.cardTitle}>Tailwind CSS Built-in</h3>
+              <p style={ui.cardDesc}>Pre-configured Tailwind CSS with support for CSS Modules, Sass, styled-components, and custom theming.</p>
             </article>
+            <article style={ui.card}>
+              <div style={{ fontSize: 12, color: '#0369a1', fontWeight: 600 }}>🔐 SECURITY</div>
+              <h3 style={ui.cardTitle}>Authentication Ready</h3>
+              <p style={ui.cardDesc}>JWT, OAuth, session-based auth with role-based access control, middleware, and security best practices.</p>
+            </article>
+            <article style={ui.card}>
+              <div style={{ fontSize: 12, color: '#0369a1', fontWeight: 600 }}>🌐 DEPLOYMENT</div>
+              <h3 style={ui.cardTitle}>Deploy Anywhere</h3>
+              <p style={ui.cardDesc}>One-click deployment to Vercel, Netlify, AWS, Docker with CI/CD pipelines and production optimizations.</p>
+            </article>
+            <article style={ui.card}>
+              <div style={{ fontSize: 12, color: '#0369a1', fontWeight: 600 }}>🧪 TESTING</div>
+              <h3 style={ui.cardTitle}>Testing Suite</h3>
+              <p style={ui.cardDesc}>Comprehensive testing with Vitest, Playwright, mocking utilities, and test-driven development patterns.</p>
+            </article>
+            <article style={ui.card}>
+              <div style={{ fontSize: 12, color: '#0369a1', fontWeight: 600 }}>⚡ DEVELOPER EXPERIENCE</div>
+              <h3 style={ui.cardTitle}>TypeScript + CLI</h3>
+              <p style={ui.cardDesc}>Full TypeScript support, powerful CLI tools, hot reload, and rich development experience with zero configuration.</p>
+            </article>
+          </div>
+          
+          <div style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: 16,
+            padding: 32,
+            marginTop: 40,
+            color: 'white',
+            textAlign: 'center'
+          }}>
+            <h2 style={{ fontSize: 28, fontWeight: 700, marginBottom: 16, color: 'white' }}>Ready to Build the Future?</h2>
+            <p style={{ fontSize: 18, marginBottom: 24, color: 'rgba(255,255,255,0.9)', maxWidth: 600, margin: '0 auto 24px' }}>
+              Join thousands of developers who are building modern, scalable web applications with INDJS. 
+              From startups to enterprise, INDJS powers the next generation of web experiences.
+            </p>
+            <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <a href="/learn" style={{
+                background: 'rgba(255,255,255,0.2)',
+                color: 'white',
+                padding: '12px 24px',
+                borderRadius: 10,
+                textDecoration: 'none',
+                fontWeight: 600,
+                fontSize: 16,
+                backdropFilter: 'blur(10px)'
+              }}>Start Building Now</a>
+              <a href="/docs" style={{
+                background: 'transparent',
+                color: 'white',
+                padding: '12px 24px',
+                borderRadius: 10,
+                textDecoration: 'none',
+                fontWeight: 600,
+                fontSize: 16,
+                border: '2px solid rgba(255,255,255,0.3)'
+              }}>View Documentation</a>
+            </div>
           </div>
         </section>
 
-        <p style={ui.footer}>
-          Deployed with <strong>INDJS</strong>. Edit <code>pages/index.jsx</code> to customize this page.
-        </p>
+        <div style={{
+          ...ui.footer,
+          borderTop: '1px solid rgba(255,255,255,0.1)',
+          paddingTop: 20,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 16
+        }}>
+          <p style={{ margin: 0, fontSize: 14 }}>
+            Powered by <strong>INDJS</strong> v1.0.0 • Edit <code>pages/index.jsx</code> to customize
+          </p>
+          <div style={{ display: 'flex', gap: 16, fontSize: 14 }}>
+            <a href="/docs" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Documentation</a>
+            <a href="https://github.com/indjs/indjs" style={{ color: '#cbd5e1', textDecoration: 'none' }}>GitHub</a>
+            <a href="https://twitter.com/indjs" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Twitter</a>
+          </div>
+        </div>
       </div>
     </main>
   );

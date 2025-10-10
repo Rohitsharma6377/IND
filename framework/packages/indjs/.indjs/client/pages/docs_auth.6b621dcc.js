@@ -24485,14 +24485,14 @@ var require_jsx_runtime = __commonJS({
   }
 });
 
-// .indjs/client/entry_learn.js
+// .indjs/client/entry_docs_auth.js
 var import_react2 = __toESM(require_react(), 1);
 var import_client = __toESM(require_client(), 1);
 
-// pages/learn.jsx
+// pages/docs/auth.jsx
 var import_react = __toESM(require_react(), 1);
 var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
-function Learn() {
+function Auth() {
   const ui = {
     page: {
       fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
@@ -24527,18 +24527,36 @@ function Learn() {
       fontSize: 14
     },
     section: {
-      marginBottom: 24
+      marginBottom: 32
     },
     h2: {
       fontSize: 24,
       color: "#0b1220",
-      marginBottom: 12
+      marginBottom: 16,
+      borderBottom: "2px solid #e2e8f0",
+      paddingBottom: 8
+    },
+    h3: {
+      fontSize: 20,
+      color: "#0b1220",
+      marginBottom: 12,
+      marginTop: 24
     },
     p: {
       fontSize: 16,
       color: "#334155",
       lineHeight: 1.6,
-      marginBottom: 12
+      marginBottom: 16
+    },
+    ul: {
+      fontSize: 16,
+      color: "#334155",
+      lineHeight: 1.6,
+      marginBottom: 16,
+      paddingLeft: 20
+    },
+    li: {
+      marginBottom: 8
     },
     code: {
       background: "#f1f5f9",
@@ -24556,265 +24574,571 @@ function Learn() {
       fontFamily: "monospace",
       overflow: "auto",
       marginBottom: 20,
-      lineHeight: 1.5,
-      whiteSpace: "pre-wrap"
+      lineHeight: 1.5
+    },
+    warning: {
+      background: "#fef3c7",
+      border: "1px solid #f59e0b",
+      borderRadius: 8,
+      padding: 16,
+      marginBottom: 20
+    },
+    warningTitle: {
+      fontWeight: 600,
+      color: "#92400e",
+      marginBottom: 8
+    },
+    success: {
+      background: "#dcfce7",
+      border: "1px solid #16a34a",
+      borderRadius: 8,
+      padding: 16,
+      marginBottom: 20
+    },
+    successTitle: {
+      fontWeight: 600,
+      color: "#15803d",
+      marginBottom: 8
+    },
+    grid: {
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+      gap: 20,
+      marginBottom: 32
+    },
+    card: {
+      background: "#f8fafc",
+      border: "1px solid #e2e8f0",
+      borderRadius: 8,
+      padding: 20
+    },
+    cardTitle: {
+      fontSize: 18,
+      fontWeight: 600,
+      color: "#0b1220",
+      marginBottom: 12
     }
   };
   return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("main", { style: ui.page, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.wrap, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { style: ui.hero, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { style: ui.nav, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/", style: ui.backLink, children: "\u2190 Back to Home" }) }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { style: ui.h1, children: "Getting Started with INDJS" }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 18, color: "#64748b", marginBottom: 32, lineHeight: 1.6 }, children: "Build modern full-stack React applications with zero configuration. INDJS provides everything you need to create fast, scalable web applications with built-in SSR, API routes, and deployment tools." }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { style: ui.nav, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs", style: ui.backLink, children: "\u2190 Back to Documentation" }) }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { style: ui.h1, children: "Authentication Guide" }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F680} Quick Start" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Create a new INDJS application with a single command and start building immediately:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# Create a new INDJS app
-npx create-indjs my-app
-
-# Navigate to your project
-cd my-app
-
-# Start the development server
-npm run dev
-
-# Your app is now running at http://localhost:3000` }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-        background: "#dbeafe",
-        border: "1px solid #3b82f6",
-        borderRadius: 8,
-        padding: 16,
-        marginTop: 16
-      }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontWeight: 600, color: "#1e40af", marginBottom: 8 }, children: "\u{1F4A1} Pro Tip" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: 0, fontSize: 14, color: "#1e40af" }, children: [
-          "Use templates to get started faster: ",
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { style: ui.code, children: "npx create-indjs my-blog --template blog" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
-          "Available templates: basic, blog, admin, ecommerce, ai-app"
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Overview" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "INDJS provides a comprehensive authentication system with built-in support for JWT tokens, OAuth providers, session management, and role-based access control. This guide will help you implement secure authentication in your INDJS application." })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Authentication Methods" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.grid, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.card, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.cardTitle, children: "\u{1F510} JWT Authentication" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { ...ui.p, marginBottom: 0 }, children: "Stateless token-based authentication perfect for APIs and SPAs. Includes automatic token refresh and secure cookie storage." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.card, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.cardTitle, children: "\u{1F310} OAuth Integration" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { ...ui.p, marginBottom: 0 }, children: "Built-in support for Google, GitHub, Facebook, and custom OAuth providers. Simplified setup with automatic user profile management." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.card, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.cardTitle, children: "\u{1F36A} Session-Based Auth" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { ...ui.p, marginBottom: 0 }, children: "Traditional server-side sessions with secure cookie management. Ideal for server-rendered applications." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.card, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.cardTitle, children: "\u{1F465} Role-Based Access" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { ...ui.p, marginBottom: 0 }, children: "Flexible role and permission system with middleware support. Protect routes and API endpoints based on user roles." })
         ] })
       ] })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F4C1} Project Structure" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "INDJS follows a simple, intuitive project structure that scales with your application:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `my-app/
-\u251C\u2500\u2500 pages/                 # File-based routing
-\u2502   \u251C\u2500\u2500 index.jsx         # Home page (/)
-\u2502   \u251C\u2500\u2500 about.jsx         # About page (/about)
-\u2502   \u251C\u2500\u2500 blog/
-\u2502   \u2502   \u251C\u2500\u2500 index.jsx     # Blog listing (/blog)
-\u2502   \u2502   \u2514\u2500\u2500 [slug].jsx    # Dynamic blog post (/blog/my-post)
-\u2502   \u2514\u2500\u2500 api/              # API routes
-\u2502       \u251C\u2500\u2500 hello.js      # API endpoint (/api/hello)
-\u2502       \u2514\u2500\u2500 users/
-\u2502           \u2514\u2500\u2500 [id].js   # Dynamic API route (/api/users/123)
-\u251C\u2500\u2500 components/           # Reusable React components
-\u251C\u2500\u2500 lib/                  # Utility functions and configurations
-\u251C\u2500\u2500 public/               # Static assets (images, favicon, etc.)
-\u251C\u2500\u2500 styles/               # Global CSS and styling
-\u251C\u2500\u2500 package.json
-\u2514\u2500\u2500 indjs.config.js      # Optional configuration` })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F6E3}\uFE0F File-based Routing" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Pages are automatically routed based on their file structure. No configuration needed!" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// File structure \u2192 Routes
-pages/index.jsx           \u2192 /
-pages/about.jsx           \u2192 /about
-pages/contact.jsx         \u2192 /contact
-pages/blog/index.jsx      \u2192 /blog
-pages/blog/[slug].jsx     \u2192 /blog/my-post
-pages/shop/[...slug].jsx  \u2192 /shop/category/product
-pages/api/users.js        \u2192 /api/users
-pages/api/auth/login.js   \u2192 /api/auth/login` }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Creating Your First Page" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/about.jsx
-import React from 'react';
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Quick Setup" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Get authentication up and running in your INDJS app with these simple steps:" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "1. Install Dependencies" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# Install authentication packages
+npm install jsonwebtoken bcryptjs
+npm install @types/jsonwebtoken @types/bcryptjs --save-dev
 
-export default function About() {
-  return (
-    <div>
-      <h1>About Us</h1>
-      <p>Welcome to our amazing INDJS application!</p>
-    </div>
-  );
-}` })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F50C} API Routes" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: ui.p, children: [
-        "Build full-stack applications with serverless API endpoints. Just create files in ",
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { style: ui.code, children: "pages/api/" }),
-        ":"
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/api/hello.js
-export default function handler({ req, res }) {
-  res.json({ 
-    message: 'Hello from INDJS API!',
-    timestamp: new Date().toISOString()
+# For OAuth (optional)
+npm install passport passport-google-oauth20 passport-github2` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "2. Environment Variables" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# .env.local
+JWT_SECRET=your-super-secret-jwt-key-here
+JWT_EXPIRES_IN=7d
+
+# OAuth (optional)
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
+
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "3. Create Auth Utilities" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// lib/auth.js
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+
+export function hashPassword(password) {
+  return bcrypt.hash(password, 12);
+}
+
+export function verifyPassword(password, hashedPassword) {
+  return bcrypt.compare(password, hashedPassword);
+}
+
+export function signToken(payload) {
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: JWT_EXPIRES_IN,
+    issuer: 'indjs-app'
   });
 }
 
-// pages/api/users/[id].js
-export default async function handler({ req, res, params }) {
-  const { id } = params;
+export function verifyToken(token) {
+  return jwt.verify(token, JWT_SECRET, { issuer: 'indjs-app' });
+}
+
+export function getTokenFromRequest(req) {
+  // Check Authorization header
+  let token = req.headers.authorization?.replace('Bearer ', '');
   
-  if (req.method === 'GET') {
-    const user = await getUserById(id);
-    res.json(user);
-  } else if (req.method === 'PUT') {
-    const updatedUser = await updateUser(id, req.body);
-    res.json(updatedUser);
+  // Check cookies
+  if (!token && req.headers.cookie) {
+    const cookies = req.headers.cookie.split(';').reduce((acc, cookie) => {
+      const [key, value] = cookie.trim().split('=');
+      acc[key] = value;
+      return acc;
+    }, {});
+    token = cookies.authToken;
+  }
+  
+  return token;
+}` })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Login & Registration" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Registration API" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/api/auth/register.js
+import { hashPassword, signToken } from '../../../lib/auth';
+import { createUser, getUserByEmail } from '../../../lib/database';
+
+export default async function handler({ req, res }) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const { name, email, password } = req.body;
+
+    // Validation
+    if (!name || !email || !password) {
+      return res.status(400).json({ 
+        error: 'Name, email, and password are required' 
+      });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({ 
+        error: 'Password must be at least 8 characters long' 
+      });
+    }
+
+    // Check if user exists
+    const existingUser = await getUserByEmail(email);
+    if (existingUser) {
+      return res.status(409).json({ error: 'User already exists' });
+    }
+
+    // Create user
+    const hashedPassword = await hashPassword(password);
+    const user = await createUser({
+      name,
+      email,
+      password: hashedPassword,
+      role: 'user'
+    });
+
+    // Generate token
+    const token = signToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role
+    });
+
+    // Set secure cookie
+    res.setHeader('Set-Cookie', 
+      \`authToken=\${token}; HttpOnly; Secure; SameSite=Strict; Max-Age=604800; Path=/\`
+    );
+
+    res.status(201).json({
+      success: true,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'Registration failed' });
+  }
+}` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Login API" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/api/auth/login.js
+import { verifyPassword, signToken } from '../../../lib/auth';
+import { getUserByEmail } from '../../../lib/database';
+
+export default async function handler({ req, res }) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ 
+        error: 'Email and password are required' 
+      });
+    }
+
+    // Find user
+    const user = await getUserByEmail(email);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Verify password
+    const isValid = await verifyPassword(password, user.password);
+    if (!isValid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Generate token
+    const token = signToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role
+    });
+
+    // Set secure cookie
+    res.setHeader('Set-Cookie', 
+      \`authToken=\${token}; HttpOnly; Secure; SameSite=Strict; Max-Age=604800; Path=/\`
+    );
+
+    res.json({
+      success: true,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Login failed' });
   }
 }` })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u26A1 Server-Side Rendering" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Get better SEO and performance with built-in SSR. Fetch data on the server before rendering:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/blog/[slug].jsx
-import React from 'react';
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Authentication Middleware" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Protect your API routes and pages with authentication middleware:" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// lib/middleware/auth.js
+import { verifyToken, getTokenFromRequest } from '../auth';
+import { getUserById } from '../database';
 
-export default function BlogPost({ post, author }) {
-  return (
-    <article>
-      <h1>{post.title}</h1>
-      <p>By {author.name} \u2022 {post.publishedAt}</p>
-      <div dangerouslySetInnerHTML={{ __html: post.content }} />
-    </article>
-  );
-}
+export function requireAuth(handler) {
+  return async ({ req, res, ...rest }) => {
+    try {
+      const token = getTokenFromRequest(req);
+      
+      if (!token) {
+        return res.status(401).json({ error: 'Authentication required' });
+      }
 
-// Fetch data on each request (SSR)
-export async function getServerSideProps({ params }) {
-  const { slug } = params;
-  const post = await fetchBlogPost(slug);
-  const author = await fetchAuthor(post.authorId);
-  
-  return {
-    props: { post, author }
+      const decoded = verifyToken(token);
+      const user = await getUserById(decoded.userId);
+      
+      if (!user) {
+        return res.status(401).json({ error: 'User not found' });
+      }
+
+      // Add user to request
+      req.user = user;
+      req.token = token;
+
+      return handler({ req, res, ...rest });
+
+    } catch (error) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
   };
 }
 
-// Or generate static pages at build time (SSG)
-export async function getStaticProps({ params }) {
-  const { slug } = params;
-  const post = await fetchBlogPost(slug);
-  
-  return {
-    props: { post },
-    revalidate: 3600 // Regenerate every hour
+export function requireRole(roles) {
+  return (handler) => {
+    return requireAuth(async ({ req, res, ...rest }) => {
+      const userRole = req.user.role;
+      
+      if (!roles.includes(userRole)) {
+        return res.status(403).json({ 
+          error: 'Insufficient permissions' 
+        });
+      }
+
+      return handler({ req, res, ...rest });
+    });
   };
-}` })
+}
+
+// Usage examples:
+// export default requireAuth(myHandler);
+// export default requireRole(['admin', 'moderator'])(myHandler);` })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F3A8} Built-in Styling" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "INDJS comes with Tailwind CSS pre-configured. Start styling immediately:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/dashboard.jsx
-export default function Dashboard() {
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Client-Side Authentication" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Auth Context & Hook" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// hooks/useAuth.js
+import { createContext, useContext, useState, useEffect } from 'react';
+
+const AuthContext = createContext();
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const login = async (email, password) => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
+        return { success: true };
+      } else {
+        const error = await response.json();
+        return { success: false, error: error.error };
+      }
+    } catch (error) {
+      return { success: false, error: 'Login failed' };
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      setUser(null);
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  const register = async (name, email, password) => {
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
+        return { success: true };
+      } else {
+        const error = await response.json();
+        return { success: false, error: error.error };
+      }
+    } catch (error) {
+      return { success: false, error: 'Registration failed' };
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">
-            Dashboard
-          </h1>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <h3 className="text-lg font-medium text-gray-900">
-                  Total Users
-                </h3>
-                <p className="text-3xl font-bold text-blue-600">1,234</p>
-              </div>
-            </div>
-            {/* More cards... */}
-          </div>
-        </div>
-      </div>
-    </div>
+    <AuthContext.Provider value={{
+      user,
+      loading,
+      login,
+      logout,
+      register,
+      isAuthenticated: !!user
+    }}>
+      {children}
+    </AuthContext.Provider>
   );
-}` })
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+  return context;
+}` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Protected Route Component" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// components/ProtectedRoute.jsx
+import { useAuth } from '../hooks/useAuth';
+import { useRouter } from 'indjs';
+import { useEffect } from 'react';
+
+export default function ProtectedRoute({ 
+  children, 
+  requiredRole, 
+  fallback = <div>Loading...</div> 
+}) {
+  const { user, loading, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.push('/login');
+    }
+
+    if (!loading && requiredRole && user?.role !== requiredRole) {
+      router.push('/unauthorized');
+    }
+  }, [loading, isAuthenticated, user, requiredRole]);
+
+  if (loading) return fallback;
+  if (!isAuthenticated) return null;
+  if (requiredRole && user?.role !== requiredRole) return null;
+
+  return children;
+}
+
+// Usage:
+// <ProtectedRoute>
+//   <Dashboard />
+// </ProtectedRoute>
+//
+// <ProtectedRoute requiredRole="admin">
+//   <AdminPanel />
+// </ProtectedRoute>` })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F680} Next Steps" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-          background: "#f8fafc",
-          borderRadius: 12,
-          padding: 20,
-          border: "1px solid #e2e8f0"
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 18, fontWeight: 600, color: "#0b1220", marginBottom: 8 }, children: "\u{1F4D6} Learn the Basics" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14, color: "#475569", marginBottom: 12 }, children: "Master routing, API routes, and SSR/SSG" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/routing", style: { color: "#0ea5e9", textDecoration: "none", fontSize: 14, fontWeight: 500 }, children: "Start Learning \u2192" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-          background: "#f8fafc",
-          borderRadius: 12,
-          padding: 20,
-          border: "1px solid #e2e8f0"
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 18, fontWeight: 600, color: "#0b1220", marginBottom: 8 }, children: "\u{1F510} Add Authentication" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14, color: "#475569", marginBottom: 12 }, children: "Secure your app with JWT, OAuth, and sessions" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/authentication", style: { color: "#0ea5e9", textDecoration: "none", fontSize: 14, fontWeight: 500 }, children: "Add Auth \u2192" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-          background: "#f8fafc",
-          borderRadius: 12,
-          padding: 20,
-          border: "1px solid #e2e8f0"
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 18, fontWeight: 600, color: "#0b1220", marginBottom: 8 }, children: "\u{1F5C4}\uFE0F Connect Database" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14, color: "#475569", marginBottom: 12 }, children: "Integrate MongoDB, PostgreSQL, or Prisma" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/database", style: { color: "#0ea5e9", textDecoration: "none", fontSize: 14, fontWeight: 500 }, children: "Connect DB \u2192" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-          background: "#f8fafc",
-          borderRadius: 12,
-          padding: 20,
-          border: "1px solid #e2e8f0"
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 18, fontWeight: 600, color: "#0b1220", marginBottom: 8 }, children: "\u{1F310} Deploy Your App" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14, color: "#475569", marginBottom: 12 }, children: "Deploy to Vercel, Netlify, or AWS" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/deployment", style: { color: "#0ea5e9", textDecoration: "none", fontSize: 14, fontWeight: 500 }, children: "Deploy Now \u2192" })
-        ] })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "OAuth Integration" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Google OAuth Setup" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/api/auth/google.js
+export default function handler({ req, res }) {
+  const params = new URLSearchParams({
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+    response_type: 'code',
+    scope: 'openid email profile',
+    access_type: 'offline'
+  });
+  
+  const authUrl = \`https://accounts.google.com/o/oauth2/v2/auth?\${params}\`;
+  res.redirect(authUrl);
+}
+
+// pages/api/auth/google/callback.js
+import { signToken } from '../../../../lib/auth';
+import { findOrCreateUser } from '../../../../lib/database';
+
+export default async function handler({ req, res }) {
+  try {
+    const { code } = req.query;
+    
+    // Exchange code for tokens
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        code,
+        grant_type: 'authorization_code',
+        redirect_uri: process.env.GOOGLE_REDIRECT_URI
+      })
+    });
+    
+    const tokens = await tokenResponse.json();
+    
+    // Get user info
+    const userResponse = await fetch(
+      \`https://www.googleapis.com/oauth2/v2/userinfo?access_token=\${tokens.access_token}\`
+    );
+    const googleUser = await userResponse.json();
+    
+    // Find or create user
+    const user = await findOrCreateUser({
+      email: googleUser.email,
+      name: googleUser.name,
+      avatar: googleUser.picture,
+      provider: 'google',
+      providerId: googleUser.id
+    });
+    
+    // Generate JWT
+    const token = signToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role
+    });
+    
+    // Set cookie and redirect
+    res.setHeader('Set-Cookie', 
+      \`authToken=\${token}; HttpOnly; Secure; SameSite=Strict; Max-Age=604800; Path=/\`
+    );
+    res.redirect('/dashboard');
+    
+  } catch (error) {
+    console.error('Google OAuth error:', error);
+    res.redirect('/login?error=oauth_failed');
+  }
+}` })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.success, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.successTitle, children: "\u2705 Best Practices" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", { style: { margin: 0, fontSize: 14, color: "#15803d" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Always use HTTPS in production" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Store secrets in environment variables" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Use HTTP-only cookies for token storage" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Implement proper password hashing (bcrypt with salt rounds \u2265 12)" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Add rate limiting to authentication endpoints" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Validate and sanitize all user inputs" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Implement proper session management and cleanup" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Use CSRF protection for session-based authentication" })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      borderRadius: 12,
-      padding: 24,
-      marginTop: 32,
-      color: "white"
-    }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: { fontSize: 20, fontWeight: 600, marginBottom: 12, color: "white" }, children: "Ready to Build Something Amazing?" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 16, marginBottom: 16, color: "rgba(255,255,255,0.9)" }, children: "Join thousands of developers building modern web applications with INDJS." }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: 12, flexWrap: "wrap" }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs", style: {
-          background: "rgba(255,255,255,0.2)",
-          color: "white",
-          padding: "10px 16px",
-          borderRadius: 8,
-          textDecoration: "none",
-          fontWeight: 600,
-          fontSize: 14
-        }, children: "View Documentation" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "https://github.com/indjs/indjs", style: {
-          background: "transparent",
-          color: "white",
-          padding: "10px 16px",
-          borderRadius: 8,
-          textDecoration: "none",
-          fontWeight: 600,
-          fontSize: 14,
-          border: "1px solid rgba(255,255,255,0.3)"
-        }, children: "GitHub Repository" })
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Next Steps" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", { style: ui.ul, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { style: ui.li, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/database", style: { color: "#0ea5e9" }, children: "Set up database integration for user storage" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { style: ui.li, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/api-routes", style: { color: "#0ea5e9" }, children: "Learn more about API routes and middleware" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { style: ui.li, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/deployment", style: { color: "#0ea5e9" }, children: "Deploy your authenticated app securely" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { style: ui.li, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/testing", style: { color: "#0ea5e9" }, children: "Test your authentication flows" }) })
       ] })
     ] })
   ] }) }) });
 }
 
-// .indjs/client/entry_learn.js
+// .indjs/client/entry_docs_auth.js
 var ErrorBoundary = class extends import_react2.default.Component {
   constructor(o) {
     super(o);
@@ -24840,7 +25164,7 @@ var ErrorBoundary = class extends import_react2.default.Component {
 function __ind_boot() {
   const el = document.getElementById("__ind");
   const props = window.__IND_PROPS__ || {};
-  let node = import_react2.default.createElement(Learn, props);
+  let node = import_react2.default.createElement(Auth, props);
   node = import_react2.default.createElement(ErrorBoundary, null, node);
   if (el) {
     try {
@@ -24915,4 +25239,4 @@ react/cjs/react-jsx-runtime.development.js:
    * LICENSE file in the root directory of this source tree.
    *)
 */
-//# sourceMappingURL=learn.js.map
+//# sourceMappingURL=docs_auth.js.map

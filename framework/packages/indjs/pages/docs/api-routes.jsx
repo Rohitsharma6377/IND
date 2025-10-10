@@ -111,9 +111,24 @@ export default function ApiRoutes() {
           <div style={ui.section}>
             <h2 style={ui.h2}>Introduction</h2>
             <p style={ui.p}>
-              API routes provide a solution to build your API with INDJS. Any file inside the folder 
+              API routes provide a powerful solution to build your API with INDJS. Any file inside the folder 
               <code style={ui.code}>pages/api</code> is mapped to <code style={ui.code}>/api/{'*'}</code> and will be treated as an API endpoint instead of a page.
+              This allows you to build full-stack applications with both frontend and backend in the same codebase.
             </p>
+            
+            <div style={ui.info}>
+              <div style={ui.infoTitle}>🚀 Key Features</div>
+              <ul style={{ margin: 0, fontSize: 14, color: '#1e40af' }}>
+                <li>File-based routing for API endpoints</li>
+                <li>Built-in request parsing and response helpers</li>
+                <li>Middleware support for authentication, validation, and more</li>
+                <li>TypeScript support with full type safety</li>
+                <li>Hot reload during development</li>
+                <li>Automatic error handling and logging</li>
+                <li>Support for all HTTP methods</li>
+                <li>Built-in CORS and security features</li>
+              </ul>
+            </div>
           </div>
 
           <div style={ui.section}>
@@ -531,12 +546,413 @@ export default cors({
             </div>
           </div>
 
+          <div style={ui.section}>
+            <h2 style={ui.h2}>Advanced Patterns</h2>
+            
+            <h3 style={ui.h3}>Rate Limiting</h3>
+            <div style={ui.codeBlock}>
+              {`// lib/middleware/rateLimit.js
+import { LRUCache } from 'lru-cache';
+
+const rateLimit = new LRUCache({
+  max: 500,
+  ttl: 60000, // 1 minute
+});
+
+export function rateLimiter(options = {}) {
+  const { windowMs = 60000, max = 100, message = 'Too many requests' } = options;
+  
+  return (handler) => {
+    return async ({ req, res, ...rest }) => {
+      const key = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      const current = rateLimit.get(key) || 0;
+      
+      if (current >= max) {
+        return res.status(429).json({ error: message });
+      }
+      
+      rateLimit.set(key, current + 1);
+      return handler({ req, res, ...rest });
+    };
+  };
+}
+
+// Usage
+// pages/api/limited-endpoint.js
+import { rateLimiter } from '../../lib/middleware/rateLimit';
+
+async function handler({ req, res }) {
+  res.json({ message: 'This endpoint is rate limited' });
+}
+
+export default rateLimiter({ max: 10, windowMs: 60000 })(handler);`}
+            </div>
+
+            <h3 style={ui.h3}>Request Validation with Zod</h3>
+            <div style={ui.codeBlock}>
+              {`// lib/middleware/validation.js
+import { z } from 'zod';
+
+export function validateBody(schema) {
+  return (handler) => {
+    return async ({ req, res, ...rest }) => {
+      try {
+        const validatedBody = await schema.parseAsync(req.body);
+        req.body = validatedBody;
+        return handler({ req, res, ...rest });
+      } catch (error) {
+        return res.status(400).json({
+          error: 'Validation failed',
+          details: error.errors
+        });
+      }
+    };
+  };
+}
+
+export function validateQuery(schema) {
+  return (handler) => {
+    return async ({ req, res, ...rest }) => {
+      try {
+        const validatedQuery = await schema.parseAsync(req.query);
+        req.query = validatedQuery;
+        return handler({ req, res, ...rest });
+      } catch (error) {
+        return res.status(400).json({
+          error: 'Invalid query parameters',
+          details: error.errors
+        });
+      }
+    };
+  };
+}
+
+// Usage
+// pages/api/users.js
+import { z } from 'zod';
+import { validateBody, validateQuery } from '../../lib/middleware/validation';
+
+const createUserSchema = z.object({
+  name: z.string().min(1).max(100),
+  email: z.string().email(),
+  age: z.number().int().min(18).max(120)
+});
+
+const getUsersQuerySchema = z.object({
+  page: z.string().transform(Number).pipe(z.number().int().min(1)).optional(),
+  limit: z.string().transform(Number).pipe(z.number().int().min(1).max(100)).optional(),
+  search: z.string().optional()
+});
+
+async function createUser({ req, res }) {
+  const user = await userService.create(req.body);
+  res.status(201).json(user);
+}
+
+async function getUsers({ req, res }) {
+  const { page = 1, limit = 10, search } = req.query;
+  const users = await userService.findMany({ page, limit, search });
+  res.json(users);
+}
+
+export const post = validateBody(createUserSchema)(createUser);
+export const get = validateQuery(getUsersQuerySchema)(getUsers);`}
+            </div>
+
+            <h3 style={ui.h3}>Database Transactions</h3>
+            <div style={ui.codeBlock}>
+              {`// pages/api/orders.js
+import { prisma } from '../../lib/database/prisma';
+import { requireAuth } from '../../lib/middleware/auth';
+
+async function createOrder({ req, res }) {
+  const { items, shippingAddress } = req.body;
+  const userId = req.user.id;
+  
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      // Create the order
+      const order = await tx.order.create({
+        data: {
+          userId,
+          status: 'pending',
+          shippingAddress,
+          total: 0 // Will be calculated
+        }
+      });
+      
+      let total = 0;
+      
+      // Create order items and update inventory
+      for (const item of items) {
+        const product = await tx.product.findUnique({
+          where: { id: item.productId }
+        });
+        
+        if (!product) {
+          throw new Error(\`Product \${item.productId} not found\`);
+        }
+        
+        if (product.inventory < item.quantity) {
+          throw new Error(\`Insufficient inventory for \${product.name}\`);
+        }
+        
+        // Create order item
+        await tx.orderItem.create({
+          data: {
+            orderId: order.id,
+            productId: item.productId,
+            quantity: item.quantity,
+            price: product.price
+          }
+        });
+        
+        // Update inventory
+        await tx.product.update({
+          where: { id: item.productId },
+          data: {
+            inventory: {
+              decrement: item.quantity
+            }
+          }
+        });
+        
+        total += product.price * item.quantity;
+      }
+      
+      // Update order total
+      const updatedOrder = await tx.order.update({
+        where: { id: order.id },
+        data: { total },
+        include: {
+          items: {
+            include: {
+              product: true
+            }
+          }
+        }
+      });
+      
+      return updatedOrder;
+    });
+    
+    res.status(201).json(result);
+    
+  } catch (error) {
+    console.error('Order creation failed:', error);
+    res.status(400).json({ error: error.message });
+  }
+}
+
+export const post = requireAuth(createOrder);`}
+            </div>
+
+            <h3 style={ui.h3}>WebSocket Integration</h3>
+            <div style={ui.codeBlock}>
+              {`// pages/api/websocket.js
+import { Server } from 'socket.io';
+
+export default function handler(req, res) {
+  if (!res.socket.server.io) {
+    const io = new Server(res.socket.server, {
+      path: '/api/websocket',
+      addTrailingSlash: false,
+    });
+    
+    io.on('connection', (socket) => {
+      console.log('Client connected:', socket.id);
+      
+      socket.on('join-room', (room) => {
+        socket.join(room);
+        socket.to(room).emit('user-joined', { userId: socket.id });
+      });
+      
+      socket.on('send-message', (data) => {
+        socket.to(data.room).emit('receive-message', {
+          message: data.message,
+          userId: socket.id,
+          timestamp: new Date().toISOString()
+        });
+      });
+      
+      socket.on('disconnect', () => {
+        console.log('Client disconnected:', socket.id);
+      });
+    });
+    
+    res.socket.server.io = io;
+  }
+  
+  res.end();
+}
+
+// Client-side usage
+// hooks/useSocket.js
+import { useEffect, useState } from 'react';
+import io from 'socket.io-client';
+
+export function useSocket() {
+  const [socket, setSocket] = useState(null);
+  const [connected, setConnected] = useState(false);
+  
+  useEffect(() => {
+    const socketInstance = io({
+      path: '/api/websocket'
+    });
+    
+    socketInstance.on('connect', () => {
+      setConnected(true);
+    });
+    
+    socketInstance.on('disconnect', () => {
+      setConnected(false);
+    });
+    
+    setSocket(socketInstance);
+    
+    return () => socketInstance.close();
+  }, []);
+  
+  return { socket, connected };
+}`}
+            </div>
+          </div>
+
+          <div style={ui.section}>
+            <h2 style={ui.h2}>Performance Optimization</h2>
+            
+            <h3 style={ui.h3}>Response Caching</h3>
+            <div style={ui.codeBlock}>
+              {`// lib/middleware/cache.js
+import { LRUCache } from 'lru-cache';
+
+const cache = new LRUCache({
+  max: 1000,
+  ttl: 1000 * 60 * 5, // 5 minutes
+});
+
+export function withCache(options = {}) {
+  const { ttl = 300000, keyGenerator } = options;
+  
+  return (handler) => {
+    return async ({ req, res, ...rest }) => {
+      const cacheKey = keyGenerator 
+        ? keyGenerator(req) 
+        : \`\${req.method}:\${req.url}\`;
+      
+      // Check cache for GET requests
+      if (req.method === 'GET') {
+        const cached = cache.get(cacheKey);
+        if (cached) {
+          res.setHeader('X-Cache', 'HIT');
+          return res.json(cached);
+        }
+      }
+      
+      // Intercept response to cache it
+      const originalJson = res.json;
+      res.json = function(data) {
+        if (req.method === 'GET' && res.statusCode === 200) {
+          cache.set(cacheKey, data, { ttl });
+        }
+        res.setHeader('X-Cache', 'MISS');
+        return originalJson.call(this, data);
+      };
+      
+      return handler({ req, res, ...rest });
+    };
+  };
+}
+
+// Usage
+// pages/api/posts.js
+import { withCache } from '../../lib/middleware/cache';
+
+async function getPosts({ req, res }) {
+  const posts = await postService.findMany();
+  res.json(posts);
+}
+
+export const get = withCache({ 
+  ttl: 600000, // 10 minutes
+  keyGenerator: (req) => \`posts:\${req.query.page || 1}\`
+})(getPosts);`}
+            </div>
+
+            <h3 style={ui.h3}>Database Connection Pooling</h3>
+            <div style={ui.codeBlock}>
+              {`// lib/database/pool.js
+import { Pool } from 'pg';
+
+class DatabasePool {
+  constructor() {
+    this.pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      max: 20,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+    });
+    
+    this.pool.on('error', (err) => {
+      console.error('Database pool error:', err);
+    });
+  }
+  
+  async query(text, params) {
+    const start = Date.now();
+    const client = await this.pool.connect();
+    
+    try {
+      const result = await client.query(text, params);
+      const duration = Date.now() - start;
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Query executed:', { text, duration, rows: result.rowCount });
+      }
+      
+      return result;
+    } finally {
+      client.release();
+    }
+  }
+  
+  async transaction(callback) {
+    const client = await this.pool.connect();
+    
+    try {
+      await client.query('BEGIN');
+      const result = await callback(client);
+      await client.query('COMMIT');
+      return result;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+  
+  async end() {
+    await this.pool.end();
+  }
+}
+
+export const db = new DatabasePool();`}
+            </div>
+          </div>
+
           <div style={ui.warning}>
-            <div style={ui.warningTitle}>⚠️ Security Note</div>
-            <p style={{ margin: 0, fontSize: 14, color: '#92400e' }}>
-              Always validate and sanitize input data. Never trust client-side data. 
-              Use proper authentication and authorization for protected endpoints.
-            </p>
+            <div style={ui.warningTitle}>⚠️ Security Best Practices</div>
+            <ul style={{ margin: 0, fontSize: 14, color: '#92400e' }}>
+              <li>Always validate and sanitize input data</li>
+              <li>Never trust client-side data</li>
+              <li>Use proper authentication and authorization</li>
+              <li>Implement rate limiting to prevent abuse</li>
+              <li>Use HTTPS in production</li>
+              <li>Sanitize database queries to prevent SQL injection</li>
+              <li>Log security events and monitor for suspicious activity</li>
+              <li>Keep dependencies updated</li>
+            </ul>
           </div>
         </section>
       </div>

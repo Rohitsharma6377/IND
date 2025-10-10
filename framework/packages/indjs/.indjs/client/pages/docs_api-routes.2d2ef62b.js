@@ -24485,14 +24485,14 @@ var require_jsx_runtime = __commonJS({
   }
 });
 
-// .indjs/client/entry_learn.js
+// .indjs/client/entry_docs_api-routes.js
 var import_react2 = __toESM(require_react(), 1);
 var import_client = __toESM(require_client(), 1);
 
-// pages/learn.jsx
+// pages/docs/api-routes.jsx
 var import_react = __toESM(require_react(), 1);
 var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
-function Learn() {
+function ApiRoutes() {
   const ui = {
     page: {
       fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
@@ -24527,18 +24527,36 @@ function Learn() {
       fontSize: 14
     },
     section: {
-      marginBottom: 24
+      marginBottom: 32
     },
     h2: {
       fontSize: 24,
       color: "#0b1220",
-      marginBottom: 12
+      marginBottom: 16,
+      borderBottom: "2px solid #e2e8f0",
+      paddingBottom: 8
+    },
+    h3: {
+      fontSize: 20,
+      color: "#0b1220",
+      marginBottom: 12,
+      marginTop: 24
     },
     p: {
       fontSize: 16,
       color: "#334155",
       lineHeight: 1.6,
-      marginBottom: 12
+      marginBottom: 16
+    },
+    ul: {
+      fontSize: 16,
+      color: "#334155",
+      lineHeight: 1.6,
+      marginBottom: 16,
+      paddingLeft: 20
+    },
+    li: {
+      marginBottom: 8
     },
     code: {
       background: "#f1f5f9",
@@ -24556,265 +24574,429 @@ function Learn() {
       fontFamily: "monospace",
       overflow: "auto",
       marginBottom: 20,
-      lineHeight: 1.5,
-      whiteSpace: "pre-wrap"
+      lineHeight: 1.5
+    },
+    warning: {
+      background: "#fef3c7",
+      border: "1px solid #f59e0b",
+      borderRadius: 8,
+      padding: 16,
+      marginBottom: 20
+    },
+    warningTitle: {
+      fontWeight: 600,
+      color: "#92400e",
+      marginBottom: 8
     }
   };
   return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("main", { style: ui.page, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.wrap, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { style: ui.hero, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { style: ui.nav, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/", style: ui.backLink, children: "\u2190 Back to Home" }) }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { style: ui.h1, children: "Getting Started with INDJS" }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 18, color: "#64748b", marginBottom: 32, lineHeight: 1.6 }, children: "Build modern full-stack React applications with zero configuration. INDJS provides everything you need to create fast, scalable web applications with built-in SSR, API routes, and deployment tools." }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { style: ui.nav, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs", style: ui.backLink, children: "\u2190 Back to Documentation" }) }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { style: ui.h1, children: "API Routes" }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F680} Quick Start" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Create a new INDJS application with a single command and start building immediately:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# Create a new INDJS app
-npx create-indjs my-app
-
-# Navigate to your project
-cd my-app
-
-# Start the development server
-npm run dev
-
-# Your app is now running at http://localhost:3000` }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-        background: "#dbeafe",
-        border: "1px solid #3b82f6",
-        borderRadius: 8,
-        padding: 16,
-        marginTop: 16
-      }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontWeight: 600, color: "#1e40af", marginBottom: 8 }, children: "\u{1F4A1} Pro Tip" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: 0, fontSize: 14, color: "#1e40af" }, children: [
-          "Use templates to get started faster: ",
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { style: ui.code, children: "npx create-indjs my-blog --template blog" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
-          "Available templates: basic, blog, admin, ecommerce, ai-app"
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Introduction" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: ui.p, children: [
+        "API routes provide a powerful solution to build your API with INDJS. Any file inside the folder",
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { style: ui.code, children: "pages/api" }),
+        " is mapped to ",
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("code", { style: ui.code, children: [
+          "/api/",
+          "*"
+        ] }),
+        " and will be treated as an API endpoint instead of a page. This allows you to build full-stack applications with both frontend and backend in the same codebase."
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.info, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.infoTitle, children: "\u{1F680} Key Features" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", { style: { margin: 0, fontSize: 14, color: "#1e40af" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "File-based routing for API endpoints" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Built-in request parsing and response helpers" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Middleware support for authentication, validation, and more" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "TypeScript support with full type safety" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Hot reload during development" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Automatic error handling and logging" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Support for all HTTP methods" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Built-in CORS and security features" })
         ] })
       ] })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F4C1} Project Structure" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "INDJS follows a simple, intuitive project structure that scales with your application:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `my-app/
-\u251C\u2500\u2500 pages/                 # File-based routing
-\u2502   \u251C\u2500\u2500 index.jsx         # Home page (/)
-\u2502   \u251C\u2500\u2500 about.jsx         # About page (/about)
-\u2502   \u251C\u2500\u2500 blog/
-\u2502   \u2502   \u251C\u2500\u2500 index.jsx     # Blog listing (/blog)
-\u2502   \u2502   \u2514\u2500\u2500 [slug].jsx    # Dynamic blog post (/blog/my-post)
-\u2502   \u2514\u2500\u2500 api/              # API routes
-\u2502       \u251C\u2500\u2500 hello.js      # API endpoint (/api/hello)
-\u2502       \u2514\u2500\u2500 users/
-\u2502           \u2514\u2500\u2500 [id].js   # Dynamic API route (/api/users/123)
-\u251C\u2500\u2500 components/           # Reusable React components
-\u251C\u2500\u2500 lib/                  # Utility functions and configurations
-\u251C\u2500\u2500 public/               # Static assets (images, favicon, etc.)
-\u251C\u2500\u2500 styles/               # Global CSS and styling
-\u251C\u2500\u2500 package.json
-\u2514\u2500\u2500 indjs.config.js      # Optional configuration` })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F6E3}\uFE0F File-based Routing" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Pages are automatically routed based on their file structure. No configuration needed!" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// File structure \u2192 Routes
-pages/index.jsx           \u2192 /
-pages/about.jsx           \u2192 /about
-pages/contact.jsx         \u2192 /contact
-pages/blog/index.jsx      \u2192 /blog
-pages/blog/[slug].jsx     \u2192 /blog/my-post
-pages/shop/[...slug].jsx  \u2192 /shop/category/product
-pages/api/users.js        \u2192 /api/users
-pages/api/auth/login.js   \u2192 /api/auth/login` }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Creating Your First Page" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/about.jsx
-import React from 'react';
-
-export default function About() {
-  return (
-    <div>
-      <h1>About Us</h1>
-      <p>Welcome to our amazing INDJS application!</p>
-    </div>
-  );
-}` })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F50C} API Routes" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Basic API Route" }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: ui.p, children: [
-        "Build full-stack applications with serverless API endpoints. Just create files in ",
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { style: ui.code, children: "pages/api/" }),
+        "Create your first API endpoint by adding a file to ",
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { style: ui.code, children: "pages/api" }),
         ":"
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/api/hello.js
 export default function handler({ req, res }) {
-  res.json({ 
-    message: 'Hello from INDJS API!',
-    timestamp: new Date().toISOString()
-  });
+  res.json({ message: 'Hello from INDJS API!' });
+}` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: ui.p, children: [
+        "This creates an endpoint at ",
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { style: ui.code, children: "/api/hello" }),
+        " that responds with JSON."
+      ] })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "HTTP Methods" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Handle different HTTP methods by exporting named functions or using a switch statement:" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Named Exports Method" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/api/users.js
+export async function get({ req, res }) {
+  const users = await fetchUsers();
+  res.json(users);
 }
 
-// pages/api/users/[id].js
-export default async function handler({ req, res, params }) {
+export async function post({ req, res }) {
+  const newUser = await createUser(req.body);
+  res.status(201).json(newUser);
+}
+
+export async function put({ req, res, params }) {
   const { id } = params;
+  const updatedUser = await updateUser(id, req.body);
+  res.json(updatedUser);
+}
+
+export async function del({ req, res, params }) {
+  const { id } = params;
+  await deleteUser(id);
+  res.status(204).end();
+}` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Switch Statement Method" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/api/products.js
+export default async function handler({ req, res }) {
+  const { method } = req;
   
-  if (req.method === 'GET') {
-    const user = await getUserById(id);
-    res.json(user);
-  } else if (req.method === 'PUT') {
-    const updatedUser = await updateUser(id, req.body);
-    res.json(updatedUser);
+  switch (method) {
+    case 'GET':
+      const products = await getProducts();
+      return res.json(products);
+      
+    case 'POST':
+      const product = await createProduct(req.body);
+      return res.status(201).json(product);
+      
+    case 'PUT':
+      const updated = await updateProduct(req.body);
+      return res.json(updated);
+      
+    case 'DELETE':
+      await deleteProduct(req.query.id);
+      return res.status(204).end();
+      
+    default:
+      res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
+      return res.status(405).end(\`Method \${method} Not Allowed\`);
   }
 }` })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u26A1 Server-Side Rendering" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Get better SEO and performance with built-in SSR. Fetch data on the server before rendering:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/blog/[slug].jsx
-import React from 'react';
-
-export default function BlogPost({ post, author }) {
-  return (
-    <article>
-      <h1>{post.title}</h1>
-      <p>By {author.name} \u2022 {post.publishedAt}</p>
-      <div dangerouslySetInnerHTML={{ __html: post.content }} />
-    </article>
-  );
-}
-
-// Fetch data on each request (SSR)
-export async function getServerSideProps({ params }) {
-  const { slug } = params;
-  const post = await fetchBlogPost(slug);
-  const author = await fetchAuthor(post.authorId);
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Dynamic API Routes" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "API routes support dynamic parameters just like pages:" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/api/users/[id].js
+export default async function handler({ req, res, params }) {
+  const { id } = params;
+  const { method } = req;
   
-  return {
-    props: { post, author }
-  };
-}
-
-// Or generate static pages at build time (SSG)
-export async function getStaticProps({ params }) {
-  const { slug } = params;
-  const post = await fetchBlogPost(slug);
+  switch (method) {
+    case 'GET':
+      const user = await getUserById(id);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      return res.json(user);
+      
+    case 'PUT':
+      const updatedUser = await updateUser(id, req.body);
+      return res.json(updatedUser);
+      
+    case 'DELETE':
+      await deleteUser(id);
+      return res.status(204).end();
+      
+    default:
+      res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
+      return res.status(405).end(\`Method \${method} Not Allowed\`);
+  }
+}` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Catch-all API Routes" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/api/[...slug].js
+export default function handler({ req, res, params }) {
+  const { slug } = params; // slug is an array
   
-  return {
-    props: { post },
-    revalidate: 3600 // Regenerate every hour
-  };
+  // Handle different API paths
+  if (slug[0] === 'v1') {
+    return handleV1API(req, res, slug.slice(1));
+  }
+  
+  if (slug[0] === 'v2') {
+    return handleV2API(req, res, slug.slice(1));
+  }
+  
+  return res.status(404).json({ error: 'API endpoint not found' });
 }` })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F3A8} Built-in Styling" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "INDJS comes with Tailwind CSS pre-configured. Start styling immediately:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/dashboard.jsx
-export default function Dashboard() {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">
-            Dashboard
-          </h1>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <h3 className="text-lg font-medium text-gray-900">
-                  Total Users
-                </h3>
-                <p className="text-3xl font-bold text-blue-600">1,234</p>
-              </div>
-            </div>
-            {/* More cards... */}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Request and Response" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Request Object" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `export default function handler({ req, res, params, query, body }) {
+  // HTTP method
+  console.log(req.method); // GET, POST, PUT, DELETE, etc.
+  
+  // Request headers
+  console.log(req.headers['content-type']);
+  console.log(req.headers.authorization);
+  
+  // URL parameters (from dynamic routes)
+  console.log(params); // { id: '123' } from [id].js
+  
+  // Query parameters
+  console.log(query); // { search: 'term', page: '1' }
+  
+  // Request body (automatically parsed)
+  console.log(body); // Parsed JSON, form data, etc.
+  
+  // Raw request URL
+  console.log(req.url); // /api/users?page=1
+  
+  // Request path
+  console.log(req.path); // /api/users
+}` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Response Methods" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `export default function handler({ req, res }) {
+  // Send JSON response
+  res.json({ message: 'Success', data: [] });
+  
+  // Set status code
+  res.status(201).json({ created: true });
+  
+  // Send plain text
+  res.send('Hello World');
+  
+  // Send with custom headers
+  res.setHeader('Cache-Control', 'max-age=3600');
+  res.json({ cached: true });
+  
+  // Redirect
+  res.redirect('/api/v2/users');
+  
+  // End response without body
+  res.status(204).end();
+  
+  // Send file
+  res.sendFile('/path/to/file.pdf');
+  
+  // Set cookies
+  res.cookie('sessionId', '123', { 
+    httpOnly: true, 
+    secure: true,
+    maxAge: 86400000 // 24 hours
+  });
 }` })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F680} Next Steps" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-          background: "#f8fafc",
-          borderRadius: 12,
-          padding: 20,
-          border: "1px solid #e2e8f0"
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 18, fontWeight: 600, color: "#0b1220", marginBottom: 8 }, children: "\u{1F4D6} Learn the Basics" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14, color: "#475569", marginBottom: 12 }, children: "Master routing, API routes, and SSR/SSG" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/routing", style: { color: "#0ea5e9", textDecoration: "none", fontSize: 14, fontWeight: 500 }, children: "Start Learning \u2192" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-          background: "#f8fafc",
-          borderRadius: 12,
-          padding: 20,
-          border: "1px solid #e2e8f0"
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 18, fontWeight: 600, color: "#0b1220", marginBottom: 8 }, children: "\u{1F510} Add Authentication" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14, color: "#475569", marginBottom: 12 }, children: "Secure your app with JWT, OAuth, and sessions" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/authentication", style: { color: "#0ea5e9", textDecoration: "none", fontSize: 14, fontWeight: 500 }, children: "Add Auth \u2192" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-          background: "#f8fafc",
-          borderRadius: 12,
-          padding: 20,
-          border: "1px solid #e2e8f0"
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 18, fontWeight: 600, color: "#0b1220", marginBottom: 8 }, children: "\u{1F5C4}\uFE0F Connect Database" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14, color: "#475569", marginBottom: 12 }, children: "Integrate MongoDB, PostgreSQL, or Prisma" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/database", style: { color: "#0ea5e9", textDecoration: "none", fontSize: 14, fontWeight: 500 }, children: "Connect DB \u2192" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-          background: "#f8fafc",
-          borderRadius: 12,
-          padding: 20,
-          border: "1px solid #e2e8f0"
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 18, fontWeight: 600, color: "#0b1220", marginBottom: 8 }, children: "\u{1F310} Deploy Your App" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14, color: "#475569", marginBottom: 12 }, children: "Deploy to Vercel, Netlify, or AWS" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/deployment", style: { color: "#0ea5e9", textDecoration: "none", fontSize: 14, fontWeight: 500 }, children: "Deploy Now \u2192" })
-        ] })
-      ] })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Middleware" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Add middleware to your API routes for authentication, logging, validation, etc:" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// lib/middleware/auth.js
+export function requireAuth(handler) {
+  return async ({ req, res, ...rest }) => {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+    
+    try {
+      const user = await verifyToken(token);
+      req.user = user;
+      return handler({ req, res, ...rest });
+    } catch (error) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+  };
+}
+
+// pages/api/protected.js
+import { requireAuth } from '../../lib/middleware/auth';
+
+async function handler({ req, res }) {
+  res.json({ 
+    message: 'This is protected',
+    user: req.user 
+  });
+}
+
+export default requireAuth(handler);` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Validation Middleware" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// lib/middleware/validate.js
+export function validate(schema) {
+  return (handler) => {
+    return async ({ req, res, ...rest }) => {
+      try {
+        const validatedData = await schema.parseAsync(req.body);
+        req.body = validatedData;
+        return handler({ req, res, ...rest });
+      } catch (error) {
+        return res.status(400).json({ 
+          error: 'Validation failed',
+          details: error.errors 
+        });
+      }
+    };
+  };
+}
+
+// pages/api/users.js
+import { z } from 'zod';
+import { validate } from '../../lib/middleware/validate';
+
+const userSchema = z.object({
+  name: z.string().min(1),
+  email: z.string().email(),
+  age: z.number().min(18)
+});
+
+async function createUser({ req, res }) {
+  const user = await saveUser(req.body);
+  res.status(201).json(user);
+}
+
+export const post = validate(userSchema)(createUser);` })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      borderRadius: 12,
-      padding: 24,
-      marginTop: 32,
-      color: "white"
-    }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: { fontSize: 20, fontWeight: 600, marginBottom: 12, color: "white" }, children: "Ready to Build Something Amazing?" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 16, marginBottom: 16, color: "rgba(255,255,255,0.9)" }, children: "Join thousands of developers building modern web applications with INDJS." }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: 12, flexWrap: "wrap" }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs", style: {
-          background: "rgba(255,255,255,0.2)",
-          color: "white",
-          padding: "10px 16px",
-          borderRadius: 8,
-          textDecoration: "none",
-          fontWeight: 600,
-          fontSize: 14
-        }, children: "View Documentation" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "https://github.com/indjs/indjs", style: {
-          background: "transparent",
-          color: "white",
-          padding: "10px 16px",
-          borderRadius: 8,
-          textDecoration: "none",
-          fontWeight: 600,
-          fontSize: 14,
-          border: "1px solid rgba(255,255,255,0.3)"
-        }, children: "GitHub Repository" })
-      ] })
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Error Handling" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// lib/api-error.js
+export class ApiError extends Error {
+  constructor(message, statusCode = 500) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
+// pages/api/users/[id].js
+import { ApiError } from '../../../lib/api-error';
+
+export default async function handler({ req, res, params }) {
+  try {
+    const { id } = params;
+    
+    if (!id || isNaN(id)) {
+      throw new ApiError('Invalid user ID', 400);
+    }
+    
+    const user = await getUserById(id);
+    
+    if (!user) {
+      throw new ApiError('User not found', 404);
+    }
+    
+    res.json(user);
+    
+  } catch (error) {
+    if (error instanceof ApiError) {
+      return res.status(error.statusCode).json({ 
+        error: error.message 
+      });
+    }
+    
+    console.error('Unexpected error:', error);
+    res.status(500).json({ 
+      error: 'Internal server error' 
+    });
+  }
+}` })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "File Uploads" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/api/upload.js
+import formidable from 'formidable';
+import fs from 'fs/promises';
+import path from 'path';
+
+export default async function handler({ req, res }) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+  
+  const form = formidable({
+    uploadDir: './uploads',
+    keepExtensions: true,
+    maxFileSize: 10 * 1024 * 1024 // 10MB
+  });
+  
+  try {
+    const [fields, files] = await form.parse(req);
+    const file = files.file[0];
+    
+    // Process the uploaded file
+    const newPath = path.join('./uploads', \`\${Date.now()}-\${file.originalFilename}\`);
+    await fs.rename(file.filepath, newPath);
+    
+    res.json({
+      message: 'File uploaded successfully',
+      filename: file.originalFilename,
+      size: file.size,
+      path: newPath
+    });
+    
+  } catch (error) {
+    res.status(500).json({ error: 'Upload failed' });
+  }
+}
+
+// Disable body parsing for file uploads
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};` })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "CORS Configuration" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// lib/middleware/cors.js
+export function cors(options = {}) {
+  const {
+    origin = '*',
+    methods = ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders = ['Content-Type', 'Authorization']
+  } = options;
+  
+  return (handler) => {
+    return async ({ req, res, ...rest }) => {
+      // Set CORS headers
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Methods', methods.join(', '));
+      res.setHeader('Access-Control-Allow-Headers', allowedHeaders.join(', '));
+      
+      // Handle preflight requests
+      if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+      }
+      
+      return handler({ req, res, ...rest });
+    };
+  };
+}
+
+// pages/api/public-data.js
+import { cors } from '../../lib/middleware/cors';
+
+async function handler({ req, res }) {
+  res.json({ data: 'This API allows cross-origin requests' });
+}
+
+export default cors({
+  origin: ['https://myapp.com', 'https://admin.myapp.com'],
+  methods: ['GET', 'POST']
+})(handler);` })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.warning, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.warningTitle, children: "\u26A0\uFE0F Security Note" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 14, color: "#92400e" }, children: "Always validate and sanitize input data. Never trust client-side data. Use proper authentication and authorization for protected endpoints." })
     ] })
   ] }) }) });
 }
 
-// .indjs/client/entry_learn.js
+// .indjs/client/entry_docs_api-routes.js
 var ErrorBoundary = class extends import_react2.default.Component {
   constructor(o) {
     super(o);
@@ -24840,7 +25022,7 @@ var ErrorBoundary = class extends import_react2.default.Component {
 function __ind_boot() {
   const el = document.getElementById("__ind");
   const props = window.__IND_PROPS__ || {};
-  let node = import_react2.default.createElement(Learn, props);
+  let node = import_react2.default.createElement(ApiRoutes, props);
   node = import_react2.default.createElement(ErrorBoundary, null, node);
   if (el) {
     try {
@@ -24915,4 +25097,4 @@ react/cjs/react-jsx-runtime.development.js:
    * LICENSE file in the root directory of this source tree.
    *)
 */
-//# sourceMappingURL=learn.js.map
+//# sourceMappingURL=docs_api-routes.js.map

@@ -24485,14 +24485,14 @@ var require_jsx_runtime = __commonJS({
   }
 });
 
-// .indjs/client/entry_learn.js
+// .indjs/client/entry_docs_deployment.js
 var import_react2 = __toESM(require_react(), 1);
 var import_client = __toESM(require_client(), 1);
 
-// pages/learn.jsx
+// pages/docs/deployment.jsx
 var import_react = __toESM(require_react(), 1);
 var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
-function Learn() {
+function Deployment() {
   const ui = {
     page: {
       fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
@@ -24527,18 +24527,36 @@ function Learn() {
       fontSize: 14
     },
     section: {
-      marginBottom: 24
+      marginBottom: 32
     },
     h2: {
       fontSize: 24,
       color: "#0b1220",
-      marginBottom: 12
+      marginBottom: 16,
+      borderBottom: "2px solid #e2e8f0",
+      paddingBottom: 8
+    },
+    h3: {
+      fontSize: 20,
+      color: "#0b1220",
+      marginBottom: 12,
+      marginTop: 24
     },
     p: {
       fontSize: 16,
       color: "#334155",
       lineHeight: 1.6,
-      marginBottom: 12
+      marginBottom: 16
+    },
+    ul: {
+      fontSize: 16,
+      color: "#334155",
+      lineHeight: 1.6,
+      marginBottom: 16,
+      paddingLeft: 20
+    },
+    li: {
+      marginBottom: 8
     },
     code: {
       background: "#f1f5f9",
@@ -24556,265 +24574,532 @@ function Learn() {
       fontFamily: "monospace",
       overflow: "auto",
       marginBottom: 20,
-      lineHeight: 1.5,
-      whiteSpace: "pre-wrap"
+      lineHeight: 1.5
+    },
+    success: {
+      background: "#dcfce7",
+      border: "1px solid #16a34a",
+      borderRadius: 8,
+      padding: 16,
+      marginBottom: 20
+    },
+    successTitle: {
+      fontWeight: 600,
+      color: "#15803d",
+      marginBottom: 8
+    },
+    info: {
+      background: "#dbeafe",
+      border: "1px solid #3b82f6",
+      borderRadius: 8,
+      padding: 16,
+      marginBottom: 20
+    },
+    infoTitle: {
+      fontWeight: 600,
+      color: "#1e40af",
+      marginBottom: 8
     }
   };
   return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("main", { style: ui.page, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.wrap, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { style: ui.hero, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { style: ui.nav, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/", style: ui.backLink, children: "\u2190 Back to Home" }) }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { style: ui.h1, children: "Getting Started with INDJS" }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 18, color: "#64748b", marginBottom: 32, lineHeight: 1.6 }, children: "Build modern full-stack React applications with zero configuration. INDJS provides everything you need to create fast, scalable web applications with built-in SSR, API routes, and deployment tools." }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { style: ui.nav, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs", style: ui.backLink, children: "\u2190 Back to Documentation" }) }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { style: ui.h1, children: "Deployment" }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F680} Quick Start" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Create a new INDJS application with a single command and start building immediately:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# Create a new INDJS app
-npx create-indjs my-app
-
-# Navigate to your project
-cd my-app
-
-# Start the development server
-npm run dev
-
-# Your app is now running at http://localhost:3000` }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-        background: "#dbeafe",
-        border: "1px solid #3b82f6",
-        borderRadius: 8,
-        padding: 16,
-        marginTop: 16
-      }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontWeight: 600, color: "#1e40af", marginBottom: 8 }, children: "\u{1F4A1} Pro Tip" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: 0, fontSize: 14, color: "#1e40af" }, children: [
-          "Use templates to get started faster: ",
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { style: ui.code, children: "npx create-indjs my-blog --template blog" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
-          "Available templates: basic, blog, admin, ecommerce, ai-app"
-        ] })
-      ] })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Overview" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "INDJS applications can be deployed to various platforms including Vercel, Netlify, AWS, Google Cloud, and traditional servers. The framework includes built-in deployment helpers to make the process seamless." })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F4C1} Project Structure" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "INDJS follows a simple, intuitive project structure that scales with your application:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `my-app/
-\u251C\u2500\u2500 pages/                 # File-based routing
-\u2502   \u251C\u2500\u2500 index.jsx         # Home page (/)
-\u2502   \u251C\u2500\u2500 about.jsx         # About page (/about)
-\u2502   \u251C\u2500\u2500 blog/
-\u2502   \u2502   \u251C\u2500\u2500 index.jsx     # Blog listing (/blog)
-\u2502   \u2502   \u2514\u2500\u2500 [slug].jsx    # Dynamic blog post (/blog/my-post)
-\u2502   \u2514\u2500\u2500 api/              # API routes
-\u2502       \u251C\u2500\u2500 hello.js      # API endpoint (/api/hello)
-\u2502       \u2514\u2500\u2500 users/
-\u2502           \u2514\u2500\u2500 [id].js   # Dynamic API route (/api/users/123)
-\u251C\u2500\u2500 components/           # Reusable React components
-\u251C\u2500\u2500 lib/                  # Utility functions and configurations
-\u251C\u2500\u2500 public/               # Static assets (images, favicon, etc.)
-\u251C\u2500\u2500 styles/               # Global CSS and styling
-\u251C\u2500\u2500 package.json
-\u2514\u2500\u2500 indjs.config.js      # Optional configuration` })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F6E3}\uFE0F File-based Routing" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Pages are automatically routed based on their file structure. No configuration needed!" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// File structure \u2192 Routes
-pages/index.jsx           \u2192 /
-pages/about.jsx           \u2192 /about
-pages/contact.jsx         \u2192 /contact
-pages/blog/index.jsx      \u2192 /blog
-pages/blog/[slug].jsx     \u2192 /blog/my-post
-pages/shop/[...slug].jsx  \u2192 /shop/category/product
-pages/api/users.js        \u2192 /api/users
-pages/api/auth/login.js   \u2192 /api/auth/login` }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Creating Your First Page" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/about.jsx
-import React from 'react';
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Vercel Deployment" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Vercel provides the easiest deployment experience for INDJS applications with zero configuration." }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Quick Deploy" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# Install Vercel CLI
+npm install -g vercel
 
-export default function About() {
-  return (
-    <div>
-      <h1>About Us</h1>
-      <p>Welcome to our amazing INDJS application!</p>
-    </div>
-  );
-}` })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F50C} API Routes" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: ui.p, children: [
-        "Build full-stack applications with serverless API endpoints. Just create files in ",
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { style: ui.code, children: "pages/api/" }),
-        ":"
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/api/hello.js
-export default function handler({ req, res }) {
-  res.json({ 
-    message: 'Hello from INDJS API!',
-    timestamp: new Date().toISOString()
-  });
-}
+# Deploy your app
+vercel
 
-// pages/api/users/[id].js
-export default async function handler({ req, res, params }) {
-  const { id } = params;
-  
-  if (req.method === 'GET') {
-    const user = await getUserById(id);
-    res.json(user);
-  } else if (req.method === 'PUT') {
-    const updatedUser = await updateUser(id, req.body);
-    res.json(updatedUser);
+# Or use the INDJS CLI
+indjs deploy vercel` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Vercel Configuration" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// vercel.json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "pages/**",
+          "public/**",
+          ".indjs/**"
+        ]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
   }
-}` })
+}` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Environment Variables" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# Add environment variables in Vercel dashboard or via CLI
+vercel env add DATABASE_URL
+vercel env add JWT_SECRET
+vercel env add GOOGLE_CLIENT_ID
+
+# Or create .env.production
+DATABASE_URL=postgresql://...
+JWT_SECRET=your-secret-key
+GOOGLE_CLIENT_ID=your-client-id` })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u26A1 Server-Side Rendering" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Get better SEO and performance with built-in SSR. Fetch data on the server before rendering:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/blog/[slug].jsx
-import React from 'react';
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Netlify Deployment" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Deploy to Netlify with built-in CI/CD and edge functions support." }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Netlify Configuration" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# netlify.toml
+[build]
+  command = "npm run build"
+  publish = ".indjs/static"
 
-export default function BlogPost({ post, author }) {
-  return (
-    <article>
-      <h1>{post.title}</h1>
-      <p>By {author.name} \u2022 {post.publishedAt}</p>
-      <div dangerouslySetInnerHTML={{ __html: post.content }} />
-    </article>
-  );
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[functions]
+  directory = ".indjs/functions"
+  node_bundler = "esbuild"` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Deploy with CLI" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# Install Netlify CLI
+npm install -g netlify-cli
+
+# Build and deploy
+npm run build
+netlify deploy --prod
+
+# Or use INDJS CLI
+indjs deploy netlify` })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "AWS Deployment" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Deploy to AWS using Lambda functions, S3, and CloudFront for a scalable solution." }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "AWS Lambda + API Gateway" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# Install AWS CLI and configure
+aws configure
+
+# Install Serverless Framework
+npm install -g serverless
+
+# Create serverless.yml
+service: indjs-app
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  environment:
+    NODE_ENV: production
+    DATABASE_URL: \${env:DATABASE_URL}
+
+functions:
+  app:
+    handler: .indjs/lambda/handler.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: true
+      - http:
+          path: /
+          method: ANY
+          cors: true
+
+plugins:
+  - serverless-offline
+
+# Deploy
+sls deploy` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "AWS Amplify" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# amplify.yml
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm install
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: .indjs/static
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*` })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Google Cloud Platform" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Deploy to Google Cloud using Cloud Run, App Engine, or Cloud Functions." }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Cloud Run Deployment" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# Dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY . .
+RUN npm run build
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
+
+# Build and deploy
+gcloud builds submit --tag gcr.io/PROJECT_ID/indjs-app
+gcloud run deploy --image gcr.io/PROJECT_ID/indjs-app --platform managed` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "App Engine Configuration" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# app.yaml
+runtime: nodejs18
+
+env_variables:
+  NODE_ENV: production
+  DATABASE_URL: your-database-url
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 10
+
+# Deploy
+gcloud app deploy` })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Docker Deployment" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Containerize your INDJS application for deployment anywhere." }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Production Dockerfile" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# Multi-stage build for smaller image
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+FROM node:18-alpine AS runner
+
+# Create app user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 indjs
+
+WORKDIR /app
+
+# Copy built application
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY . .
+
+# Build the application
+RUN npm run build
+
+# Change ownership
+RUN chown -R indjs:nodejs /app
+USER indjs
+
+EXPOSE 3000
+
+ENV NODE_ENV=production
+ENV PORT=3000
+
+CMD ["npm", "start"]` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Docker Compose" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# docker-compose.yml
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://user:password@db:5432/myapp
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: myapp
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - app
+    restart: unless-stopped
+
+volumes:
+  postgres_data:` })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Traditional Server Deployment" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Deploy to traditional servers using PM2 or systemd for process management." }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "PM2 Deployment" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# Install PM2
+npm install -g pm2
+
+# ecosystem.config.js
+module.exports = {
+  apps: [{
+    name: 'indjs-app',
+    script: 'npm',
+    args: 'start',
+    instances: 'max',
+    exec_mode: 'cluster',
+    env: {
+      NODE_ENV: 'development',
+      PORT: 3000
+    },
+    env_production: {
+      NODE_ENV: 'production',
+      PORT: 3000
+    },
+    error_file: './logs/err.log',
+    out_file: './logs/out.log',
+    log_file: './logs/combined.log',
+    time: true
+  }]
+};
+
+# Deploy
+npm run build
+pm2 start ecosystem.config.js --env production
+pm2 save
+pm2 startup` }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: ui.h3, children: "Nginx Configuration" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# /etc/nginx/sites-available/indjs-app
+server {
+    listen 80;
+    server_name yourdomain.com;
+    
+    # Redirect HTTP to HTTPS
+    return 301 https://$server_name$request_uri;
 }
 
-// Fetch data on each request (SSR)
-export async function getServerSideProps({ params }) {
-  const { slug } = params;
-  const post = await fetchBlogPost(slug);
-  const author = await fetchAuthor(post.authorId);
-  
-  return {
-    props: { post, author }
-  };
-}
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com;
+    
+    ssl_certificate /path/to/certificate.crt;
+    ssl_certificate_key /path/to/private.key;
+    
+    # Security headers
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+    
+    # Gzip compression
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+    
+    # Static files
+    location /_next/static/ {
+        alias /var/www/indjs-app/.indjs/static/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+    
+    # API routes
+    location /api/ {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+    
+    # All other routes
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}` })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "Environment Configuration" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Manage environment variables and configuration across different deployment environments." }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# .env.local (development)
+NODE_ENV=development
+DATABASE_URL=postgresql://localhost:5432/myapp_dev
+JWT_SECRET=dev-secret-key
+REDIS_URL=redis://localhost:6379
 
-// Or generate static pages at build time (SSG)
-export async function getStaticProps({ params }) {
-  const { slug } = params;
-  const post = await fetchBlogPost(slug);
+# .env.staging
+NODE_ENV=staging
+DATABASE_URL=postgresql://staging-db:5432/myapp_staging
+JWT_SECRET=staging-secret-key
+REDIS_URL=redis://staging-redis:6379
+
+# .env.production
+NODE_ENV=production
+DATABASE_URL=postgresql://prod-db:5432/myapp_prod
+JWT_SECRET=super-secure-production-key
+REDIS_URL=redis://prod-redis:6379
+
+# Load environment variables in your app
+// lib/config.js
+export const config = {
+  nodeEnv: process.env.NODE_ENV || 'development',
+  port: parseInt(process.env.PORT || '3000'),
+  databaseUrl: process.env.DATABASE_URL,
+  jwtSecret: process.env.JWT_SECRET,
+  redisUrl: process.env.REDIS_URL,
   
-  return {
-    props: { post },
-    revalidate: 3600 // Regenerate every hour
-  };
-}` })
+  // Feature flags
+  features: {
+    analytics: process.env.ENABLE_ANALYTICS === 'true',
+    debugging: process.env.NODE_ENV === 'development',
+    rateLimiting: process.env.ENABLE_RATE_LIMITING !== 'false'
+  }
+};` })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F3A8} Built-in Styling" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "INDJS comes with Tailwind CSS pre-configured. Start styling immediately:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `// pages/dashboard.jsx
-export default function Dashboard() {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">
-            Dashboard
-          </h1>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <h3 className="text-lg font-medium text-gray-900">
-                  Total Users
-                </h3>
-                <p className="text-3xl font-bold text-blue-600">1,234</p>
-              </div>
-            </div>
-            {/* More cards... */}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}` })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "CI/CD Pipeline" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: ui.p, children: "Set up continuous integration and deployment with GitHub Actions." }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.codeBlock, children: `# .github/workflows/deploy.yml
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Run linting
+      run: npm run lint
+    
+    - name: Build application
+      run: npm run build
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build application
+      run: npm run build
+    
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v20
+      with:
+        vercel-token: \${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: \${{ secrets.ORG_ID }}
+        vercel-project-id: \${{ secrets.PROJECT_ID }}
+        vercel-args: '--prod'` })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.section, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: ui.h2, children: "\u{1F680} Next Steps" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-          background: "#f8fafc",
-          borderRadius: 12,
-          padding: 20,
-          border: "1px solid #e2e8f0"
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 18, fontWeight: 600, color: "#0b1220", marginBottom: 8 }, children: "\u{1F4D6} Learn the Basics" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14, color: "#475569", marginBottom: 12 }, children: "Master routing, API routes, and SSR/SSG" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/routing", style: { color: "#0ea5e9", textDecoration: "none", fontSize: 14, fontWeight: 500 }, children: "Start Learning \u2192" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-          background: "#f8fafc",
-          borderRadius: 12,
-          padding: 20,
-          border: "1px solid #e2e8f0"
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 18, fontWeight: 600, color: "#0b1220", marginBottom: 8 }, children: "\u{1F510} Add Authentication" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14, color: "#475569", marginBottom: 12 }, children: "Secure your app with JWT, OAuth, and sessions" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/authentication", style: { color: "#0ea5e9", textDecoration: "none", fontSize: 14, fontWeight: 500 }, children: "Add Auth \u2192" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-          background: "#f8fafc",
-          borderRadius: 12,
-          padding: 20,
-          border: "1px solid #e2e8f0"
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 18, fontWeight: 600, color: "#0b1220", marginBottom: 8 }, children: "\u{1F5C4}\uFE0F Connect Database" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14, color: "#475569", marginBottom: 12 }, children: "Integrate MongoDB, PostgreSQL, or Prisma" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/database", style: { color: "#0ea5e9", textDecoration: "none", fontSize: 14, fontWeight: 500 }, children: "Connect DB \u2192" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-          background: "#f8fafc",
-          borderRadius: 12,
-          padding: 20,
-          border: "1px solid #e2e8f0"
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 18, fontWeight: 600, color: "#0b1220", marginBottom: 8 }, children: "\u{1F310} Deploy Your App" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14, color: "#475569", marginBottom: 12 }, children: "Deploy to Vercel, Netlify, or AWS" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs/deployment", style: { color: "#0ea5e9", textDecoration: "none", fontSize: 14, fontWeight: 500 }, children: "Deploy Now \u2192" })
-        ] })
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.success, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.successTitle, children: "\u2705 Deployment Checklist" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", { style: { margin: 0, fontSize: 14, color: "#15803d" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Build and test your application locally" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Set up environment variables for production" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Configure database connections and migrations" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Set up SSL certificates for HTTPS" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Configure monitoring and logging" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Set up backup and disaster recovery" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Test deployment in staging environment" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Monitor application performance after deployment" })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      borderRadius: 12,
-      padding: 24,
-      marginTop: 32,
-      color: "white"
-    }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: { fontSize: 20, fontWeight: 600, marginBottom: 12, color: "white" }, children: "Ready to Build Something Amazing?" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 16, marginBottom: 16, color: "rgba(255,255,255,0.9)" }, children: "Join thousands of developers building modern web applications with INDJS." }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: 12, flexWrap: "wrap" }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "/docs", style: {
-          background: "rgba(255,255,255,0.2)",
-          color: "white",
-          padding: "10px 16px",
-          borderRadius: 8,
-          textDecoration: "none",
-          fontWeight: 600,
-          fontSize: 14
-        }, children: "View Documentation" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "https://github.com/indjs/indjs", style: {
-          background: "transparent",
-          color: "white",
-          padding: "10px 16px",
-          borderRadius: 8,
-          textDecoration: "none",
-          fontWeight: 600,
-          fontSize: 14,
-          border: "1px solid rgba(255,255,255,0.3)"
-        }, children: "GitHub Repository" })
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: ui.info, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: ui.infoTitle, children: "\u{1F4A1} Pro Tips" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", { style: { margin: 0, fontSize: 14, color: "#1e40af" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { children: [
+          "Use the INDJS CLI for quick deployments: ",
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { style: ui.code, children: "indjs deploy" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Always test your deployment in a staging environment first" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Use environment variables for sensitive configuration" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Set up health checks and monitoring" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Keep your dependencies up to date" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: "Use CDN for static assets in production" })
       ] })
     ] })
   ] }) }) });
 }
 
-// .indjs/client/entry_learn.js
+// .indjs/client/entry_docs_deployment.js
 var ErrorBoundary = class extends import_react2.default.Component {
   constructor(o) {
     super(o);
@@ -24840,7 +25125,7 @@ var ErrorBoundary = class extends import_react2.default.Component {
 function __ind_boot() {
   const el = document.getElementById("__ind");
   const props = window.__IND_PROPS__ || {};
-  let node = import_react2.default.createElement(Learn, props);
+  let node = import_react2.default.createElement(Deployment, props);
   node = import_react2.default.createElement(ErrorBoundary, null, node);
   if (el) {
     try {
@@ -24915,4 +25200,4 @@ react/cjs/react-jsx-runtime.development.js:
    * LICENSE file in the root directory of this source tree.
    *)
 */
-//# sourceMappingURL=learn.js.map
+//# sourceMappingURL=docs_deployment.js.map

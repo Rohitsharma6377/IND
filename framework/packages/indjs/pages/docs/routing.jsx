@@ -415,6 +415,326 @@ export async function getServerSideProps({ params }) {
   };
 }`}
             </div>
+
+            <h3 style={ui.h3}>Parallel Routes</h3>
+            <p style={ui.p}>Render multiple pages simultaneously in the same layout:</p>
+            <div style={ui.codeBlock}>
+              {`// pages/dashboard/@analytics/page.jsx
+export default function Analytics() {
+  return (
+    <div>
+      <h2>Analytics Dashboard</h2>
+      <AnalyticsCharts />
+    </div>
+  );
+}
+
+// pages/dashboard/@team/page.jsx
+export default function Team() {
+  return (
+    <div>
+      <h2>Team Overview</h2>
+      <TeamMembers />
+    </div>
+  );
+}
+
+// pages/dashboard/layout.jsx
+export default function DashboardLayout({ children, analytics, team }) {
+  return (
+    <div className="dashboard-layout">
+      <main>{children}</main>
+      <aside className="analytics-panel">{analytics}</aside>
+      <aside className="team-panel">{team}</aside>
+    </div>
+  );
+}`}
+            </div>
+
+            <h3 style={ui.h3}>Intercepting Routes</h3>
+            <p style={ui.p}>Intercept routes to show modals or overlays:</p>
+            <div style={ui.codeBlock}>
+              {`// pages/gallery/(..)photo/[id].jsx - Intercepts /photo/[id]
+import { useRouter } from 'indjs';
+import Modal from '../../../components/Modal';
+
+export default function PhotoModal({ params }) {
+  const router = useRouter();
+  const { id } = params;
+  
+  return (
+    <Modal onClose={() => router.back()}>
+      <PhotoViewer id={id} />
+    </Modal>
+  );
+}
+
+// pages/photo/[id].jsx - Regular photo page
+export default function PhotoPage({ params }) {
+  const { id } = params;
+  
+  return (
+    <div>
+      <PhotoViewer id={id} />
+      <PhotoComments id={id} />
+    </div>
+  );
+}`}
+            </div>
+          </div>
+
+          <div style={ui.section}>
+            <h2 style={ui.h2}>Route Performance Optimization</h2>
+            
+            <h3 style={ui.h3}>Route Prefetching</h3>
+            <div style={ui.codeBlock}>
+              {`// Automatic prefetching with Link component
+import { Link } from 'indjs';
+
+export default function Navigation() {
+  return (
+    <nav>
+      {/* Prefetches on hover by default */}
+      <Link href="/about" prefetch>About</Link>
+      
+      {/* Disable prefetching */}
+      <Link href="/heavy-page" prefetch={false}>Heavy Page</Link>
+      
+      {/* Prefetch only in viewport */}
+      <Link href="/blog" prefetch="viewport">Blog</Link>
+    </nav>
+  );
+}
+
+// Manual prefetching
+import { useRouter } from 'indjs';
+
+export default function MyComponent() {
+  const router = useRouter();
+  
+  useEffect(() => {
+    // Prefetch critical routes
+    router.prefetch('/dashboard');
+    router.prefetch('/profile');
+  }, [router]);
+  
+  return <div>Content</div>;
+}`}
+            </div>
+
+            <h3 style={ui.h3}>Route-based Code Splitting</h3>
+            <div style={ui.codeBlock}>
+              {`// Dynamic imports for code splitting
+import dynamic from 'indjs/dynamic';
+import { Suspense } from 'react';
+
+// Lazy load heavy components
+const HeavyChart = dynamic(() => import('../components/HeavyChart'), {
+  loading: () => <div>Loading chart...</div>,
+  ssr: false // Don't render on server
+});
+
+const AdminPanel = dynamic(() => import('../components/AdminPanel'), {
+  loading: () => <div>Loading admin panel...</div>
+});
+
+export default function Dashboard({ user }) {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      
+      <Suspense fallback={<div>Loading...</div>}>
+        <HeavyChart />
+      </Suspense>
+      
+      {user.role === 'admin' && (
+        <Suspense fallback={<div>Loading admin features...</div>}>
+          <AdminPanel />
+        </Suspense>
+      )}
+    </div>
+  );
+}`}
+            </div>
+
+            <h3 style={ui.h3}>Route Caching Strategies</h3>
+            <div style={ui.codeBlock}>
+              {`// pages/blog/[slug].jsx
+export async function getStaticProps({ params }) {
+  const { slug } = params;
+  const post = await fetchPost(slug);
+  
+  return {
+    props: { post },
+    revalidate: 3600, // Cache for 1 hour
+    // Cache tags for fine-grained invalidation
+    tags: ['posts', \`post-\${slug}\`]
+  };
+}
+
+export async function getStaticPaths() {
+  const posts = await fetchPopularPosts();
+  
+  return {
+    paths: posts.map(post => ({ params: { slug: post.slug } })),
+    fallback: 'blocking' // Generate other pages on-demand
+  };
+}
+
+// Programmatic cache invalidation
+// pages/api/revalidate.js
+export default async function handler({ req, res }) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+  
+  const { slug, tags } = req.body;
+  
+  try {
+    // Revalidate specific page
+    if (slug) {
+      await res.revalidate(\`/blog/\${slug}\`);
+    }
+    
+    // Revalidate by tags
+    if (tags) {
+      await res.revalidateTag(tags);
+    }
+    
+    return res.json({ revalidated: true });
+  } catch (err) {
+    return res.status(500).json({ error: 'Error revalidating' });
+  }
+}`}
+            </div>
+          </div>
+
+          <div style={ui.section}>
+            <h2 style={ui.h2}>Advanced Layout Patterns</h2>
+            
+            <h3 style={ui.h3}>Conditional Layouts</h3>
+            <div style={ui.codeBlock}>
+              {`// pages/admin/users.jsx
+import AdminLayout from '../../layouts/AdminLayout';
+import PublicLayout from '../../layouts/PublicLayout';
+
+export default function UsersPage({ user, users }) {
+  // Choose layout based on user role
+  const Layout = user?.role === 'admin' ? AdminLayout : PublicLayout;
+  
+  return (
+    <Layout>
+      <h1>Users</h1>
+      {user?.role === 'admin' ? (
+        <AdminUsersList users={users} />
+      ) : (
+        <PublicUsersList users={users.filter(u => u.public)} />
+      )}
+    </Layout>
+  );
+}
+
+// Alternative: Layout selection in getLayout
+UsersPage.getLayout = function getLayout(page, { user }) {
+  if (user?.role === 'admin') {
+    return <AdminLayout>{page}</AdminLayout>;
+  }
+  return <PublicLayout>{page}</PublicLayout>;
+};`}
+            </div>
+
+            <h3 style={ui.h3}>Nested Layout Composition</h3>
+            <div style={ui.codeBlock}>
+              {`// layouts/AppLayout.jsx
+export default function AppLayout({ children }) {
+  return (
+    <div className="app">
+      <Header />
+      <main>{children}</main>
+      <Footer />
+    </div>
+  );
+}
+
+// layouts/DashboardLayout.jsx
+export default function DashboardLayout({ children }) {
+  return (
+    <div className="dashboard">
+      <Sidebar />
+      <div className="content">{children}</div>
+    </div>
+  );
+}
+
+// pages/dashboard/analytics.jsx
+import AppLayout from '../../layouts/AppLayout';
+import DashboardLayout from '../../layouts/DashboardLayout';
+
+export default function Analytics() {
+  return <div>Analytics content</div>;
+}
+
+// Compose multiple layouts
+Analytics.getLayout = function getLayout(page) {
+  return (
+    <AppLayout>
+      <DashboardLayout>
+        {page}
+      </DashboardLayout>
+    </AppLayout>
+  );
+};`}
+            </div>
+
+            <h3 style={ui.h3}>Layout with Data Fetching</h3>
+            <div style={ui.codeBlock}>
+              {`// layouts/BlogLayout.jsx
+import { useState, useEffect } from 'react';
+
+export default function BlogLayout({ children }) {
+  const [categories, setCategories] = useState([]);
+  const [recentPosts, setRecentPosts] = useState([]);
+  
+  useEffect(() => {
+    // Fetch layout-specific data
+    Promise.all([
+      fetch('/api/categories').then(r => r.json()),
+      fetch('/api/posts/recent').then(r => r.json())
+    ]).then(([cats, posts]) => {
+      setCategories(cats);
+      setRecentPosts(posts);
+    });
+  }, []);
+  
+  return (
+    <div className="blog-layout">
+      <aside className="sidebar">
+        <div className="categories">
+          <h3>Categories</h3>
+          {categories.map(cat => (
+            <Link key={cat.id} href={\`/blog/category/\${cat.slug}\`}>
+              {cat.name}
+            </Link>
+          ))}
+        </div>
+        
+        <div className="recent-posts">
+          <h3>Recent Posts</h3>
+          {recentPosts.map(post => (
+            <Link key={post.id} href={\`/blog/\${post.slug}\`}>
+              {post.title}
+            </Link>
+          ))}
+        </div>
+      </aside>
+      
+      <main className="content">
+        {children}
+      </main>
+    </div>
+  );
+}`}
+            </div>
           </div>
         </section>
       </div>

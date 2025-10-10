@@ -1,12 +1,15 @@
 {
-  "/docs/api-routes": "/pages/docs_api-routes.da1d0b82.js",
+  "/docs/api-routes": "/pages/docs_api-routes.6666c1e9.js",
+  "/docs/auth": "/pages/docs_auth.6b621dcc.js",
   "/docs/authentication": "/pages/docs_authentication.03df480f.js",
   "/docs/database": "/pages/docs_database.63851f51.js",
+  "/docs/deployment": "/pages/docs_deployment.dcad4399.js",
   "/docs/installation": "/pages/docs_installation.d248d582.js",
-  "/docs/routing": "/pages/docs_routing.df4a6dfd.js",
+  "/docs/routing": "/pages/docs_routing.501030f6.js",
   "/docs/ssr-ssg": "/pages/docs_ssr-ssg.8cdee861.js",
   "/docs/styling": "/pages/docs_styling.b863e40f.js",
-  "/docs": "/pages/docs.fe7d8233.js",
-  "/": "/pages/index.6d0af1e4.js",
-  "/learn": "/pages/learn.a086299c.js"
+  "/docs/testing": "/pages/docs_testing.354e1dec.js",
+  "/docs": "/pages/docs.a3d48c30.js",
+  "/": "/pages/index.39700364.js",
+  "/learn": "/pages/learn.6ae138bc.js"
 }
