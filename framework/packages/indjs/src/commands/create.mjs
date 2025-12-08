@@ -11,29 +11,17 @@ const templates = {
     name: 'Basic App',
     description: 'A minimal INDJS application with essential files'
   },
-  blog: {
-    name: 'Blog Starter',
-    description: 'Blog structure with content folder'
+  universal: {
+    name: 'Universal App',
+    description: 'Web + Mobile (iOS/Android) + Desktop (Electron) from one codebase'
   },
-  admin: {
-    name: 'Admin Dashboard',
-    description: 'Admin layout with charts/tables placeholders'
+  'todo-app': {
+    name: 'Todo App Template',
+    description: 'Complete cross-platform Todo app with beautiful UI'
   },
-  ecommerce: {
-    name: 'E-commerce Starter',
-    description: 'Products listing, product detail, and basic cart placeholder'
-  },
-  'ai-app': {
-    name: 'AI App Starter',
-    description: 'Example AI pages and API usage integrated with INDJS AI stubs'
-  },
-  'desktop-electron': {
-    name: 'Desktop (Electron)',
-    description: 'Run your INDJS app as a desktop app with Electron'
-  },
-  'mobile-capacitor': {
-    name: 'Mobile (Capacitor)',
-    description: 'Build iOS/Android apps wrapping your INDJS web build'
+  'fullstack-saas': {
+    name: 'Fullstack SaaS',
+    description: 'SaaS starter with Authentication and Database setup'
   }
 };
 
@@ -109,20 +97,39 @@ export async function create({ name, template, root, language, state, useTailwin
     await createGitignore(appPath);
     await createPublicAssets(appPath);
 
-    if (template === 'desktop-electron') {
-      const mainCjs = `const { app, BrowserWindow } = require('electron');
+    if (template === 'desktop-electron' || template === 'universal' || template === 'todo-app') {
+      const mainCjs = `const { app, BrowserWindow, Menu, Tray, nativeImage, ipcMain, shell } = require('electron');
+const path = require('path');
+const isDev = !app.isPackaged;
+
 function createWindow() {
-  const win = new BrowserWindow({ width: 1200, height: 800 });
-  const port = process.env.PORT || 3005;
-  win.loadURL('http://localhost:' + port);
+  const win = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js')
+    }
+  });
+
+  const startUrl = isDev 
+    ? 'http://localhost:3000' 
+    : \`file://\${path.join(__dirname, '../.indjs/static/index.html')}\`;
+
+  win.loadURL(startUrl);
+  if (isDev) win.webContents.openDevTools();
 }
+
 app.whenReady().then(createWindow);
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 `;
-      await fs.writeFile(path.join(appPath, 'main.cjs'), mainCjs);
+      // Ensure directory exists
+      await fs.mkdir(path.join(appPath, 'electron'), { recursive: true });
+      await fs.writeFile(path.join(appPath, template === 'desktop-electron' ? 'main.cjs' : 'electron/main.cjs'), mainCjs);
     }
 
-    if (template === 'mobile-capacitor') {
+    if (template === 'mobile-capacitor' || template === 'universal' || template === 'todo-app') {
       await createMobileConfigs(appPath, opts);
     }
 
@@ -169,6 +176,14 @@ async function createDirectoryStructure(appPath, template) {
     dirs.push('ai', 'pages/api/ai');
   }
 
+  if (template === 'fullstack-saas') {
+    dirs.push('pages/api/auth', 'lib/db');
+  }
+
+  if (template === 'universal' || template === 'todo-app') {
+    dirs.push('electron', 'lib');
+  }
+
   for (const dir of dirs) {
     await fs.mkdir(path.join(appPath, dir), { recursive: true });
   }
@@ -208,8 +223,8 @@ async function createPackageJson(appPath, name, opts, template) {
     packageJson.main = 'main.cjs';
     packageJson.devDependencies = {
       ...packageJson.devDependencies,
-      electron: '^31.0.2',
-      concurrently: '^9.0.1',
+      electron: '^28.0.0',
+      concurrently: '^8.2.2',
       'wait-on': '^7.2.0',
       'cross-env': '^7.0.3'
     };
@@ -219,23 +234,77 @@ async function createPackageJson(appPath, name, opts, template) {
       'desktop:start': 'cross-env PORT=3005 concurrently "indjs start --port %PORT%" "electron ."'
     };
   }
-  if (template === 'mobile-capacitor') {
+
+  // Mobile / Universal / Todo-App Scripts & Deps
+  const isMobile = template === 'mobile-capacitor' || template === 'universal' || template === 'todo-app';
+  const isDesktop = template === 'desktop-electron' || template === 'universal' || template === 'todo-app';
+
+  if (isDesktop && template !== 'desktop-electron') { // desktop-electron already handled above, mostly
+    packageJson.main = 'electron/main.cjs';
     packageJson.devDependencies = {
       ...packageJson.devDependencies,
-      '@capacitor/cli': '^6.1.2'
+      electron: '^28.0.0',
+      'electron-builder': '^24.9.1',
+      concurrently: '^8.2.2',
+      'wait-on': '^7.2.0',
+      'cross-env': '^7.0.3'
     };
+
+    // Add desktop scripts
+    Object.assign(packageJson.scripts, {
+      'desktop:dev': 'concurrently "indjs dev" "wait-on http://localhost:3000 && electron ."',
+      'desktop:build': 'indjs build && electron-builder',
+      'desktop:build:all': 'indjs build && electron-builder -mwl',
+      'desktop:build:windows': 'indjs build && electron-builder --win',
+      'desktop:build:mac': 'indjs build && electron-builder --mac',
+      'desktop:build:linux': 'indjs build && electron-builder --linux',
+    });
+
+    // Add build config
+    packageJson.build = {
+      appId: `com.indjs.${name.replace(/-/g, '')}`,
+      productName: name,
+      directories: { output: 'dist' },
+      files: ['.indjs/static/**/*', 'electron/**/*', 'package.json'],
+      win: { target: ['nsis'], icon: 'assets/icon.ico' },
+      mac: { target: ['dmg'], icon: 'assets/icon.icns' },
+      linux: { target: ['AppImage', 'deb'], icon: 'assets/icon.png' }
+    };
+  }
+
+  if (isMobile) {
     packageJson.dependencies = {
       ...packageJson.dependencies,
-      '@capacitor/core': '^6.1.2'
+      '@capacitor/core': '^6.0.0',
+      '@capacitor/app': '^6.0.0',
+      '@capacitor/preferences': '^6.0.0',
+      '@capacitor/android': '^6.0.0',
+      '@capacitor/ios': '^6.0.0'
     };
-    // optional native platforms are added by user later
-    packageJson.scripts = {
-      ...packageJson.scripts,
-      'mobile:build': 'indjs build && npx cap copy',
-      'mobile:sync': 'npx cap sync',
-      'mobile:android': 'npx cap open android',
-      'mobile:ios': 'npx cap open ios'
+    packageJson.devDependencies = {
+      ...packageJson.devDependencies,
+      '@capacitor/cli': '^6.0.0'
     };
+
+    Object.assign(packageJson.scripts, {
+      'android:setup': `npx cap init "${name}" "com.indjs.${name.replace(/-/g, '')}" --web-dir=.indjs/static && npx cap add android`,
+      'android:build': 'npm run build && npx cap sync android',
+      'android:sync': 'npx cap sync android',
+      'android:open': 'npx cap open android',
+      'android:run': 'npx cap run android',
+      'android:dev': 'npm run build && npx cap sync android && npx cap run android',
+      'android:logs': 'adb logcat',
+      'ios:setup': `npx cap init "${name}" "com.indjs.${name.replace(/-/g, '')}" --web-dir=.indjs/static && npx cap add ios`,
+      'ios:open': 'npx cap open ios',
+      'mobile:setup': 'npm run android:setup',
+      'mobile:dev': 'npm run android:dev',
+      'mobile:build': 'npm run android:build',
+      'mobile:run': 'npm run android:run'
+    });
+  }
+
+  if (template === 'universal' || template === 'todo-app') {
+    packageJson.scripts['build:all'] = 'npm run build && npm run desktop:build:all && npm run mobile:build';
   }
 
   await fs.writeFile(
@@ -280,7 +349,7 @@ async function createConfigFiles(appPath, opts) {
 
   // Tailwind config
   if (opts?.useTailwind !== false) {
-  const tailwindConfig = `/** @type {import('tailwindcss').Config} */
+    const tailwindConfig = `/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',
@@ -292,16 +361,16 @@ module.exports = {
   plugins: [],
 }`;
 
-  await fs.writeFile(path.join(appPath, 'tailwind.config.cjs'), tailwindConfig);
+    await fs.writeFile(path.join(appPath, 'tailwind.config.cjs'), tailwindConfig);
 
-  // PostCSS config
-  const postCssConfig = `module.exports = {
+    // PostCSS config
+    const postCssConfig = `module.exports = {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
   },
 }`;
-  await fs.writeFile(path.join(appPath, 'postcss.config.cjs'), postCssConfig);
+    await fs.writeFile(path.join(appPath, 'postcss.config.cjs'), postCssConfig);
   }
 
   // Environment variables
@@ -659,6 +728,187 @@ export default function AIPlayground(){
     await fs.writeFile(path.join(appPath, 'pages', `ai.${ext}`), aiPage);
     await fs.writeFile(path.join(appPath, 'pages', 'api', 'ai', 'echo.js'), aiApi);
   }
+
+  if (template === 'todo-app') {
+    const todoPage = `import React, { useState, useEffect } from 'react';
+
+export default function TodoApp() {
+  const [todos, setTodos] = useState([]);
+  const [input, setInput] = useState('');
+  const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('todos');
+    if (saved) setTodos(JSON.parse(saved));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
+
+  const add = (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    setTodos([...todos, { id: Date.now(), text: input, done: false }]);
+    setInput('');
+  };
+
+  const toggle = (id) => setTodos(todos.map(t => t.id === id ? { ...t, done: !t.done } : t));
+  const del = (id) => setTodos(todos.filter(t => t.id !== id));
+  
+  const filtered = todos.filter(t => 
+    filter === 'active' ? !t.done : filter === 'completed' ? t.done : true
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 p-8">
+      <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">My Tasks</h1>
+        
+        <form onSubmit={add} className="flex gap-4 mb-8">
+          <input 
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            className="flex-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+            placeholder="What needs to be done?"
+          />
+          <button className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">
+            Add
+          </button>
+        </form>
+
+        <div className="flex gap-2 mb-6">
+          {['all', 'active', 'completed'].map(f => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={\`px-4 py-2 rounded-lg font-medium transition \${
+                filter === f ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:bg-gray-50'
+              }\`}
+            >
+              {f.charAt(0).toUpperCase() + f.slice(1)}
+            </button>
+          ))}
+        </div>
+
+        <div className="space-y-3">
+          {filtered.map(t => (
+            <div key={t.id} className="group flex items-center gap-4 p-4 hover:bg-gray-50 rounded-xl transition">
+              <button 
+                onClick={() => toggle(t.id)}
+                className={\`w-6 h-6 rounded-full border-2 flex items-center justify-center transition \${
+                  t.done ? 'bg-green-500 border-green-500' : 'border-gray-300'
+                }\`}
+              >
+                {t.done && <span className="text-white text-sm">✓</span>}
+              </button>
+              <span className={\`flex-1 text-lg transition \${t.done ? 'line-through text-gray-400' : 'text-gray-700'}\`}>
+                {t.text}
+              </span>
+              <button 
+                onClick={() => del(t.id)}
+                className="opacity-0 group-hover:opacity-100 text-red-500 hover:bg-red-50 p-2 rounded-lg transition"
+              >
+                🗑️
+              </button>
+            </div>
+          ))}
+          {filtered.length === 0 && (
+            <div className="text-center py-12 text-gray-400">No tasks found</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+`;
+    await fs.writeFile(path.join(appPath, 'pages', `index.${ext}`), todoPage);
+
+    // Platform lib
+    const platformLib = `export const getPlatform = () => {
+  if (typeof window === 'undefined') return 'Server';
+  if (window.Capacitor) return window.Capacitor.getPlatform();
+  if (window.process && window.process.type === 'renderer') return 'Desktop (Electron)';
+  return 'Web';
+};
+export const storage = {
+  get: async (key) => {
+    if (typeof window !== 'undefined' && window.Capacitor) {
+       const { Preferences } = await import('@capacitor/preferences');
+       const { value } = await Preferences.get({ key });
+       return value;
+    }
+    return localStorage.getItem(key);
+  },
+  set: async (key, value) => {
+    if (typeof window !== 'undefined' && window.Capacitor) {
+       const { Preferences } = await import('@capacitor/preferences');
+       return Preferences.set({ key, value });
+    }
+    return localStorage.setItem(key, value);
+  }
+};
+`;
+    await fs.writeFile(path.join(appPath, 'lib', 'platform.js'), platformLib);
+  }
+
+  if (template === 'universal') {
+    const uniPage = `import React from 'react';
+import { getPlatform } from '../lib/platform';
+
+export default function UniversalApp() {
+  const [platform, setPlatform] = React.useState('Loading...');
+
+  React.useEffect(() => {
+    setPlatform(getPlatform());
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center">
+      <div className="text-center space-y-8 p-8">
+        <h1 className="text-6xl font-bold">Universal App</h1>
+        <div className="text-2xl bg-white/20 backdrop-blur-lg rounded-2xl p-8 border border-white/30">
+          Running on: <span className="font-bold text-yellow-300">{platform}</span>
+        </div>
+        <p className="text-xl opacity-80 max-w-md mx-auto">
+          This single codebase runs on Web, iOS, Android, Windows, macOS, and Linux!
+        </p>
+      </div>
+    </div>
+  );
+}
+`;
+    await fs.writeFile(path.join(appPath, 'pages', `index.${ext}`), uniPage);
+
+    const platformLib = `export const getPlatform = () => {
+  if (typeof window === 'undefined') return 'Server';
+  if (window.Capacitor) return window.Capacitor.getPlatform(); // 'web', 'ios', 'android'
+  if (window.process && window.process.type === 'renderer') return 'Desktop (Electron)';
+  return 'Web';
+};`;
+    await fs.writeFile(path.join(appPath, 'lib', 'platform.js'), platformLib);
+  }
+
+  if (template === 'fullstack-saas') {
+    // Basic Fullstack SaaS setup
+    const saasPage = `import React from 'react';
+export default function SaaS() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-xl shadow-lg text-center max-w-md">
+        <h1 className="text-3xl font-bold mb-4">SaaS Starter</h1>
+        <p className="mb-6 text-gray-600">Complete authentication and database setup ready.</p>
+        <div className="space-x-4">
+          <button className="bg-indigo-600 text-white px-4 py-2 rounded">Login</button>
+          <button className="border border-gray-300 px-4 py-2 rounded">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+`;
+    await fs.writeFile(path.join(appPath, 'pages', `index.${ext}`), saasPage);
+  }
 }
 
 async function createAppShell(appPath, opts) {
@@ -831,13 +1081,13 @@ Sitemap: https://yoursite.com/sitemap.xml`;
     const logoJpg = path.join(assetsDir, 'indjs.jpeg');
     const logoPng = path.join(assetsDir, 'indjs2.png');
     // Copy if exists
-    try { await fs.copyFile(logoJpg, path.join(appPath, 'public', 'indjs.jpeg')); } catch {}
-    try { await fs.copyFile(logoPng, path.join(appPath, 'public', 'indjs2.png')); } catch {}
+    try { await fs.copyFile(logoJpg, path.join(appPath, 'public', 'indjs.jpeg')); } catch { }
+    try { await fs.copyFile(logoPng, path.join(appPath, 'public', 'indjs2.png')); } catch { }
 
     // Generate standard favicons from PNG if available
     try {
       const srcPng = path.join(appPath, 'public', 'indjs2.png');
-      const hasPng = await fs.stat(srcPng).then(()=>true).catch(()=>false);
+      const hasPng = await fs.stat(srcPng).then(() => true).catch(() => false);
       if (hasPng) {
         await sharp(srcPng).resize(32, 32).png().toFile(path.join(appPath, 'public', 'favicon-32x32.png'));
         await sharp(srcPng).resize(16, 16).png().toFile(path.join(appPath, 'public', 'favicon-16x16.png'));
@@ -857,8 +1107,8 @@ Sitemap: https://yoursite.com/sitemap.xml`;
         };
         await fs.writeFile(path.join(appPath, 'public', 'site.webmanifest'), JSON.stringify(manifest, null, 2));
       }
-    } catch {}
-  } catch {}
+    } catch { }
+  } catch { }
 }
 
 // Extra platform configs

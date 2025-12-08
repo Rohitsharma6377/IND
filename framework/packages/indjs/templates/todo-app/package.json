@@ -14,12 +14,16 @@
         "desktop:build:windows": "indjs build && electron-builder --win",
         "desktop:build:mac": "indjs build && electron-builder --mac",
         "desktop:build:linux": "indjs build && electron-builder --linux",
-        "mobile:add:ios": "npx cap add ios",
-        "mobile:add:android": "npx cap add android",
-        "mobile:build": "indjs build && npx cap copy",
-        "mobile:sync": "npx cap sync",
-        "mobile:ios": "npx cap open ios",
-        "mobile:android": "npx cap open android",
+        "android:setup": "npx cap init \"Todo App\" \"com.indjs.todo\" --web-dir=.indjs/static && npx cap add android",
+        "android:build": "npm run build && npx cap sync android",
+        "android:sync": "npx cap sync android",
+        "android:open": "npx cap open android",
+        "android:run": "npx cap run android",
+        "android:dev": "npm run build && npx cap sync android && npx cap run android",
+        "mobile:setup": "npm run android:setup",
+        "mobile:dev": "npm run android:dev",
+        "mobile:build": "npm run android:build",
+        "mobile:run": "npm run android:run",
         "test": "indjs test"
     },
     "dependencies": {
@@ -28,12 +32,12 @@
         "indjs": "latest",
         "@capacitor/core": "^6.0.0",
         "@capacitor/preferences": "^6.0.0",
-        "@capacitor/app": "^6.0.0"
+        "@capacitor/app": "^6.0.0",
+        "@capacitor/android": "^6.0.0",
+        "@capacitor/ios": "^6.0.0"
     },
     "devDependencies": {
         "@capacitor/cli": "^6.0.0",
-        "@capacitor/ios": "^6.0.0",
-        "@capacitor/android": "^6.0.0",
         "electron": "^28.0.0",
         "electron-builder": "^24.9.1",
         "concurrently": "^8.2.2",

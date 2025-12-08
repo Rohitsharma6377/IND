@@ -1,0 +1,21 @@
+{
+  "appId": "com.indjs.lifemanager",
+  "appName": "My Life Manager",
+  "webDir": ".indjs/static",
+  "server": {
+    "url": "http://192.168.1.100:3000",
+    "cleartext": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#9333EA",
+      "showSpinner": true,
+      "spinnerColor": "#FFFFFF"
+    },
+    "StatusBar": {
+      "style": "dark",
+      "backgroundColor": "#9333EA"
+    }
+  }
+}
