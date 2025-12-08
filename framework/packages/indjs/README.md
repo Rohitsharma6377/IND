@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![INDJS Logo](https://via.placeholder.com/200x100/4F46E5/FFFFFF?text=INDJS)
+# 🚀 INDJS
 
 **A modern, fast, and lightweight full-stack React framework with file-based routing, SSR, and built-in optimizations**
 

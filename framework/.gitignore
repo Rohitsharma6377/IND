@@ -3,8 +3,12 @@ test-app/
 test-project/
 my-new-app/
 quick-test-app/
+test-indjs-app/
 *.log
 .DS_Store
 .env
 .env.local
 .env.*.local
+*.tgz
+test-results/
+.indjs/

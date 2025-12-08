@@ -91,3 +91,19 @@ demo/
 
 # Publishing guide
 PUBLISH.md
+DEPLOY-TO-NPM.md
+development.md
+
+# Development pages (only templates should be published)
+pages/
+public/
+
+# Test artifacts
+test-indjs-app/
+test-results/
+playwright-report/
+e2e/
+
+# Build artifacts from development
+.indjs/
+*.tgz

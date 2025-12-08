@@ -1,14 +1,79 @@
 {
-  "name": "indjs-monorepo",
+  "name": "indjs-framework",
+  "version": "2.0.14",
+  "description": "A modern, blazing-fast, and feature-rich full-stack React framework that's better than Next.js",
   "private": false,
+  "type": "module",
+  "author": "INDJS Team || Rohit Sharma <netcurion@outlook.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/Rohitsharma6377/IND#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rohitsharma6377/IND.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Rohitsharma6377/IND/issues"
+  },
+  "keywords": [
+    "react",
+    "framework",
+    "ssr",
+    "ssg",
+    "full-stack",
+    "file-based-routing",
+    "nextjs-alternative",
+    "web-framework",
+    "typescript",
+    "tailwind",
+    "esbuild",
+    "vite",
+    "hot-reload",
+    "static-generation",
+    "serverless",
+    "api-routes",
+    "authentication",
+    "database",
+    "testing",
+    "deployment"
+  ],
   "workspaces": [
-    "packages/*", 
+    "packages/*",
     "apps/*"
   ],
   "scripts": {
-    "build": "npm -ws run build",
-    "dev": "npm --workspace apps/hello run dev",
-    "start": "npm --workspace apps/hello run start"
+    "dev": "npm --workspace packages/indjs run dev",
+    "build": "npm --workspace packages/indjs run build",
+    "start": "npm --workspace packages/indjs run start",
+    "test": "npm --workspace packages/indjs run test",
+    "test:watch": "npm --workspace packages/indjs run test:watch",
+    "e2e": "npm --workspace packages/indjs run e2e",
+    "lint": "eslint packages --ext .js,.jsx,.mjs,.ts,.tsx",
+    "format": "prettier --write \"packages/**/*.{js,jsx,mjs,ts,tsx,json,md}\"",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf packages/*/dist packages/*/.indjs packages/*/node_modules",
+    "prepare": "husky install || true",
+    "publish:npm": "npm --workspace packages/indjs publish",
+    "version:patch": "npm --workspace packages/indjs version patch",
+    "version:minor": "npm --workspace packages/indjs version minor",
+    "version:major": "npm --workspace packages/indjs version major"
   },
-  "version": "0.0.2"
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.3",
+    "prettier": "^3.1.0",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
 }
