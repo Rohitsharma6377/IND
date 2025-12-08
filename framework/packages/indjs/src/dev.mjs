@@ -51,7 +51,7 @@ export async function dev({ root, port }) {
   try {
     if (fsSync.existsSync(serverCacheDir)) {
       for (const f of fsSync.readdirSync(serverCacheDir)) {
-        try { fsSync.unlinkSync(path.join(serverCacheDir, f)); } catch {}
+        try { fsSync.unlinkSync(path.join(serverCacheDir, f)); } catch { }
       }
     }
     const cleanPages = (dir) => {
@@ -59,12 +59,12 @@ export async function dev({ root, port }) {
         const full = path.join(dir, name.name);
         if (name.isDirectory()) cleanPages(full);
         else if (name.name.includes('__indjs.') && name.name.endsWith('.mjs')) {
-          try { fsSync.unlinkSync(full); } catch {}
+          try { fsSync.unlinkSync(full); } catch { }
         }
       }
     };
     if (fsSync.existsSync(pagesDir)) cleanPages(pagesDir);
-  } catch {}
+  } catch { }
 
   // Static assets
   app.use(express.static(publicDir, { extensions: ['html'] }));
@@ -132,8 +132,8 @@ export async function dev({ root, port }) {
   }
 
   if (!viteServer) {
-    try { bus.emit('build-start', { type: 'client' }); } catch {}
-    await safeBuildClient({ root, pages, onSuccess: () => { try { bus.emit('build-end', { type: 'client' }); } catch {} } });
+    try { bus.emit('build-start', { type: 'client' }); } catch { }
+    await safeBuildClient({ root, pages, onSuccess: () => { try { bus.emit('build-end', { type: 'client' }); } catch { } } });
   }
   const cssWatcher = await watchCss({ root, onRebuild: () => { console.log('[indjs] css rebuilt'); bus.emit('rebuild', { type: 'css' }); } });
 
@@ -143,14 +143,14 @@ export async function dev({ root, port }) {
     const candidates = ['_middleware.ts', '_middleware.tsx', '_middleware.jsx', '_middleware.js'];
     for (const c of candidates) {
       const f = path.join(root, 'pages', c);
-      try { await fs.access(f); middleware = await loadModule(f); return; } catch {}
+      try { await fs.access(f); middleware = await loadModule(f); return; } catch { }
     }
     middleware = null;
   }
   await loadMiddleware();
 
   app.use(async (req, res, next) => {
-    try { await applyHook(plugins, 'onRequest', { req, res, root }); } catch {}
+    try { await applyHook(plugins, 'onRequest', { req, res, root }); } catch { }
     if (!middleware?.default) return next();
     try {
       const result = await middleware.default({ req, res, root });
@@ -203,7 +203,7 @@ export async function dev({ root, port }) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       if (typeof rendered === 'function') return rendered(res);
       res.end(rendered);
-      try { await applyHook(plugins, 'onResponse', { req, res }); } catch {}
+      try { await applyHook(plugins, 'onResponse', { req, res }); } catch { }
     } catch (e) { bus.emit('error', e); next(e); }
   });
 
@@ -248,30 +248,30 @@ export async function dev({ root, port }) {
         };
       }
       if (suggestion) bus.emit('suggestion', suggestion);
-    } catch {}
+    } catch { }
     if (res.headersSent) return next(err);
     res.status(500).send('Internal Server Error');
   });
 
-  function parseErrorLocation(e){
+  function parseErrorLocation(e) {
     try {
       const s = String(e && e.stack || '');
       // Match C:\path\file.tsx:82:1 or /path/file.tsx:82:1
       const m = s.match(/\(?([A-Za-z]:\\[^):]+|\/[^):]+):(\d+):(\d+)\)?/);
-      if (m) return { file: m[1].replace(/\\/g,'/'), line: parseInt(m[2],10), column: parseInt(m[3],10) };
+      if (m) return { file: m[1].replace(/\\/g, '/'), line: parseInt(m[2], 10), column: parseInt(m[3], 10) };
       return null;
     } catch { return null; }
   }
 
-  function makeCodeFrame(file, line, column, pad=3){
+  function makeCodeFrame(file, line, column, pad = 3) {
     try {
       if (!file || !fsSync.existsSync(file)) return null;
       const txt = fsSync.readFileSync(file, 'utf8').split(/\r?\n/);
-      const start = Math.max(1, (line||1) - pad);
-      const end = Math.min(txt.length, (line||1) + pad);
+      const start = Math.max(1, (line || 1) - pad);
+      const end = Math.min(txt.length, (line || 1) + pad);
       const lines = [];
-      for (let i=start;i<=end;i++){
-        lines.push({ n: i, code: txt[i-1], highlight: i === line, column: i===line ? (column||0) : 0 });
+      for (let i = start; i <= end; i++) {
+        lines.push({ n: i, code: txt[i - 1], highlight: i === line, column: i === line ? (column || 0) : 0 });
       }
       return { file, line, column, lines };
     } catch { return null; }
@@ -299,7 +299,21 @@ export async function dev({ root, port }) {
     }
   }
   if (!server) throw new Error('Failed to bind any port');
-  console.log(`[indjs] dev server running at http://localhost:${listenPort}`);
+
+  const os = await import('os');
+  function getLocalIP() {
+    const interfaces = os.networkInterfaces();
+    for (const name of Object.keys(interfaces)) {
+      for (const iface of interfaces[name]) {
+        if (iface.family === 'IPv4' && !iface.internal) return iface.address;
+      }
+    }
+    return 'localhost';
+  }
+  const ip = getLocalIP();
+  console.log(chalk.green(`\n🚀 INDJS Dev Server Running!`));
+  console.log(`   ${chalk.bold('Local:')}   http://localhost:${listenPort}`);
+  console.log(`   ${chalk.bold('Network:')} http://${ip}:${listenPort}\n`);
 
   // Watch pages for changes and hot-reload routes list (basic)
   const watcher = chokidar.watch(pagesDir, { ignoreInitial: true });
@@ -307,20 +321,22 @@ export async function dev({ root, port }) {
   watcher.on('all', async () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(async () => {
-      try { bus.emit('build-start', { type: 'client' }); } catch {}
+      try { bus.emit('build-start', { type: 'client' }); } catch { }
       ({ pages, api } = await discoverRoutes(root));
       if (!viteServer) {
-        await safeBuildClient({ root, pages, onSuccess: async () => {
-          await loadMiddleware();
-          console.log('[indjs] routes updated and client rebuilt');
-          bus.emit('rebuild', { type: 'routes' });
-          try { bus.emit('build-end', { type: 'client' }); } catch {}
-        } });
+        await safeBuildClient({
+          root, pages, onSuccess: async () => {
+            await loadMiddleware();
+            console.log('[indjs] routes updated and client rebuilt');
+            bus.emit('rebuild', { type: 'routes' });
+            try { bus.emit('build-end', { type: 'client' }); } catch { }
+          }
+        });
       } else {
         await loadMiddleware();
         console.log('[indjs] routes updated');
         bus.emit('rebuild', { type: 'routes' });
-        try { bus.emit('build-end', { type: 'client' }); } catch {}
+        try { bus.emit('build-end', { type: 'client' }); } catch { }
       }
     }, 100);
   });
@@ -340,7 +356,7 @@ export async function dev({ root, port }) {
           payload.column = loc.column || null;
         }
         bus.emit('error', payload);
-      } catch {}
+      } catch { }
       console.error('[indjs] client build error:', e?.message || e);
     }
   }

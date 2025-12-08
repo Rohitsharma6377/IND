@@ -16,3 +16,7 @@ export { default as dynamic } from './dynamic.mjs';
 
 // Router hooks/utilities
 export { useRouter, Router } from './router.mjs';
+
+// Platform detection
+export * as Platform from './platform.mjs';
+export { isWeb, isDesktop, isMobile, isAndroid, isIOS, platform } from './platform.mjs';

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-import('../src/cli.mjs').then(m => m.run()).catch(err => {
+import { run } from '../src/cli.mjs';
+
+run().catch(err => {
   console.error(err);
   process.exit(1);
 });

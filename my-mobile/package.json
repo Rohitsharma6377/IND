@@ -8,7 +8,7 @@
     "build": "indjs build",
     "start": "indjs start",
     "test": "indjs test",
-    "android:setup": "npx cap init \"My Life Manager\" \"com.indjs.lifemanager\" --web-dir=.indjs/static && npx cap add android",
+    "android:setup": "node scripts/setup-android.js",
     "android:build": "npm run build && npx cap sync android",
     "android:sync": "npx cap sync android",
     "android:open": "npx cap open android",
@@ -21,12 +21,12 @@
     "mobile:run": "npm run android:run"
   },
   "dependencies": {
-    "@capacitor/android": "^7.4.4",
-    "@capacitor/app": "^7.1.0",
-    "@capacitor/cli": "^7.4.4",
-    "@capacitor/core": "^7.4.4",
-    "@capacitor/ios": "^7.4.4",
-    "@capacitor/preferences": "^7.0.2",
+    "@capacitor/android": "^6.2.1",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/ios": "^6.0.0",
+    "@capacitor/preferences": "^6.0.0",
     "indjs": "^1.0.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

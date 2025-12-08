@@ -9,8 +9,30 @@ import chalk from 'chalk';
 import { Command } from 'commander';
 import { spawn } from 'child_process';
 import http from 'http';
+import os from 'os';
+import fs from 'fs/promises';
 
 const program = new Command();
+
+async function loadPackageJson(root) {
+  try {
+    const { default: path } = await import('path');
+    const content = await fs.readFile(path.join(root, 'package.json'), 'utf8');
+    return JSON.parse(content);
+  } catch { return {}; }
+}
+
+function getLocalIP() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return 'localhost';
+}
 
 function parseArgs(argv) {
   const args = { _: [] };
@@ -45,7 +67,7 @@ function showHelp() {
   console.log('  deploy    Deploy application to various platforms');
   console.log('  test      Run tests');
   console.log('  desktop   Desktop helpers (Electron): dev, start');
-  console.log('  mobile    Mobile helpers (Capacitor): build, sync, android, ios');
+  console.log('  mobile    Mobile helpers (Capacitor): dev, build, sync, android, ios');
   console.log('  ai        AI helpers: scaffold, docs, refactor');
   console.log('  help      Show this help message\n');
   console.log('Options:');
@@ -88,14 +110,13 @@ async function tryOllama(prompt) {
         res.on('end', () => {
           try {
             const j = JSON.parse(data);
-            // Ollama returns { response: string, done: boolean, ... }
             if (j && typeof j.response === 'string') return resolve(j.response);
-          } catch {}
+          } catch { }
           return resolve(null);
         });
       });
       req.on('error', () => resolve(null));
-      req.on('timeout', () => { try { req.destroy(); } catch {}; resolve(null); });
+      req.on('timeout', () => { try { req.destroy(); } catch { }; resolve(null); });
       req.write(payload);
       req.end();
     });
@@ -134,15 +155,15 @@ export async function run() {
       case 'dev':
         console.log(chalk.blue('🚀 Starting development server...'));
         return dev({ root, port });
-      
+
       case 'start':
         console.log(chalk.green('🌟 Starting production server...'));
         return start({ root, port });
-      
+
       case 'build':
         console.log(chalk.yellow('🔨 Building application...'));
         return build({ root, baseUrl, webDir });
-      
+
       case 'create':
         const appName = args._[1];
         if (!appName) {
@@ -151,7 +172,7 @@ export async function run() {
           process.exit(1);
         }
         return create({ name: appName, template: args.template });
-      
+
       case 'generate':
       case 'g':
         const type = args._[1];
@@ -163,29 +184,123 @@ export async function run() {
           process.exit(1);
         }
         return generate({ type, name, root, noPrompt: !!(args.noPrompt || args.quick) });
-      
+
       case 'deploy':
         const platform = args._[1] || 'vercel';
         return deploy({ platform, root });
-      
+
       case 'test':
         return test({ root, watch: args.watch });
-      
+
       case 'desktop': {
         const sub = args._[1] || 'dev';
         const dport = parseInt(args.port || process.env.PORT || '3005', 10);
-        if (!['dev','start'].includes(sub)) {
+
+        // Try to use project script first
+        const pkg = await loadPackageJson(root);
+        const scriptName = `desktop:${sub}`;
+        if (pkg?.scripts?.[scriptName]) {
+          console.log(chalk.blue(`📌 Running npm run ${scriptName}...`));
+          return runShell(`npm run ${scriptName}`, { cwd: root });
+        }
+
+        if (!['dev', 'start'].includes(sub)) {
           console.error(chalk.red('❌ Usage: indjs desktop <dev|start> [--port <number>]'));
           process.exit(1);
         }
         const cmdStr = sub === 'dev'
-          ? `npx cross-env PORT=${dport} concurrently "indjs dev --port %PORT%" "wait-on http://localhost:%PORT% && electron ."`
-          : `npx cross-env PORT=${dport} concurrently "indjs start --port %PORT%" "electron ."`;
+          ? `npx cross-env PORT=${dport} concurrently -k "indjs dev --port %PORT%" "wait-on http://localhost:%PORT% && electron ."`
+          : `npx cross-env PORT=${dport} concurrently -k "indjs start --port %PORT%" "electron ."`;
         return runShell(cmdStr, { cwd: root });
       }
 
       case 'mobile': {
-        const sub = args._[1] || 'build';
+        const sub = args._[1] || 'dev';
+
+        // Try to use project script first
+        const pkg = await loadPackageJson(root);
+        // Map generic mobile commands to specific scripts if they exist
+        const scriptMap = {
+          'android': 'android:open',
+          'ios': 'ios:open',
+          'sync': 'mobile:sync',
+          'build': 'mobile:build',
+          'run': 'mobile:run',
+          'dev': 'mobile:dev'
+        };
+
+        // If user runs "mobile dev", we provide the "Metro-like" experience
+        if (sub === 'dev') {
+          console.log(chalk.blue('📱 Starting Mobile Dev Environment...'));
+
+          // 1. Detect LAN IP
+          const ip = getLocalIP();
+          const host = ip === 'localhost' ? '127.0.0.1' : ip;
+          const port = args.port || process.env.PORT || '3000';
+          const url = `http://${host}:${port}`;
+
+          console.log(chalk.cyan(`   → Dev Server: ${url}`));
+
+          // 2. Update capacitor.config.json temporarily
+          const { default: path } = await import('path');
+          const capConfigPath = path.join(root, 'capacitor.config.json');
+
+          try {
+            const capContent = await fs.readFile(capConfigPath, 'utf8');
+            const capConfig = JSON.parse(capContent);
+
+            // Allow user to skip config update if they know what they are doing
+            if (!args.noConfig) {
+              console.log(chalk.yellow('   → Updating capacitor.config.json server url...'));
+              capConfig.server = { ...capConfig.server, url: url, cleartext: true };
+              await fs.writeFile(capConfigPath, JSON.stringify(capConfig, null, 2));
+
+              // 3. Sync config to native
+              console.log(chalk.yellow('   → Syncing config to Android/iOS...'));
+              await runShell('npx cap copy', { cwd: root });
+            }
+          } catch (e) {
+            console.warn('   ⚠️ Could not automatically update capacitor config:', e.message);
+          }
+
+          // 4. Run Dev Server + Native Run
+          const target = args._[2] || 'android'; // default to android
+
+          console.log(chalk.green(`🚀 Launching ${target} app and Dev Server...`));
+
+          // Use current CLI script path for recursive call
+          const indjsBin = process.argv[1];
+
+          // Spawn Dev Server
+          const server = spawn(process.execPath, [indjsBin, 'dev', '--port', port], { stdio: 'inherit' });
+
+          // Spawn Native Run (Capacitor)
+          // We wait a bit for server to likely be up, or just let it race.
+          // Native app will just show error until reloaded if server is slow.
+          setTimeout(() => {
+            const native = spawn('npx', ['cap', 'run', target], { stdio: 'inherit', shell: true });
+
+            native.on('exit', (code) => {
+              if (code !== 0) console.error(`Native run exited with code ${code}`);
+              // Optional: kill server if native run exits? No, maybe user wants to keep server.
+            });
+          }, 3000); // 3s delay to give server a head start
+
+          // Handle process exit to kill children
+          process.on('SIGINT', () => {
+            server.kill();
+            process.exit();
+          });
+
+          return new Promise(() => { }); // Keep alive forever until Ctrl+C
+        }
+
+        const scriptName = scriptMap[sub] || `mobile:${sub}`;
+        if (pkg?.scripts?.[scriptName]) {
+          console.log(chalk.blue(`📌 Running npm run ${scriptName}...`));
+          return runShell(`npm run ${scriptName}`, { cwd: root });
+        }
+
         const map = {
           build: 'npx indjs build && npx cap copy',
           sync: 'npx cap sync',
@@ -194,12 +309,12 @@ export async function run() {
         };
         const cmdStr = map[sub];
         if (!cmdStr) {
-          console.error(chalk.red('❌ Usage: indjs mobile <build|sync|android|ios>'));
+          console.error(chalk.red('❌ Usage: indjs mobile <dev|build|sync|android|ios>'));
           process.exit(1);
         }
         return runShell(cmdStr, { cwd: root });
       }
-      
+
       case 'ai': {
         const sub = args._[1];
         if (!sub) {
@@ -250,7 +365,7 @@ export async function run() {
         console.error(chalk.red('❌ Unknown ai subcommand. Use: scaffold, docs, refactor'));
         process.exit(1);
       }
-      
+
       default:
         console.error(chalk.red(`❌ Unknown command: ${cmd}`));
         showHelp();

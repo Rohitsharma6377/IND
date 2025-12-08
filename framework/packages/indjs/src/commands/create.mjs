@@ -98,35 +98,74 @@ export async function create({ name, template, root, language, state, useTailwin
     await createPublicAssets(appPath);
 
     if (template === 'desktop-electron' || template === 'universal' || template === 'todo-app') {
-      const mainCjs = `const { app, BrowserWindow, Menu, Tray, nativeImage, ipcMain, shell } = require('electron');
+      // Robust Electron Setup
+      const mainCjs = `const { app, BrowserWindow, screen } = require('electron');
+const serve = require('electron-serve');
 const path = require('path');
+
 const isDev = !app.isPackaged;
+const loadURL = serve({ directory: '.indjs/static' });
+
+let mainWindow;
 
 function createWindow() {
-  const win = new BrowserWindow({
-    width: 1200,
-    height: 800,
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+  mainWindow = new BrowserWindow({
+    width: Math.min(1280, width),
+    height: Math.min(800, height),
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-      preload: path.join(__dirname, 'preload.js')
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.cjs')
     }
   });
 
-  const startUrl = isDev 
-    ? 'http://localhost:3000' 
-    : \`file://\${path.join(__dirname, '../.indjs/static/index.html')}\`;
-
-  win.loadURL(startUrl);
-  if (isDev) win.webContents.openDevTools();
+  if (isDev) {
+    mainWindow.loadURL('http://localhost:3000');
+    mainWindow.webContents.openDevTools();
+  } else {
+    loadURL(mainWindow);
+  }
+  
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
 }
 
 app.whenReady().then(createWindow);
-app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('activate', () => {
+  if (mainWindow === null) createWindow();
+});
+`;
+
+      const preloadCjs = `const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('electron', {
+  send: (channel, data) => {
+    // whitelist channels
+    let validChannels = ['toMain'];
+    if (validChannels.includes(channel)) {
+      ipcRenderer.send(channel, data);
+    }
+  },
+  receive: (channel, func) => {
+    let validChannels = ['fromMain'];
+    if (validChannels.includes(channel)) {
+      // Deliberately strip event as it includes sender 
+      ipcRenderer.on(channel, (event, ...args) => func(...args));
+    }
+  }
+});
 `;
       // Ensure directory exists
       await fs.mkdir(path.join(appPath, 'electron'), { recursive: true });
-      await fs.writeFile(path.join(appPath, template === 'desktop-electron' ? 'main.cjs' : 'electron/main.cjs'), mainCjs);
+      await fs.writeFile(path.join(appPath, 'electron', 'main.cjs'), mainCjs);
+      await fs.writeFile(path.join(appPath, 'electron', 'preload.cjs'), preloadCjs);
     }
 
     if (template === 'mobile-capacitor' || template === 'universal' || template === 'todo-app') {
@@ -146,6 +185,93 @@ app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(
     process.exit(1);
   }
 }
+
+async function createMobileConfigs(appPath, opts) {
+  // Capacitor config
+  const appId = `com.indjs.${path.basename(appPath).toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+  const appName = path.basename(appPath);
+
+  const capConfig = {
+    appId: appId,
+    appName: appName,
+    webDir: '.indjs/static',
+    server: {
+      androidScheme: 'https'
+    }
+  };
+
+  await fs.writeFile(
+    path.join(appPath, 'capacitor.config.json'),
+    JSON.stringify(capConfig, null, 2)
+  );
+
+  // Setup scripts for android
+  const scriptsDir = path.join(appPath, 'scripts');
+  await fs.mkdir(scriptsDir, { recursive: true });
+
+  // Robust setup-android.js script
+  const setupAndroid = `const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+
+console.log('🤖 Setting up Android environment...');
+
+try {
+  // 1. Initialize capacitor if not done (usually done by create-indjs, but safe to retry)
+  // We assume 'npx cap init' was run or config exists.
+  
+  // 2. Add android platform if missing
+  if (!fs.existsSync(path.join(__dirname, '../android'))) {
+    console.log('📦 Adding Android platform...');
+    execSync('npx cap add android', { stdio: 'inherit', cwd: path.join(__dirname, '..') });
+  }
+
+  // 3. Patch build.gradle for Java 17
+  const buildGradlePath = path.join(__dirname, '../android/app/build.gradle');
+  if (fs.existsSync(buildGradlePath)) {
+    console.log('🔧 Patching build.gradle for Java 17...');
+    let content = fs.readFileSync(buildGradlePath, 'utf8');
+    
+    if (!content.includes('sourceCompatibility JavaVersion.VERSION_17')) {
+      content = content.replace(
+        /sourceCompatibility JavaVersion.VERSION_1_8/g,
+        'sourceCompatibility JavaVersion.VERSION_17'
+      ).replace(
+        /targetCompatibility JavaVersion.VERSION_1_8/g,
+        'targetCompatibility JavaVersion.VERSION_17'
+      );
+      
+      // If it wasn't valid 1_8, try to find the block and force it
+      if (!content.includes('JavaVersion.VERSION_17')) {
+         // Fallback replacement if 1_8 regex didn't match
+         content = content.replace(/compileOptions \\{([\\s\\S]*?)\\}/, 
+           'compileOptions {\\n        sourceCompatibility JavaVersion.VERSION_17\\n        targetCompatibility JavaVersion.VERSION_17\\n    }');
+      }
+      
+      fs.writeFileSync(buildGradlePath, content, 'utf8');
+      console.log('✅ build.gradle patched.');
+    } else {
+      console.log('✨ build.gradle already uses Java 17');
+    }
+  }
+
+  // 4. Update variables.gradle to ensure compatibility
+  const varGradlePath = path.join(__dirname, '../android/variables.gradle');
+  if (fs.existsSync(varGradlePath)) {
+     // Ensure minSdk is high enough if needed, currently 22 is default in Cap 5/6
+  }
+
+  console.log('✅ Android setup complete! Run "npm run android:dev" to start.');
+
+} catch (e) {
+  console.error('❌ Android setup failed:', e.message);
+  process.exit(1);
+}
+`;
+
+  await fs.writeFile(path.join(scriptsDir, 'setup-android.cjs'), setupAndroid);
+}
+
 
 async function createDirectoryStructure(appPath, template) {
   const dirs = [
@@ -239,7 +365,7 @@ async function createPackageJson(appPath, name, opts, template) {
   const isMobile = template === 'mobile-capacitor' || template === 'universal' || template === 'todo-app';
   const isDesktop = template === 'desktop-electron' || template === 'universal' || template === 'todo-app';
 
-  if (isDesktop && template !== 'desktop-electron') { // desktop-electron already handled above, mostly
+  if (isDesktop && template !== 'desktop-electron') {
     packageJson.main = 'electron/main.cjs';
     packageJson.devDependencies = {
       ...packageJson.devDependencies,
@@ -249,13 +375,17 @@ async function createPackageJson(appPath, name, opts, template) {
       'wait-on': '^7.2.0',
       'cross-env': '^7.0.3'
     };
+    packageJson.dependencies = {
+      ...packageJson.dependencies,
+      'electron-serve': '^1.3.0'
+    };
 
     // Add desktop scripts
     Object.assign(packageJson.scripts, {
-      'desktop:dev': 'concurrently "indjs dev" "wait-on http://localhost:3000 && electron ."',
+      'desktop:dev': 'concurrently -k "indjs dev" "wait-on http://localhost:3000 && electron ."',
       'desktop:build': 'indjs build && electron-builder',
       'desktop:build:all': 'indjs build && electron-builder -mwl',
-      'desktop:build:windows': 'indjs build && electron-builder --win',
+      'desktop:build:win': 'indjs build && electron-builder --win',
       'desktop:build:mac': 'indjs build && electron-builder --mac',
       'desktop:build:linux': 'indjs build && electron-builder --linux',
     });
@@ -264,8 +394,12 @@ async function createPackageJson(appPath, name, opts, template) {
     packageJson.build = {
       appId: `com.indjs.${name.replace(/-/g, '')}`,
       productName: name,
-      directories: { output: 'dist' },
-      files: ['.indjs/static/**/*', 'electron/**/*', 'package.json'],
+      directories: { output: 'dist/electron' },
+      files: [
+        '.indjs/static/**/*',
+        'electron/**/*',
+        'package.json'
+      ],
       win: { target: ['nsis'], icon: 'assets/icon.ico' },
       mac: { target: ['dmg'], icon: 'assets/icon.icns' },
       linux: { target: ['AppImage', 'deb'], icon: 'assets/icon.png' }
@@ -287,7 +421,7 @@ async function createPackageJson(appPath, name, opts, template) {
     };
 
     Object.assign(packageJson.scripts, {
-      'android:setup': `npx cap init "${name}" "com.indjs.${name.replace(/-/g, '')}" --web-dir=.indjs/static && npx cap add android`,
+      'android:setup': 'node scripts/setup-android.cjs',
       'android:build': 'npm run build && npx cap sync android',
       'android:sync': 'npx cap sync android',
       'android:open': 'npx cap open android',
@@ -542,7 +676,7 @@ export default function Layout({ children }) {
 export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   useEffect(() => {
-    fetch('/api/users').then(r=>r.json()).then(j=>setUsers(j.users||[])).catch(()=>{});
+    fetch('/api/users').then(r => r.json()).then(j => setUsers(j.users || [])).catch(() => { });
   }, []);
   return (
     <div className="min-h-screen bg-gray-50">
@@ -574,11 +708,11 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((u)=> (
+                {users.map((u) => (
                   <tr key={String(u.id)} className="border-t">
-                    <td className="py-2 pr-4">{'${'}u.name{'}'}</td>
-                    <td className="py-2 pr-4">{'${'}u.email{'}'}</td>
-                    <td className="py-2">{'${'}u.role{'}'}</td>
+                    <td className="py-2 pr-4">{u.name}</td>
+                    <td className="py-2 pr-4">{u.email}</td>
+                    <td className="py-2">{u.role}</td>
                   </tr>
                 ))}
               </tbody>
@@ -612,35 +746,76 @@ export default function Products() {
   ];
   const [cart, setCart] = useState([]);
   useEffect(() => {
-    try { const saved = JSON.parse(localStorage.getItem('cart') || '[]'); setCart(saved); } catch {}
+    try { const saved = JSON.parse(localStorage.getItem('cart') || '[]'); setCart(saved); } catch { }
   }, []);
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
-  function addToCart(item){
+  function addToCart(item) {
     setCart(prev => [...prev, { ...item, qty: 1 }]);
   }
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-16">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Products</h1>
-        <a href="/cart" className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">View Cart ({'${'}cart.length{'}'})</a>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold">Products</h1>
+          <a href="/cart" className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">View Cart ({cart.length})</a>
+        </div>
+        <ul className="space-y-2">
+          {items.map(i => (
+            <li key={i.id} className="flex items-center justify-between">
+              <div>
+                <a className="text-indigo-600" href={'/product/' + i.id}>{i.name}</a>
+                <span className="ml-2 text-gray-600">\${i.price.toFixed(2)}</span>
+              </div>
+              <button className="btn btn-primary" onClick={() => addToCart(i)}>Add to cart</button>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-8 border rounded-lg p-4 bg-white shadow-sm">
+          <h2 className="font-semibold mb-2">Cart ({cart.length})</h2>
+          {cart.length === 0 ? (
+            <p className="text-gray-600">Your cart is empty.</p>
+          ) : (
+            <>
+              <ul className="space-y-1">
+                {cart.map((c, idx) => (
+                  <li key={idx} className="flex justify-between">
+                    <span>{c.name}</span>
+                    <span>\${c.price.toFixed(2)}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-2 font-semibold">Total: \${total.toFixed(2)}</div>
+            </>
+          )}
+        </div>
       </div>
-      <ul className="space-y-2">
-        {items.map(i => (
-          <li key={i.id} className="flex items-center justify-between">
-            <div>
-              <a className="text-indigo-600" href={'/product/' + i.id}>{i.name}</a>
-              <span className="ml-2 text-gray-600">${'{'}i.price.toFixed(2){'}'}</span>
-            </div>
-            <button className="btn btn-primary" onClick={() => addToCart(i)}>Add to cart</button>
-          </li>
-        ))}
-      </ul>
-      <div className="mt-8 border rounded-lg p-4 bg-white shadow-sm">
-        <h2 className="font-semibold mb-2">Cart ({'${'}cart.length{'}'})</h2>
+    </div>
+  );
+}`;
+    const productDynamic = `export default function Product({params}) {
+  return (
+      <div className="container mx-auto px-4 py-16">
+        Product ID: {params?.id}
+      </div>
+      );
+}`;
+    await fs.writeFile(path.join(appPath, 'pages', `products.${ext}`), productsPage);
+    await fs.writeFile(path.join(appPath, 'pages', 'product', `[id].${ext}`), productDynamic);
+    // Cart page reading from localStorage
+    const cartPage = `import React, {useEffect, useState} from 'react';
+
+      export default function Cart(){
+  const [cart, setCart] = useState([]);
+  useEffect(() => {
+    try { const saved = JSON.parse(localStorage.getItem('cart') || '[]'); setCart(saved); } catch { }
+  }, []);
+  const total = cart.reduce((s, i) => s + i.price * (i.qty||1), 0);
+      return (
+      <div className="container mx-auto px-4 py-16">
+        <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
         {cart.length === 0 ? (
           <p className="text-gray-600">Your cart is empty.</p>
         ) : (
@@ -648,146 +823,106 @@ export default function Products() {
             <ul className="space-y-1">
               {cart.map((c, idx) => (
                 <li key={idx} className="flex justify-between">
-                  <span>{'${'}c.name{'}'}</span>
-                  <span>${'${'}c.price.toFixed(2){'}'}</span>
+                  <span>{c.name}</span>
+                  <span>\${(c.price * (c.qty||1)).toFixed(2)}</span>
                 </li>
               ))}
             </ul>
-            <div className="mt-2 font-semibold">Total: ${'${'}total.toFixed(2){'}'}</div>
+            <div className="mt-2 font-semibold">Total: \${total.toFixed(2)}</div>
           </>
         )}
       </div>
-    </div>
-  );
-}`;
-    const productDynamic = `export default function Product({ params }) {
-  return (
-    <div className="container mx-auto px-4 py-16">
-      Product ID: {params?.id}
-    </div>
-  );
-}`;
-    await fs.writeFile(path.join(appPath, 'pages', `products.${ext}`), productsPage);
-    await fs.writeFile(path.join(appPath, 'pages', 'product', `[id].${ext}`), productDynamic);
-    // Cart page reading from localStorage
-    const cartPage = `import React, { useEffect, useState } from 'react';
-
-export default function Cart(){
-  const [cart, setCart] = useState([]);
-  useEffect(() => {
-    try { const saved = JSON.parse(localStorage.getItem('cart') || '[]'); setCart(saved); } catch {}
-  }, []);
-  const total = cart.reduce((s, i) => s + i.price * (i.qty||1), 0);
-  return (
-    <div className="container mx-auto px-4 py-16">
-      <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
-      {cart.length === 0 ? (
-        <p className="text-gray-600">Your cart is empty.</p>
-      ) : (
-        <>
-          <ul className="space-y-1">
-            {cart.map((c, idx) => (
-              <li key={idx} className="flex justify-between">
-                <span>{'${'}c.name{'}'}</span>
-                <span>${'${'}(c.price * (c.qty||1)).toFixed(2){'}'}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-2 font-semibold">Total: ${'${'}total.toFixed(2){'}'}</div>
-        </>
-      )}
-    </div>
-  );
+      );
 }`;
     await fs.writeFile(path.join(appPath, 'pages', `cart.${ext}`), cartPage);
   }
 
   if (template === 'ai-app') {
-    const aiPage = `import React, { useState } from 'react';
+    const aiPage = `import React, {useState} from 'react';
 
-export default function AIPlayground(){
+      export default function AIPlayground(){
   const [text, setText] = useState('');
-  const [out, setOut] = useState('');
-  async function suggest(){
-    const res = await fetch('/__indjs/ai/suggest', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text }) });
-    const j = await res.json(); setOut(JSON.stringify(j, null, 2));
+      const [out, setOut] = useState('');
+      async function suggest(){
+    const res = await fetch('/__indjs/ai/suggest', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({text}) });
+      const j = await res.json(); setOut(JSON.stringify(j, null, 2));
   }
-  return (
-    <div className="container mx-auto px-4 py-16">
-      <h1 className="text-3xl font-bold mb-6">AI Playground</h1>
-      <textarea className="w-full border rounded p-2" rows={6} value={text} onChange={e=>setText(e.target.value)} />
-      <div className="mt-4 flex gap-2">
-        <button className="btn btn-primary" onClick={suggest}>Suggest</button>
+      return (
+      <div className="container mx-auto px-4 py-16">
+        <h1 className="text-3xl font-bold mb-6">AI Playground</h1>
+        <textarea className="w-full border rounded p-2" rows={6} value={text} onChange={e => setText(e.target.value)} />
+        <div className="mt-4 flex gap-2">
+          <button className="btn btn-primary" onClick={suggest}>Suggest</button>
+        </div>
+        <pre className="mt-4 bg-gray-100 p-3 rounded">{out}</pre>
       </div>
-      <pre className="mt-4 bg-gray-100 p-3 rounded">{out}</pre>
-    </div>
-  );
+      );
 }`;
-    const aiApi = `export async function post({ body }) { return { ok: true, echo: body||{} }; }`;
+    const aiApi = `export async function post({body}) { return {ok: true, echo: body||{ } }; }`;
     await fs.mkdir(path.join(appPath, 'pages', 'api', 'ai'), { recursive: true });
     await fs.writeFile(path.join(appPath, 'pages', `ai.${ext}`), aiPage);
     await fs.writeFile(path.join(appPath, 'pages', 'api', 'ai', 'echo.js'), aiApi);
   }
 
   if (template === 'todo-app') {
-    const todoPage = `import React, { useState, useEffect } from 'react';
+    const todoPage = `import React, {useState, useEffect} from 'react';
 
-export default function TodoApp() {
+      export default function TodoApp() {
   const [todos, setTodos] = useState([]);
-  const [input, setInput] = useState('');
-  const [filter, setFilter] = useState('all');
+      const [input, setInput] = useState('');
+      const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     const saved = localStorage.getItem('todos');
-    if (saved) setTodos(JSON.parse(saved));
+      if (saved) setTodos(JSON.parse(saved));
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos));
+        localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
 
   const add = (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-    setTodos([...todos, { id: Date.now(), text: input, done: false }]);
-    setInput('');
+        e.preventDefault();
+      if (!input.trim()) return;
+      setTodos([...todos, {id: Date.now(), text: input, done: false }]);
+      setInput('');
   };
 
-  const toggle = (id) => setTodos(todos.map(t => t.id === id ? { ...t, done: !t.done } : t));
+  const toggle = (id) => setTodos(todos.map(t => t.id === id ? {...t, done: !t.done } : t));
   const del = (id) => setTodos(todos.filter(t => t.id !== id));
   
-  const filtered = todos.filter(t => 
-    filter === 'active' ? !t.done : filter === 'completed' ? t.done : true
-  );
+  const filtered = todos.filter(t =>
+      filter === 'active' ? !t.done : filter === 'completed' ? t.done : true
+      );
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 p-8">
-      <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">My Tasks</h1>
-        
-        <form onSubmit={add} className="flex gap-4 mb-8">
-          <input 
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            className="flex-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
-            placeholder="What needs to be done?"
-          />
-          <button className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">
-            Add
-          </button>
-        </form>
+      return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 p-8">
+        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-8">My Tasks</h1>
 
-        <div className="flex gap-2 mb-6">
-          {['all', 'active', 'completed'].map(f => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={\`px-4 py-2 rounded-lg font-medium transition \${
-                filter === f ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:bg-gray-50'
-              }\`}
-            >
-              {f.charAt(0).toUpperCase() + f.slice(1)}
+          <form onSubmit={add} className="flex gap-4 mb-8">
+            <input
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              className="flex-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+              placeholder="What needs to be done?"
+            />
+            <button className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">
+              Add
             </button>
+          </form>
+
+          <div className="flex gap-2 mb-6">
+            {['all', 'active', 'completed'].map(f => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={\`px-4 py-2 rounded-lg font-medium transition \${
+              filter === f ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:bg-gray-50'
+            }\`}
+            >
+            {f.charAt(0).toUpperCase() + f.slice(1)}
+          </button>
           ))}
         </div>
 
@@ -803,22 +938,22 @@ export default function TodoApp() {
                 {t.done && <span className="text-white text-sm">✓</span>}
               </button>
               <span className={\`flex-1 text-lg transition \${t.done ? 'line-through text-gray-400' : 'text-gray-700'}\`}>
-                {t.text}
-              </span>
-              <button 
-                onClick={() => del(t.id)}
-                className="opacity-0 group-hover:opacity-100 text-red-500 hover:bg-red-50 p-2 rounded-lg transition"
-              >
-                🗑️
-              </button>
-            </div>
-          ))}
-          {filtered.length === 0 && (
-            <div className="text-center py-12 text-gray-400">No tasks found</div>
-          )}
-        </div>
+          {t.text}
+        </span>
+        <button
+          onClick={() => del(t.id)}
+          className="opacity-0 group-hover:opacity-100 text-red-500 hover:bg-red-50 p-2 rounded-lg transition"
+        >
+          🗑️
+        </button>
       </div>
+          ))}
+      {filtered.length === 0 && (
+        <div className="text-center py-12 text-gray-400">No tasks found</div>
+      )}
     </div>
+      </div >
+    </div >
   );
 }
 `;
@@ -834,16 +969,16 @@ export default function TodoApp() {
 export const storage = {
   get: async (key) => {
     if (typeof window !== 'undefined' && window.Capacitor) {
-       const { Preferences } = await import('@capacitor/preferences');
-       const { value } = await Preferences.get({ key });
-       return value;
+      const { Preferences } = await import('@capacitor/preferences');
+      const { value } = await Preferences.get({ key });
+      return value;
     }
     return localStorage.getItem(key);
   },
   set: async (key, value) => {
     if (typeof window !== 'undefined' && window.Capacitor) {
-       const { Preferences } = await import('@capacitor/preferences');
-       return Preferences.set({ key, value });
+      const { Preferences } = await import('@capacitor/preferences');
+      return Preferences.set({ key, value });
     }
     return localStorage.setItem(key, value);
   }
@@ -885,7 +1020,7 @@ export default function UniversalApp() {
   if (window.Capacitor) return window.Capacitor.getPlatform(); // 'web', 'ios', 'android'
   if (window.process && window.process.type === 'renderer') return 'Desktop (Electron)';
   return 'Web';
-};`;
+}; `;
     await fs.writeFile(path.join(appPath, 'lib', 'platform.js'), platformLib);
   }
 
@@ -963,28 +1098,28 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
 }
 
-export default function Button({ 
-  children, 
-  variant = 'primary', 
-  size = 'md', 
+export default function Button({
+  children,
+  variant = 'primary',
+  size = 'md',
   className = '',
-  ...props 
+  ...props
 }: ButtonProps) {
   const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
-  
+
   const variants: Record<Variant, string> = {
     primary: 'bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500',
     secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
     outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-indigo-500'
   };
-  
+
   const sizes: Record<Size, string> = {
     sm: 'px-3 py-2 text-sm',
     md: 'px-4 py-2 text-base',
     lg: 'px-6 py-3 text-lg'
   };
-  
-  const classes = \`${'${'}baseClasses{'}'} ${'${'}variants[variant]{'}'} ${'${'}sizes[size]{'}'} ${'${'}className{'}'}\`;
+
+  const classes = \`\${baseClasses} \${variants[variant]} \${sizes[size]} \${className}\`;
   
   return (
     <button className={classes} {...props}>
@@ -1015,7 +1150,7 @@ export default function Button({
     lg: 'px-6 py-3 text-lg'
   };
   
-  const classes = \`${'${'}baseClasses{'}'} ${'${'}variants[variant]{'}'} ${'${'}sizes[size]{'}'} ${'${'}className{'}'}\`;
+  const classes = \`\${baseClasses} \${variants[variant]} \${sizes[size]} \${className}\`;
   
   return (
     <button className={classes} {...props}>
@@ -1109,51 +1244,4 @@ Sitemap: https://yoursite.com/sitemap.xml`;
       }
     } catch { }
   } catch { }
-}
-
-// Extra platform configs
-async function createMobileConfigs(appPath, opts) {
-  const isTS = opts?.language === 'ts';
-  // Capacitor config
-  if (isTS) {
-    const capTs = `import { CapacitorConfig } from '@capacitor/cli';
-
-const config: CapacitorConfig = {
-  appId: 'com.example.indjsapp',
-  appName: 'INDJS App',
-  webDir: '.indjs/static',
-  server: {
-    androidScheme: 'https'
-  }
-};
-
-export default config;
-`;
-    await fs.writeFile(path.join(appPath, 'capacitor.config.ts'), capTs);
-  } else {
-    const capJson = {
-      appId: 'com.example.indjsapp',
-      appName: 'INDJS App',
-      webDir: '.indjs/static',
-      server: { androidScheme: 'https' }
-    };
-    await fs.writeFile(path.join(appPath, 'capacitor.config.json'), JSON.stringify(capJson, null, 2));
-  }
-
-  // Quickstart README for Capacitor
-  const readme = `# Mobile (Capacitor) Quickstart
-
-This project is scaffolded for Capacitor mobile builds.
-
-Steps:
-1. Build web assets: \`npm run build\`
-2. Copy to native platforms: \`npm run mobile:build\` (runs build + \`npx cap copy\`)
-3. Add a platform (once): \`npx cap add android\` or \`npx cap add ios\`
-4. Open in IDE: \`npm run mobile:android\` or \`npm run mobile:ios\`
-
-Notes:
-- Web assets are output to \`.indjs/static\`.
-- Update appId/appName in capacitor.config.* before publishing.
-`;
-  await fs.writeFile(path.join(appPath, 'CAPACITOR.md'), readme);
 }

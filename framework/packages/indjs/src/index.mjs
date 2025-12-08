@@ -18,6 +18,10 @@ export { buildCss, watchCss, cssHref } from './css.mjs';
 // Module loading
 export { loadModule } from './load.mjs';
 
+// Platform detection
+export * as Platform from './platform.mjs';
+export { isWeb, isDesktop, isMobile, isAndroid, isIOS, platform } from './platform.mjs';
+
 // Components
 export { default as Image } from './components/image.mjs';
 export { default as Link } from './components/link.mjs';
@@ -37,28 +41,36 @@ export default {
   dev,
   start,
   build,
-  
+
   // Routing
   discoverRoutes,
   matchDynamic,
   isDynamicRoute,
   fileToRoute,
-  
+
   // SSR
   renderPageModule,
-  
+
   // Build
   buildClientBundles,
   routeToClientPath,
-  
+
   // CSS
   buildCss,
   watchCss,
   cssHref,
-  
+
   // Module loading
   loadModule,
-  
+
+  // Platform
+  isWeb,
+  isDesktop,
+  isMobile,
+  isAndroid,
+  isIOS,
+  platform,
+
   // CLI
   runCLI
 };
