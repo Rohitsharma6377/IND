@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">my-mobile</string>
+    <string name="title_activity_main">my-mobile</string>
+    <string name="package_name">com.indjs.mymobile</string>
+    <string name="custom_url_scheme">com.indjs.mymobile</string>
+</resources>

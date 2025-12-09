@@ -171,7 +171,13 @@ export async function run() {
           console.log('Usage: indjs create <app-name>');
           process.exit(1);
         }
-        return create({ name: appName, template: args.template });
+        return create({
+          name: appName,
+          template: args.template,
+          language: args.language,
+          state: args.state,
+          useTailwind: args.useTailwind
+        });
 
       case 'generate':
       case 'g':

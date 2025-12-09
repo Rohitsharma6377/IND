@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import chalk from 'chalk';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { discoverRoutes, matchDynamic } from './routes.mjs';
 import { renderPageModule } from './ssr.mjs';
@@ -283,7 +284,7 @@ export async function dev({ root, port }) {
   for (let i = 0; i < 30; i++) {
     try {
       server = await new Promise((resolve, reject) => {
-        const s = app.listen(listenPort, () => resolve(s));
+        const s = app.listen(listenPort, '0.0.0.0', () => resolve(s));
         s.on('error', reject);
       });
       break;

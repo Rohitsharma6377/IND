@@ -331,7 +331,7 @@ async function createPackageJson(appPath, name, opts, template) {
       test: 'indjs test'
     },
     dependencies: {
-      indjs: '^1.0.13',
+      indjs: '^2.0.24',
       react: '^18.2.0',
       'react-dom': '^18.2.0',
       ...(useRTK ? { '@reduxjs/toolkit': '^2.3.0', 'react-redux': '^9.1.2' } : {})
