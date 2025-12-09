@@ -34,11 +34,23 @@ export const platform = (() => {
     return 'web';
 })();
 
+// React Native compatible API
+export const OS = platform;
+
+export const select = (obj) => {
+    if (obj.hasOwnProperty(OS)) return obj[OS];
+    if (obj.hasOwnProperty('native') && isMobile) return obj['native'];
+    if (obj.hasOwnProperty('default')) return obj['default'];
+    return undefined;
+};
+
 export default {
     isWeb,
     isDesktop,
     isMobile,
     isAndroid,
     isIOS,
-    platform
+    platform,
+    OS,
+    select
 };

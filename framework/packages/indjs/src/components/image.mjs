@@ -6,6 +6,7 @@ import React from 'react';
 export default function Image(props) {
   const {
     src,
+    source,
     alt,
     width,
     height,
@@ -17,41 +18,70 @@ export default function Image(props) {
     decoding = 'async',
     widths,
     unoptimized = false,
-    // When priority is true, hint browser to fetch with higher priority and avoid lazy-loading
     priority = false,
+    resizeMode = 'cover',
+    onError,
+    onLoad,
+    ...rest
   } = props;
 
-  if (!src) return null;
+  // React Native 'source' prop support
+  const realSrc = src || (source && source.uri) || '';
+  if (!realSrc) return null;
 
   const buildUrl = (w) => {
+    // If it's a remote URL or data URI, we might not want to optimize it via our local API unless configured
+    // For now we assume local optimization if it fits the pattern
+    if (realSrc.startsWith('data:') || realSrc.startsWith('blob:')) return realSrc;
+
+    // Simplistic check: if it is external, maybe valid
     const params = new URLSearchParams();
-    params.set('src', src);
+    params.set('src', realSrc);
     if (w) params.set('w', String(w));
     if (quality) params.set('q', String(quality));
     return `/_image?${params.toString()}`;
   };
 
-  // If unoptimized, pass through original src and attributes
-  if (unoptimized) {
+  const objectFitMap = {
+    contain: 'contain',
+    cover: 'cover',
+    stretch: 'fill',
+    center: 'none',
+    repeat: 'none', // Not fully supported via object-fit
+  };
+
+  const imageStyle = {
+    objectFit: objectFitMap[resizeMode] || 'cover',
+    width: width || '100%',
+    height: height || '100%',
+    ...style
+  };
+
+  // If unoptimized, pass through original src
+  if (unoptimized || realSrc.startsWith('data:')) {
     return (
       <img
-        src={src}
+        src={realSrc}
         alt={alt || ''}
         width={width}
         height={height}
         className={className}
-        style={style}
+        style={imageStyle}
         loading={priority ? 'eager' : loading}
         decoding={decoding}
         fetchPriority={priority ? 'high' : undefined}
+        onError={onError}
+        onLoad={onLoad}
+        {...rest}
       />
     );
   }
 
+  // Optimized path
   let finalSrc = buildUrl(width);
   let srcSet;
   if (Array.isArray(widths) && widths.length) {
-    const unique = Array.from(new Set(widths.filter(Boolean).map(Number))).sort((a,b)=>a-b);
+    const unique = Array.from(new Set(widths.filter(Boolean).map(Number))).sort((a, b) => a - b);
     if (unique.length) srcSet = unique.map(w => `${buildUrl(w)} ${w}w`).join(', ');
   }
 
@@ -64,10 +94,13 @@ export default function Image(props) {
       width={width}
       height={height}
       className={className}
-      style={style}
+      style={imageStyle}
       loading={priority ? 'eager' : loading}
       decoding={decoding}
       fetchPriority={priority ? 'high' : undefined}
+      onError={onError}
+      onLoad={onLoad}
+      {...rest}
     />
   );
 }
