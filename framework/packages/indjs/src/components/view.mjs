@@ -1,5 +1,6 @@
 
 import React, { forwardRef } from 'react';
+import StyleSheet from '../apis/style-sheet.mjs';
 
 const View = forwardRef(({ children, style, className, as: Component = 'div', ...rest }, ref) => {
     const defaultStyle = {
@@ -15,8 +16,10 @@ const View = forwardRef(({ children, style, className, as: Component = 'div', ..
         minWidth: 0,
     };
 
+    const flatStyle = StyleSheet.flatten([defaultStyle, style]);
+
     return (
-        <Component ref={ref} style={{ ...defaultStyle, ...style }} className={className} {...rest}>
+        <Component ref={ref} style={flatStyle} className={className} {...rest}>
             {children}
         </Component>
     );

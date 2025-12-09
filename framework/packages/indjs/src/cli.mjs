@@ -237,7 +237,7 @@ export async function run() {
 
         // If user runs "mobile dev", we provide the "Metro-like" experience
         if (sub === 'dev') {
-          console.log(chalk.blue('📱 Starting Mobile Dev Environment...'));
+          console.log(chalk.blue('📱 Starting Metro-like Dev Server...'));
 
           // 1. Detect LAN IP
           const ip = getLocalIP();
@@ -272,13 +272,16 @@ export async function run() {
           // 4. Run Dev Server + Native Run
           const target = args._[2] || 'android'; // default to android
 
-          console.log(chalk.green(`🚀 Launching ${target} app and Dev Server...`));
+          console.log(chalk.green(`🚀 Launching ${target} app and Metro-like Dev Server...`));
 
           // Use current CLI script path for recursive call
           const indjsBin = process.argv[1];
 
           // Spawn Dev Server
           const server = spawn(process.execPath, [indjsBin, 'dev', '--port', port], { stdio: 'inherit' });
+          server.on('error', (err) => {
+            console.error(chalk.red('❌ Failed to start dev server:'), err);
+          });
 
           // Spawn Native Run (Capacitor)
           // We wait a bit for server to likely be up, or just let it race.

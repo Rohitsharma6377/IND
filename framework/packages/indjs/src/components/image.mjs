@@ -1,4 +1,5 @@
 import React from 'react';
+import StyleSheet from '../apis/style-sheet.mjs';
 
 // INDJS Image component - uses /_image endpoint for on-the-fly optimization
 // Props: src (required), alt (required), width, quality, sizes, className, style, loading, decoding
@@ -54,7 +55,7 @@ export default function Image(props) {
     objectFit: objectFitMap[resizeMode] || 'cover',
     width: width || '100%',
     height: height || '100%',
-    ...style
+    ...StyleSheet.flatten(style)
   };
 
   // If unoptimized, pass through original src

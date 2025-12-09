@@ -12,13 +12,47 @@ export async function startVite({ app, root, bus }) {
   const appRequire = createRequire(path.join(appRoot, 'package.json'));
   const { createServer } = appRequire('vite');
   const reactPlugin = appRequire('@vitejs/plugin-react').default;
+  const { fileURLToPath } = await import('url');
+
+  const frameworkDir = path.dirname(fileURLToPath(import.meta.url));
+  const emptyMock = path.join(frameworkDir, 'mocks', 'empty.mjs');
 
   const vite = await createServer({
     root: appRoot,
     plugins: [reactPlugin({ include: [/\.(jsx|tsx|mjs|js)$/] })],
-    server: { middlewareMode: true },
+    server: {
+      middlewareMode: true,
+      hmr: {
+        // Ensure HMR client connects to the correct port if proxied or mapped
+        clientPort: typeof cfg?.port === 'number' ? cfg.port : undefined
+      }
+    },
     appType: 'custom',
     clearScreen: false,
+    optimizeDeps: {
+      esbuildOptions: {
+        loader: {
+          '.js': 'jsx',
+          '.mjs': 'jsx',
+        },
+      },
+      include: ['indjs'], // ensure indjs is optimized using the custom loader
+    },
+    esbuild: {
+      loader: "jsx",
+      include: /.*\.m?js$/, // Apply to .js and .mjs
+      exclude: [],
+    },
+    resolve: {
+      alias: {
+        'pg': emptyMock,
+        'sqlite': emptyMock,
+        'node-mocks-http': emptyMock,
+        'mock-aws-s3': emptyMock,
+        'nock': emptyMock,
+        'node-fetch': emptyMock,
+      }
+    }
   });
 
   // Mount Vite's connect instance as middleware
@@ -27,7 +61,7 @@ export async function startVite({ app, root, bus }) {
   // Forward Vite errors to our overlay bus in a best-effort manner
   // Vite sends HMR error overlays itself; we also emit our SSE so our UI stays consistent
   const sendError = (e) => {
-    try { bus?.emit?.('error', { message: String(e?.message || e || 'Vite error') }); } catch {}
+    try { bus?.emit?.('error', { message: String(e?.message || e || 'Vite error') }); } catch { }
   };
   vite.watcher.on('error', sendError);
   vite.middlewares.on('error', sendError);

@@ -31,7 +31,7 @@ async function promptIfInteractive(spinner, questions, defaults, noPrompt) {
 
 export async function generate({ type, name, root, noPrompt = false }) {
   const spinner = ora(`Generating ${type}: ${name}...`).start();
-  
+
   try {
     if (!generators[type]) {
       spinner.fail(chalk.red(`Unknown generator type: ${type}`));
@@ -41,7 +41,7 @@ export async function generate({ type, name, root, noPrompt = false }) {
 
     await generators[type](name, root, spinner, noPrompt);
     spinner.succeed(chalk.green(`✅ Generated ${type}: ${name}`));
-    
+
   } catch (error) {
     spinner.fail(chalk.red(`Failed to generate ${type}`));
     console.error(error.message);
@@ -53,7 +53,7 @@ async function generatePage(name, root, spinner, noPrompt) {
   const isTS = await detectTypescript(root);
   const ext = isTS ? 'tsx' : 'jsx';
   const pagePath = path.join(root, 'pages', `${name}.${ext}`);
-  
+
   // Check if page already exists
   try {
     await fs.access(pagePath);
@@ -118,10 +118,10 @@ async function generateComponent(name, root, spinner, noPrompt) {
   const ext = isTS ? 'tsx' : 'jsx';
   const componentDir = path.join(root, 'components');
   const componentPath = path.join(componentDir, `${toPascalCase(name)}.${ext}`);
-  
+
   // Ensure components directory exists
   await fs.mkdir(componentDir, { recursive: true });
-  
+
   // Check if component already exists
   try {
     await fs.access(componentPath);
@@ -141,8 +141,8 @@ async function generateComponent(name, root, spinner, noPrompt) {
   compAnswers = await promptIfInteractive(
     spinner,
     [
-      { type: 'checkbox', name: 'variants', message: 'Variants', choices: ['default','primary','secondary','ghost'], default: ['default'] },
-      { type: 'checkbox', name: 'sizes', message: 'Sizes', choices: ['sm','md','lg'], default: ['md'] },
+      { type: 'checkbox', name: 'variants', message: 'Variants', choices: ['default', 'primary', 'secondary', 'ghost'], default: ['default'] },
+      { type: 'checkbox', name: 'sizes', message: 'Sizes', choices: ['sm', 'md', 'lg'], default: ['md'] },
       { type: 'confirm', name: 'withAria', message: 'Include ARIA role/props?', default: true },
       { type: 'confirm', name: 'withTest', message: 'Generate basic test file?', default: false }
     ],
@@ -150,8 +150,8 @@ async function generateComponent(name, root, spinner, noPrompt) {
     noPrompt
   );
 
-  const variantUnion = compAnswers.variants.map(v=>`'${v}'`).join(' | ') || `'default'`;
-  const sizeUnion = compAnswers.sizes.map(v=>`'${v}'`).join(' | ') || `'md'`;
+  const variantUnion = compAnswers.variants.map(v => `'${v}'`).join(' | ') || `'default'`;
+  const sizeUnion = compAnswers.sizes.map(v => `'${v}'`).join(' | ') || `'md'`;
 
   const componentContent = isTS
     ? `import React from 'react';
@@ -228,12 +228,14 @@ ${componentName}.defaultProps = {
 }
 
 async function generateAPI(name, root, spinner, noPrompt) {
+  const isTS = await detectTypescript(root);
+  const ext = isTS ? 'ts' : 'js';
   const apiDir = path.join(root, 'pages', 'api');
-  const apiPath = path.join(apiDir, `${name}.js`);
-  
+  const apiPath = path.join(apiDir, `${name}.${ext}`);
+
   // Ensure api directory exists
   await fs.mkdir(apiDir, { recursive: true });
-  
+
   // Check if API route already exists
   try {
     await fs.access(apiPath);
@@ -244,14 +246,14 @@ async function generateAPI(name, root, spinner, noPrompt) {
 
   // Ask for details when interactive
   let apiAnswers = {
-    methods: ['GET','POST'],
+    methods: ['GET', 'POST'],
     validate: true,
     auth: false
   };
   apiAnswers = await promptIfInteractive(
     spinner,
     [
-      { type: 'checkbox', name: 'methods', message: 'HTTP methods', choices: ['GET','POST','PUT','DELETE'], default: ['GET','POST'] },
+      { type: 'checkbox', name: 'methods', message: 'HTTP methods', choices: ['GET', 'POST', 'PUT', 'DELETE'], default: ['GET', 'POST'] },
       { type: 'confirm', name: 'validate', message: 'Include basic input validation?', default: true },
       { type: 'confirm', name: 'auth', message: 'Require auth header (Bearer ...)?', default: false }
     ],
@@ -278,7 +280,7 @@ async function generateLayout(name, root) {
   const isTS = await detectTypescript(root);
   const ext = isTS ? 'tsx' : 'jsx';
   const layoutPath = path.join(root, 'pages', `_${name}.${ext}`);
-  
+
   // Check if layout already exists
   try {
     await fs.access(layoutPath);
@@ -320,10 +322,10 @@ export default function ${componentName}Layout({ children, ...props }) {
 async function generateHook(name, root) {
   const hooksDir = path.join(root, 'hooks');
   const hookPath = path.join(hooksDir, `use${toPascalCase(name)}.js`);
-  
+
   // Ensure hooks directory exists
   await fs.mkdir(hooksDir, { recursive: true });
-  
+
   // Check if hook already exists
   try {
     await fs.access(hookPath);
@@ -379,10 +381,10 @@ export default function ${hookName}(initialValue) {
 async function generateUtil(name, root) {
   const utilsDir = path.join(root, 'utils');
   const utilPath = path.join(utilsDir, `${name}.js`);
-  
+
   // Ensure utils directory exists
   await fs.mkdir(utilsDir, { recursive: true });
-  
+
   // Check if util already exists
   try {
     await fs.access(utilPath);
@@ -480,14 +482,14 @@ async function detectTypescript(root) {
     // Heuristic 1: tsconfig.json exists
     await fs.access(path.join(root, 'tsconfig.json'));
     return true;
-  } catch {}
+  } catch { }
   try {
     // Heuristic 2: package.json has typescript dependency
     const pkgRaw = await fs.readFile(path.join(root, 'package.json'), 'utf8');
     const pkg = JSON.parse(pkgRaw);
-    const deps = { ...(pkg.dependencies||{}), ...(pkg.devDependencies||{}) };
+    const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
     return !!deps.typescript;
-  } catch {}
+  } catch { }
   return false;
 }
 function toPascalCase(str) {

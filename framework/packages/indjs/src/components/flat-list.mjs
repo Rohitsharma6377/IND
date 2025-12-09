@@ -2,6 +2,7 @@
 import React, { forwardRef } from 'react';
 import ScrollView from './scroll-view.mjs';
 import View from './view.mjs';
+import StyleSheet from '../apis/style-sheet.mjs';
 
 const FlatList = forwardRef(({ data, renderItem, keyExtractor, ListHeaderComponent, ListFooterComponent, ListEmptyComponent, contentContainerStyle, numColumns = 1, horizontal = false, ...rest }, ref) => {
 
@@ -31,10 +32,11 @@ const FlatList = forwardRef(({ data, renderItem, keyExtractor, ListHeaderCompone
         });
     };
 
-    const style = numColumns > 1 && !horizontal ? { display: 'grid', gridTemplateColumns: `repeat(${numColumns}, 1fr)` } : {};
+    const gridStyle = numColumns > 1 && !horizontal ? { display: 'grid', gridTemplateColumns: `repeat(${numColumns}, 1fr)` } : {};
+    const flatContentStyle = StyleSheet.flatten([contentContainerStyle, gridStyle]);
 
     return (
-        <ScrollView contentContainerStyle={{ ...contentContainerStyle, ...style }} horizontal={horizontal} ref={ref} {...rest}>
+        <ScrollView contentContainerStyle={flatContentStyle} horizontal={horizontal} ref={ref} {...rest}>
             {ListHeaderComponent && (React.isValidElement(ListHeaderComponent) ? ListHeaderComponent : <ListHeaderComponent />)}
             {renderList()}
             {ListFooterComponent && (React.isValidElement(ListFooterComponent) ? ListFooterComponent : <ListFooterComponent />)}

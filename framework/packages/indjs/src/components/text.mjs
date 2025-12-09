@@ -1,5 +1,6 @@
 
 import React, { forwardRef } from 'react';
+import StyleSheet from '../apis/style-sheet.mjs';
 
 const Text = forwardRef(({ children, style, className, as: Component = 'span', ...rest }, ref) => {
     const defaultStyle = {
@@ -14,8 +15,10 @@ const Text = forwardRef(({ children, style, className, as: Component = 'span', .
         color: 'black',
     };
 
+    const flatStyle = StyleSheet.flatten([defaultStyle, style]);
+
     return (
-        <Component ref={ref} style={{ ...defaultStyle, ...style }} className={className} {...rest}>
+        <Component ref={ref} style={flatStyle} className={className} {...rest}>
             {children}
         </Component>
     );

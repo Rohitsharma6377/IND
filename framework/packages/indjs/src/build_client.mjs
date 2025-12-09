@@ -26,7 +26,7 @@ export async function buildClientBundles({ root, pages }) {
     setup(build) {
       const ensureFile = (p) => {
         if (fsSync.existsSync(p) && fsSync.statSync(p).isFile()) return p;
-        const exts = ['.jsx','.js','.tsx','.ts','.mjs','.cjs'];
+        const exts = ['.jsx', '.js', '.tsx', '.ts', '.mjs', '.cjs'];
         for (const e of exts) { const q = p + e; if (fsSync.existsSync(q)) return q; }
         return p;
       };
@@ -65,8 +65,8 @@ export async function buildClientBundles({ root, pages }) {
     const appJsx = path.join(pagesDir, '_app.jsx');
     const appJs = path.join(pagesDir, '_app.js');
     let appPath = null;
-    try { await fs.access(appJsx); appPath = appJsx; } catch {}
-    if (!appPath) { try { await fs.access(appJs); appPath = appJs; } catch {} }
+    try { await fs.access(appJsx); appPath = appJsx; } catch { }
+    if (!appPath) { try { await fs.access(appJs); appPath = appJs; } catch { } }
 
     const code = `import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
@@ -116,7 +116,7 @@ __ind_boot();
         const rec = viteManifest[e.name];
         if (rec && rec.file) manifest[e.route] = `/${rec.file}`;
       }
-    } catch {}
+    } catch { }
   } else {
     // esbuild bundling (previous behavior)
     for (const e of entries) {
@@ -128,8 +128,8 @@ __ind_boot();
         outfile: path.join(outDir, 'pages', `${e.name}.js`),
         platform: 'browser',
         jsx: 'automatic',
-        loader: { '.js': 'jsx', '.jsx': 'jsx' },
-        external: [],
+        loader: { '.js': 'jsx', '.jsx': 'jsx', '.mjs': 'jsx' },
+        external: ['pg', 'sqlite', 'node-mocks-http', 'mock-aws-s3', 'nock', 'node-fetch'],
         plugins: preactAlias ? [aliasPlugin, preactAlias] : [aliasPlugin]
       });
       // Create a content-hashed copy for production use
@@ -140,10 +140,10 @@ __ind_boot();
         const hashed = `pages/${e.name}.${hash}.js`;
         await fs.writeFile(path.join(outDir, hashed), buf);
         manifest[e.route] = `/${hashed}`;
-      } catch {}
+      } catch { }
     }
   }
 
   // Write manifest for production server to consume
-  try { await fs.writeFile(path.join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf8'); } catch {}
+  try { await fs.writeFile(path.join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf8'); } catch { }
 }

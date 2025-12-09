@@ -5,16 +5,16 @@ import ora from 'ora';
 
 export async function test({ root, watch = false }) {
   const spinner = ora('Setting up test environment...').start();
-  
+
   try {
     // Check if test setup exists
     const hasTests = await checkTestSetup(root);
-    
+
     if (!hasTests) {
       spinner.text = 'Creating test setup...';
       await createTestSetup(root);
       spinner.succeed(chalk.green('✅ Test setup created!'));
-      
+
       console.log(chalk.blue('\n🧪 Test environment is ready!'));
       console.log('Next steps:');
       console.log('1. Install test dependencies: npm install --save-dev jest @testing-library/react @testing-library/jest-dom');
@@ -27,7 +27,7 @@ export async function test({ root, watch = false }) {
     spinner.text = 'Running tests...';
     await runTests(root, watch);
     spinner.succeed(chalk.green('✅ Tests completed!'));
-    
+
   } catch (error) {
     spinner.fail(chalk.red('Failed to run tests'));
     console.error(error.message);
@@ -78,36 +78,25 @@ async function createTestSetup(root) {
 // Mock INDJS specific globals
 global.__IND_PROPS__ = {};
 
-// Mock image optimization
-jest.mock('next/image', () => ({
-  __esModule: true,
-  default: (props) => {
-    return <img {...props} />;
-  },
-}));
-
-// Mock router
-jest.mock('next/router', () => ({
-  useRouter() {
-    return {
+// Mock INDJS Image
+jest.mock('indjs', () => {
+  const original = jest.requireActual('indjs');
+  return {
+    ...original,
+    Image: (props) => <img {...props} />,
+    useRouter: () => ({
       route: '/',
       pathname: '/',
       query: {},
       asPath: '/',
       push: jest.fn(),
-      pop: jest.fn(),
+      replace: jest.fn(),
       reload: jest.fn(),
       back: jest.fn(),
-      prefetch: jest.fn().mockResolvedValue(undefined),
-      beforePopState: jest.fn(),
-      events: {
-        on: jest.fn(),
-        off: jest.fn(),
-        emit: jest.fn(),
-      },
-    };
-  },
-}));`;
+    }),
+  };
+});
+`;
 
   await fs.writeFile(path.join(root, 'jest.setup.js'), jestSetup);
 
@@ -350,16 +339,16 @@ async function runTests(root, watch) {
   // This would typically run Jest or another test runner
   // For now, we'll just simulate running tests
   console.log(chalk.blue('\n🧪 Running tests...'));
-  
+
   if (watch) {
     console.log(chalk.yellow('👀 Watching for changes...'));
     console.log('Press Ctrl+C to stop watching');
   }
-  
+
   // In a real implementation, you would:
   // 1. Check for Jest installation
   // 2. Run Jest with appropriate flags
   // 3. Parse and display results
-  
+
   console.log(chalk.green('✅ All tests passed!'));
 }
