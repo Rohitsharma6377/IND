@@ -1,0 +1,8 @@
+{
+  "appId": "com.indjs.mytestapp",
+  "appName": "my-test-app",
+  "webDir": ".indjs/static",
+  "server": {
+    "androidScheme": "https"
+  }
+}

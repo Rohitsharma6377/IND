@@ -6,14 +6,21 @@
   "bin": {
     "create-indjs": "bin/create-indjs.js"
   },
-  "keywords": ["indjs", "create", "scaffold", "react", "ssr", "full-stack"],
+  "keywords": [
+    "indjs",
+    "create",
+    "scaffold",
+    "react",
+    "ssr",
+    "full-stack"
+  ],
   "author": "INDJS Team",
   "license": "MIT",
   "engines": {
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "indjs": ">=1.0.21"
+    "indjs": ">=3.0.0"
   },
   "files": [
     "bin/**/*",

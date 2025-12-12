@@ -1,6 +1,6 @@
 {
   "name": "indjs-framework",
-  "version": "2.0.14",
+  "version": "3.0.1",
   "description": "A modern, blazing-fast, and feature-rich full-stack React framework that's better than Next.js",
   "private": false,
   "type": "module",
@@ -51,7 +51,7 @@
     "format": "prettier --write \"packages/**/*.{js,jsx,mjs,ts,tsx,json,md}\"",
     "type-check": "tsc --noEmit",
     "clean": "rimraf packages/*/dist packages/*/.indjs packages/*/node_modules",
-    "prepare": "husky install || true",
+    "prepare": "husky install || exit 0",
     "publish:npm": "npm --workspace packages/indjs publish",
     "version:patch": "npm --workspace packages/indjs version patch",
     "version:minor": "npm --workspace packages/indjs version minor",
