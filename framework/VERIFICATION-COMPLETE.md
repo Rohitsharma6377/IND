@@ -59,10 +59,8 @@ case 'mobile': {
 **Location:** `packages/indjs/templates/`
 
 **Available Templates:**
-1. ✅ `basic/` - Simple web starter
-2. ✅ `fullstack-saas/` - Full-stack SaaS with auth + database
-3. ✅ `mobile/` - Mobile app (iOS + Android)
-4. ✅ `universal/` - **Universal app (Web + Mobile + Desktop)** ⭐
+1. ✅ `universal/` - **Universal app (Web + Mobile + Desktop)** ⭐
+   *(Simpler templates have been consolidated into this single unified solution for best practices)*
 
 ---
 
@@ -76,29 +74,23 @@ case 'mobile': {
   "scripts": {
     // WEB
     "dev": "indjs dev",
+    "dev:web": "indjs dev",
     "build": "indjs build",
     "start": "indjs start",
     
     // DESKTOP (Electron)
-    "desktop:dev": "concurrently \"indjs dev\" \"wait-on http://localhost:3000 && electron .\"",
-    "desktop:build": "indjs build && electron-builder",
-    "desktop:build:all": "indjs build && electron-builder -mwl",
-    "desktop:build:windows": "indjs build && electron-builder --win",
-    "desktop:build:mac": "indjs build && electron-builder --mac",
-    "desktop:build:linux": "indjs build && electron-builder --linux",
+    "dev:desktop": "concurrently \"indjs dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "build:desktop": "indjs build && electron-builder",
     
     // MOBILE (Capacitor)
-    "mobile:add:ios": "npx cap add ios",
-    "mobile:add:android": "npx cap add android",
-    "mobile:build": "indjs build && npx cap copy",
-    "mobile:sync": "npx cap sync",
-    "mobile:ios": "npx cap open ios",
-    "mobile:android": "npx cap open android",
-    "mobile:run:ios": "npx cap run ios",
-    "mobile:run:android": "npx cap run android",
+    "dev:mobile": "indjs mobile dev",  // ✨ Metro-like Live Reload
+    "open:android": "npx cap open android",
+    "open:ios": "npx cap open ios",
+    "build:mobile": "indjs build && npx cap sync",
+    "setup:mobile": "node scripts/setup-android.cjs",
     
     // BUILD ALL PLATFORMS
-    "build:all": "npm run build && npm run desktop:build:all && npm run mobile:build"
+    "build:all": "npm run build && npm run build:desktop && npm run build:mobile"
   }
 }
 ```
