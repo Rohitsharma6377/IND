@@ -100,6 +100,7 @@
   },
   "scripts": {
     "build": "echo 'No build step required'",
+    "dev": "echo 'Run indjs create to start a new project, or use npm test for development'",
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",

@@ -1,0 +1,8 @@
+{
+  "appId": "com.indjs.universaldemo",
+  "appName": "universal-demo",
+  "webDir": ".indjs/static",
+  "server": {
+    "androidScheme": "https"
+  }
+}
