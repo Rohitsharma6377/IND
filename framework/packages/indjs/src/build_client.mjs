@@ -129,7 +129,8 @@ __ind_boot();
         platform: 'browser',
         jsx: 'automatic',
         loader: { '.js': 'jsx', '.jsx': 'jsx', '.mjs': 'jsx' },
-        external: ['pg', 'sqlite', 'node-mocks-http', 'mock-aws-s3', 'nock', 'node-fetch'],
+        resolveExtensions: ['.jsx', '.js', '.mjs', '.json', '.tsx', '.ts', '.cjs'],
+        external: ['pg', 'sqlite', 'node-mocks-http', 'mock-aws-s3', 'nock', 'node-fetch', 'mongodb', 'redis', 'firebase-admin', '@prisma/client', 'mysql2'],
         plugins: preactAlias ? [aliasPlugin, preactAlias] : [aliasPlugin]
       });
       // Create a content-hashed copy for production use

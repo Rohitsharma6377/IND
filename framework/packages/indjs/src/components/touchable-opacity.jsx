@@ -1,38 +1,44 @@
 
 import React, { forwardRef } from 'react';
-import View from './view.jsx';
+import { resolveElement } from '../universal/resolve.js';
+import StyleSheet from '../apis/style-sheet.mjs';
 
-const TouchableOpacity = forwardRef(({ activeOpacity = 0.2, style, children, onPress, disabled, ...rest }, ref) => {
-    const [isPressing, setIsPressing] = React.useState(false);
+const TouchableOpacity = forwardRef(({ children, style, onPress, activeOpacity = 0.2, ...rest }, ref) => {
+    const Component = resolveElement('touchableopacity');
 
-    const handleStart = () => !disabled && setIsPressing(true);
-    const handleEnd = () => setIsPressing(false);
-
-    const computedStyle = {
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        userSelect: 'none',
-        opacity: isPressing ? activeOpacity : 1,
-        transition: 'opacity 0.15s',
-        ...style
-    };
+    if (Component === 'button' || Component === 'div') {
+        const defaultStyle = {
+            border: 'none',
+            background: 'transparent',
+            padding: 0,
+            cursor: 'pointer',
+            transition: 'opacity 0.2s',
+        };
+        return (
+            <button
+                ref={ref}
+                style={StyleSheet.flatten([defaultStyle, style])}
+                onClick={onPress}
+                onMouseDown={(e) => e.currentTarget.style.opacity = activeOpacity}
+                onMouseUp={(e) => e.currentTarget.style.opacity = 1}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = 1}
+                {...rest}
+            >
+                {children}
+            </button>
+        );
+    }
 
     return (
-        <View
+        <Component
             ref={ref}
-            style={computedStyle}
-            role="button"
-            tabIndex={disabled ? -1 : 0}
-            aria-disabled={disabled}
-            onMouseDown={handleStart}
-            onMouseUp={handleEnd}
-            onMouseLeave={handleEnd}
-            onTouchStart={handleStart}
-            onTouchEnd={handleEnd}
-            onClick={!disabled ? onPress : undefined}
+            style={style}
+            onPress={onPress}
+            activeOpacity={activeOpacity}
             {...rest}
         >
             {children}
-        </View>
+        </Component>
     );
 });
 

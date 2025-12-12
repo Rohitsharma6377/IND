@@ -1,9 +1,12 @@
 
 import React, { forwardRef } from 'react';
+import { resolveElement } from '../universal/resolve.js';
 import StyleSheet from '../apis/style-sheet.mjs';
 
-const Text = forwardRef(({ children, style, className, as: Component = 'span', ...rest }, ref) => {
-    const defaultStyle = {
+const Text = forwardRef(({ children, style, className, ...rest }, ref) => {
+    const Component = resolveElement('text');
+
+    const defaultStyle = Component === 'span' ? {
         position: 'relative',
         display: 'inline',
         margin: 0,
@@ -13,7 +16,7 @@ const Text = forwardRef(({ children, style, className, as: Component = 'span', .
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
         fontSize: 14,
         color: 'black',
-    };
+    } : {};
 
     const flatStyle = StyleSheet.flatten([defaultStyle, style]);
 

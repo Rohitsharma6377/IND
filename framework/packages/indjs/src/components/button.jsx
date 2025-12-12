@@ -1,41 +1,38 @@
 
 import React, { forwardRef } from 'react';
-import View from './view.jsx';
-import Text from './text.jsx';
+import { resolveElement } from '../universal/resolve.js';
+import StyleSheet from '../apis/style-sheet.mjs';
 
-const Button = forwardRef(({ title, onPress, color = '#2196F3', disabled = false, style, textStyle, ...rest }, ref) => {
-    const buttonStyle = {
-        backgroundColor: disabled ? '#dfdfdf' : color,
-        padding: 8,
-        borderRadius: 2,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        alignItems: 'center',
-        justifyContent: 'center',
-        userSelect: 'none',
-        ...style
-    };
+const Button = forwardRef(({ title, onPress, color, disabled, ...rest }, ref) => {
+    const Component = resolveElement('button');
 
-    const textCommonStyle = {
-        color: disabled ? '#999' : 'white',
-        textAlign: 'center',
-        fontWeight: '500',
-        textTransform: 'uppercase',
-        ...textStyle
-    };
+    if (Component === 'button' || Component === 'div') {
+        const style = {
+            backgroundColor: disabled ? '#ccc' : (color || '#2196F3'),
+            color: 'white',
+            padding: '8px 16px',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: disabled ? 'default' : 'pointer',
+            fontSize: '14px',
+            textTransform: 'uppercase',
+            fontWeight: '500',
+        };
 
-    return (
-        <View
-            ref={ref}
-            role="button"
-            onClick={!disabled ? onPress : undefined}
-            style={buttonStyle}
-            aria-disabled={disabled}
-            tabIndex={disabled ? -1 : 0}
-            {...rest}
-        >
-            <Text style={textCommonStyle}>{title}</Text>
-        </View>
-    );
+        return (
+            <button
+                ref={ref}
+                style={style}
+                onClick={onPress}
+                disabled={disabled}
+                {...rest}
+            >
+                {title}
+            </button>
+        );
+    }
+
+    return <Component ref={ref} title={title} onPress={onPress} color={color} disabled={disabled} {...rest} />;
 });
 
 Button.displayName = 'Button';

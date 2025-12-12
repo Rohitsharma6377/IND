@@ -1,35 +1,54 @@
 
-import React from 'react';
+import React, { forwardRef } from 'react';
+import { resolveElement } from '../universal/resolve.js';
+import StyleSheet from '../apis/style-sheet.mjs';
 import ReactDOM from 'react-dom';
-import View from './view.jsx';
 
-function Modal({ visible, transparent, animationType = 'none', onRequestClose, children, style }) {
-    if (!visible) return null;
+const Modal = forwardRef(({ children, visible, transparent, animationType, onRequestClose, style, ...rest }, ref) => {
+    const Component = resolveElement('modal');
 
-    // Ideally this would portal content to document.body
-    // But for SSR safety we need to check if document exists.
-    if (typeof document === 'undefined') return null;
+    if (Component === 'div' || Component === 'view') {
+        if (!visible) return null;
 
-    const overlayStyle = {
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: transparent ? 'rgba(0,0,0,0.5)' : 'white',
-        zIndex: 9999,
-        display: 'flex',
-        flexDirection: 'column',
-        ...style
-    };
+        const modalStyle = {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: transparent ? 'transparent' : 'white',
+            zIndex: 9999,
+            display: 'flex',
+            flexDirection: 'column',
+            ...StyleSheet.flatten(style)
+        };
 
-    const content = (
-        <View style={overlayStyle} aria-modal="true" role="dialog">
+        // Render as portal if possible
+        const content = (
+            <div ref={ref} style={modalStyle} {...rest}>
+                {children}
+            </div>
+        );
+
+        if (typeof document !== 'undefined') {
+            return ReactDOM.createPortal(content, document.body);
+        }
+        return content;
+    }
+
+    return (
+        <Component
+            ref={ref}
+            visible={visible}
+            transparent={transparent}
+            animationType={animationType}
+            onRequestClose={onRequestClose}
+            {...rest}
+        >
             {children}
-        </View>
+        </Component>
     );
+});
 
-    return ReactDOM.createPortal(content, document.body);
-}
-
+Modal.displayName = 'Modal';
 export default Modal;

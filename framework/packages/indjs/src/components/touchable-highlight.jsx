@@ -1,49 +1,56 @@
 
-import React, { forwardRef, useState } from 'react';
-import View from './view.jsx';
+import React, { forwardRef } from 'react';
+import { resolveElement } from '../universal/resolve.js';
+import StyleSheet from '../apis/style-sheet.mjs';
 
-const TouchableHighlight = forwardRef(({ activeOpacity = 0.85, underlayColor = 'black', style, children, onPress, onShowUnderlay, onHideUnderlay, disabled, ...rest }, ref) => {
-    const [isPressing, setIsPressing] = useState(false);
+const TouchableHighlight = forwardRef(({ children, style, onPress, underlayColor = 'black', activeOpacity = 0.85, ...rest }, ref) => {
+    const Component = resolveElement('touchablehighlight');
 
-    const handleStart = () => {
-        if (!disabled) {
-            setIsPressing(true);
-            if (onShowUnderlay) onShowUnderlay();
-        }
-    };
+    if (Component === 'button' || Component === 'div') {
+        const defaultStyle = {
+            border: 'none',
+            background: 'transparent',
+            padding: 0,
+            cursor: 'pointer',
+        };
+        const flatStyle = StyleSheet.flatten([defaultStyle, style]);
 
-    const handleEnd = () => {
-        if (!disabled) {
-            setIsPressing(false);
-            if (onHideUnderlay) onHideUnderlay();
-        }
-    };
-
-    const computedStyle = {
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: isPressing ? activeOpacity : 1,
-        backgroundColor: isPressing ? underlayColor : undefined, // This is a simplification; Real RN wraps child in view with background
-        transition: 'opacity 0.15s, background-color 0.15s',
-        ...style
-    };
+        // Simple web implementation: just opacity, mimicking overlay is harder without state
+        return (
+            <button
+                ref={ref}
+                style={flatStyle}
+                onClick={onPress}
+                onMouseDown={(e) => {
+                    e.currentTarget.style.backgroundColor = underlayColor;
+                    e.currentTarget.style.opacity = activeOpacity;
+                }}
+                onMouseUp={(e) => {
+                    e.currentTarget.style.backgroundColor = flatStyle.backgroundColor || 'transparent';
+                    e.currentTarget.style.opacity = 1;
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = flatStyle.backgroundColor || 'transparent';
+                    e.currentTarget.style.opacity = 1;
+                }}
+                {...rest}
+            >
+                {children}
+            </button>
+        );
+    }
 
     return (
-        <View
+        <Component
             ref={ref}
-            style={computedStyle}
-            role="button"
-            tabIndex={disabled ? -1 : 0}
-            aria-disabled={disabled}
-            onMouseDown={handleStart}
-            onMouseUp={handleEnd}
-            onMouseLeave={handleEnd}
-            onTouchStart={handleStart}
-            onTouchEnd={handleEnd}
-            onClick={!disabled ? onPress : undefined}
+            style={style}
+            onPress={onPress}
+            underlayColor={underlayColor}
+            activeOpacity={activeOpacity}
             {...rest}
         >
             {children}
-        </View>
+        </Component>
     );
 });
 

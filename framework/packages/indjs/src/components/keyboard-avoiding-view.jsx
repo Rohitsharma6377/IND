@@ -1,14 +1,32 @@
 
 import React, { forwardRef } from 'react';
-import View from './view.jsx';
+import { resolveElement } from '../universal/resolve.js';
+import StyleSheet from '../apis/style-sheet.mjs';
 
-const KeyboardAvoidingView = forwardRef(({ behavior, contentContainerStyle, enabled = true, keyboardVerticalOffset = 0, style, children, ...rest }, ref) => {
-    // On web, keyboard avoidance is mostly handled by the browser. 
-    // We provide a passthrough compliant with the API.
+const KeyboardAvoidingView = forwardRef(({ children, style, behavior, contentContainerStyle, keyboardVerticalOffset, enabled, ...rest }, ref) => {
+    const Component = resolveElement('keyboardavoidingview');
+
+    // On web, keyboard avoiding is usually handled by the browser default behavior or is irrelevant
+    if (Component === 'div' || Component === 'view') {
+        return (
+            <div ref={ref} style={StyleSheet.flatten(style)} {...rest}>
+                {children}
+            </div>
+        );
+    }
+
     return (
-        <View ref={ref} style={style} {...rest}>
+        <Component
+            ref={ref}
+            style={style}
+            behavior={behavior}
+            contentContainerStyle={contentContainerStyle}
+            keyboardVerticalOffset={keyboardVerticalOffset}
+            enabled={enabled}
+            {...rest}
+        >
             {children}
-        </View>
+        </Component>
     );
 });
 

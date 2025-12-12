@@ -1,43 +1,36 @@
 
 import React, { forwardRef } from 'react';
-import View from './view.jsx';
+import { resolveElement } from '../universal/resolve.js';
+import StyleSheet from '../apis/style-sheet.mjs';
 
-const Pressable = forwardRef(({ children, style, onPress, onPressIn, onPressOut, disabled, ...rest }, ref) => {
-    const [pressed, setPressed] = React.useState(false);
+const Pressable = forwardRef(({ children, style, onPress, ...rest }, ref) => {
+    const Component = resolveElement('pressable');
 
-    const handlePressIn = (e) => {
-        if (disabled) return;
-        setPressed(true);
-        if (onPressIn) onPressIn(e);
-    };
+    if (Component === 'button' || Component === 'div') {
+        const flatStyle = StyleSheet.flatten([
+            {
+                border: 'none',
+                background: 'transparent',
+                padding: 0,
+                cursor: 'pointer',
+                textAlign: 'inherit',
+            },
+            typeof style === 'function' ? style({ pressed: false }) : style
+        ]);
 
-    const handlePressOut = (e) => {
-        if (disabled) return;
-        setPressed(false);
-        if (onPressOut) onPressOut(e);
-    };
+        return (
+            <button
+                ref={ref}
+                style={flatStyle}
+                onClick={onPress}
+                {...rest}
+            >
+                {typeof children === 'function' ? children({ pressed: false }) : children}
+            </button>
+        );
+    }
 
-    const computedStyle = typeof style === 'function' ? style({ pressed }) : style;
-    const computedChildren = typeof children === 'function' ? children({ pressed }) : children;
-
-    return (
-        <View
-            ref={ref}
-            style={{ cursor: disabled ? 'not-allowed' : 'pointer', userSelect: 'none', ...computedStyle }}
-            role="button"
-            tabIndex={disabled ? -1 : 0}
-            aria-disabled={disabled}
-            onMouseDown={handlePressIn}
-            onMouseUp={handlePressOut}
-            onMouseLeave={handlePressOut}
-            onTouchStart={handlePressIn}
-            onTouchEnd={handlePressOut}
-            onClick={!disabled ? onPress : undefined}
-            {...rest}
-        >
-            {computedChildren}
-        </View>
-    );
+    return <Component ref={ref} style={style} onPress={onPress} {...rest}>{children}</Component>;
 });
 
 Pressable.displayName = 'Pressable';

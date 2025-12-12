@@ -1,6 +1,7 @@
 
 import React, { forwardRef } from 'react';
-import View from './view.jsx';
+import { resolveElement } from '../universal/resolve.js';
+import StyleSheet from '../apis/style-sheet.mjs';
 
 const ScrollView = forwardRef(({
     children,
@@ -12,28 +13,44 @@ const ScrollView = forwardRef(({
     className,
     ...rest
 }, ref) => {
-    const containerStyle = {
-        flex: 1,
-        overflowX: horizontal ? 'auto' : 'hidden',
-        overflowY: horizontal ? 'hidden' : 'auto',
-        WebkitOverflowScrolling: 'touch',
-        scrollbarWidth: (horizontal ? !showsHorizontalScrollIndicator : !showsVerticalScrollIndicator) ? 'none' : 'auto',
-        msOverflowStyle: (horizontal ? !showsHorizontalScrollIndicator : !showsVerticalScrollIndicator) ? 'none' : 'auto',
-        ...style
-    };
+    const Component = resolveElement('scrollview');
 
-    const contentStyle = {
-        display: 'flex',
-        flexDirection: horizontal ? 'row' : 'column',
-        ...contentContainerStyle
-    };
-
-    return (
-        <View ref={ref} style={containerStyle} className={className} {...rest}>
-            <div style={contentStyle}>
-                {children}
+    if (Component === 'div' || Component === 'view') { // Web fallback
+        const containerStyle = {
+            flex: 1,
+            overflowX: horizontal ? 'auto' : 'hidden',
+            overflowY: horizontal ? 'hidden' : 'auto',
+            WebkitOverflowScrolling: 'touch',
+            scrollbarWidth: (horizontal ? !showsHorizontalScrollIndicator : !showsVerticalScrollIndicator) ? 'none' : 'auto',
+            msOverflowStyle: (horizontal ? !showsHorizontalScrollIndicator : !showsVerticalScrollIndicator) ? 'none' : 'auto',
+            ...StyleSheet.flatten(style)
+        };
+        const contentStyle = {
+            display: 'flex',
+            flexDirection: horizontal ? 'row' : 'column',
+            ...StyleSheet.flatten(contentContainerStyle)
+        };
+        return (
+            <div ref={ref} style={containerStyle} className={className} {...rest}>
+                <div style={contentStyle}>{children}</div>
             </div>
-        </View>
+        );
+    }
+
+    // React Native
+    return (
+        <Component
+            ref={ref}
+            style={style}
+            contentContainerStyle={contentContainerStyle}
+            horizontal={horizontal}
+            showsHorizontalScrollIndicator={showsHorizontalScrollIndicator}
+            showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+            className={className}
+            {...rest}
+        >
+            {children}
+        </Component>
     );
 });
 

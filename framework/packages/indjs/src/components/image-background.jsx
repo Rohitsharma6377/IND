@@ -1,29 +1,45 @@
 
 import React, { forwardRef } from 'react';
-import View from './view.jsx';
-import Image from './image.jsx';
+import { resolveElement } from '../universal/resolve.js';
+import StyleSheet from '../apis/style-sheet.mjs';
 
-const ImageBackground = forwardRef(({ source, style, imageStyle, children, ...rest }, ref) => {
+const ImageBackground = forwardRef(({ children, style, imageStyle, source, src, resizeMode = 'cover', ...rest }, ref) => {
+    const Component = resolveElement('imagebackground');
+
+    const imageSource = src || (source && source.uri) || '';
+
+    if (Component === 'div' || Component === 'view') {
+        const flatStyle = StyleSheet.flatten([
+            {
+                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column',
+                backgroundImage: `url(${imageSource})`,
+                backgroundSize: resizeMode === 'stretch' ? '100% 100%' : resizeMode,
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+            },
+            style
+        ]);
+        return (
+            <div ref={ref} style={flatStyle} {...rest}>
+                {children}
+            </div>
+        );
+    }
+
+    // React Native
     return (
-        <View ref={ref} style={{ position: 'relative', overflow: 'hidden', ...style }} {...rest}>
-            <Image
-                src={typeof source === 'string' ? source : (source && source.uri) || ''}
-                style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    zIndex: -1,
-                    ...imageStyle
-                }}
-                alt=""
-            />
+        <Component
+            ref={ref}
+            style={style}
+            imageStyle={imageStyle}
+            source={source || { uri: src }}
+            resizeMode={resizeMode}
+            {...rest}
+        >
             {children}
-        </View>
+        </Component>
     );
 });
 
