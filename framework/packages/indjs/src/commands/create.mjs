@@ -7,21 +7,9 @@ import { fileURLToPath } from 'url';
 import sharp from 'sharp';
 
 const templates = {
-  basic: {
-    name: 'Basic App',
-    description: 'A minimal INDJS application with essential files'
-  },
   universal: {
     name: 'Universal App (Recommended)',
     description: 'Unified Fullstack App for Web, Mobile, and Desktop'
-  },
-  'todo-app': {
-    name: 'Todo App Template',
-    description: 'Complete cross-platform Todo app with beautiful UI'
-  },
-  'fullstack-saas': {
-    name: 'Fullstack SaaS',
-    description: 'SaaS starter with Authentication and Database setup'
   }
 };
 
@@ -41,16 +29,9 @@ export async function create({ name, template, root, language, state, useTailwin
     {
       type: 'list',
       name: 'type',
-      message: 'What type of project do you want to create?',
+      message: 'What template do you want to use?',
       choices: [
-        { name: '🌐 Web Application (SSR/SSG)', value: 'web' },
-        { name: '🖥️ Desktop Application (Electron)', value: 'desktop' },
-        { name: '📱 Mobile Application (Capacitor Android/iOS)', value: 'mobile' },
-        { name: '🌍 Universal App (Web + Desktop + Mobile)', value: 'universal' },
-        new inquirer.Separator(),
-        { name: '📝 Todo App Template (Advanced)', value: 'todo-app' },
-        { name: '💼 Fullstack SaaS Template (Advanced)', value: 'fullstack-saas' },
-        { name: '🤖 AI App Template (Advanced)', value: 'ai-app' }
+        { name: '🌍 Universal App (Web + Desktop + Mobile)', value: 'universal' }
       ],
       when: !initialType
     },
@@ -78,7 +59,7 @@ export async function create({ name, template, root, language, state, useTailwin
   // Merge CLI args with answers
   const config = {
     name: name || answers.name,
-    type: initialType || answers.type || 'web',
+    type: 'universal', // Force universal type
     language: language || answers.language || 'js',
     root: root || process.cwd()
   };
@@ -131,9 +112,11 @@ export async function create({ name, template, root, language, state, useTailwin
     console.log('\nNext steps:');
     console.log(chalk.cyan(`  cd ${config.name}`));
     console.log(chalk.cyan('  npm install'));
-    if (config.type === 'mobile' || config.type === 'universal' || config.type === 'todo-app') {
-      console.log(chalk.cyan('  npm run android:setup  (First time only)'));
-      console.log(chalk.cyan('  npm run dev'));
+    if (config.type === 'universal') {
+      console.log(chalk.cyan('  npm run dev:mobile  (for App)'));
+      console.log(chalk.cyan('  npm run dev:desktop (for Desktop)'));
+      console.log(chalk.cyan('  npm run dev:web     (for Web)'));
+      console.log(chalk.cyan('  npm run dev         (Default: Web)'));
     } else {
       console.log(chalk.cyan('  npm run dev'));
     }
@@ -148,8 +131,6 @@ export async function create({ name, template, root, language, state, useTailwin
 
 async function createPackageJson(appPath, config) {
   const isTS = config.language === 'ts';
-  const isMobile = ['mobile', 'universal', 'todo-app'].includes(config.type);
-  const isDesktop = ['desktop', 'universal', 'todo-app'].includes(config.type);
 
   const pkg = {
     name: config.name.toLowerCase().replace(/\s+/g, '-'),
@@ -161,11 +142,17 @@ async function createPackageJson(appPath, config) {
     devDependencies: {}
   };
 
-  // Base Dependencies
+  // Base Dependencies (Universal)
   pkg.dependencies = {
     "indjs": "^2.0.29",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "electron-serve": "^1.3.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/preferences": "^6.0.0",
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/ios": "^6.0.0"
   };
 
   pkg.devDependencies = {
@@ -173,81 +160,40 @@ async function createPackageJson(appPath, config) {
     "@vitejs/plugin-react": "^4.3.0",
     "tailwindcss": "^3.4.1",
     "autoprefixer": "^10.4.17",
-    "postcss": "^8.4.35"
+    "postcss": "^8.4.35",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "concurrently": "^8.2.2",
+    "wait-on": "^7.2.0",
+    "@capacitor/cli": "^6.0.0"
   };
 
+  pkg.main = "electron/main.cjs";
+
   if (isTS) {
-    pkg.devDependencies = {
-      ...pkg.devDependencies,
+    Object.assign(pkg.devDependencies, {
       "@types/react": "^18.2.0",
       "@types/react-dom": "^18.2.0",
       "typescript": "^5.0.0"
-    };
+    });
   }
 
   // Scripts Generation
-  const commonScripts = {
+  pkg.scripts = {
     "dev": "indjs dev",
+    "dev:web": "indjs dev",
+    "dev:desktop": "concurrently -k \"indjs dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "dev:mobile": "indjs mobile dev",
+    "open:android": "npx cap open android",
+    "open:ios": "npx cap open ios",
+    "setup:mobile": "node scripts/setup-android.cjs",
     "build": "indjs build",
+    "build:desktop": "indjs build && electron-builder",
+    "build:mobile": "indjs build && npx cap sync",
+    "build:all": "npm run build && npm run build:desktop && npm run build:mobile",
     "start": "indjs start",
     "test": "indjs test"
   };
-
-  pkg.scripts = { ...commonScripts };
-
-  if (isDesktop || config.type === 'universal') {
-    Object.assign(pkg.scripts, {
-      "dev:desktop": "concurrently -k \"indjs dev\" \"wait-on http://localhost:3000 && electron .\"",
-      "build:desktop": "indjs build && electron-builder"
-    });
-    // Desktop Deps
-    Object.assign(pkg.devDependencies, {
-      "electron": "^28.0.0",
-      "electron-builder": "^24.9.1",
-      "concurrently": "^8.2.2",
-      "wait-on": "^7.2.0"
-    });
-    Object.assign(pkg.dependencies, {
-      "electron-serve": "^1.3.0"
-    });
-    // If desktop only or universal, main should be electron
-    if (config.type !== 'web') {
-      pkg.main = "electron/main.cjs";
-    }
-  }
-
-  if (isMobile || config.type === 'universal') {
-    Object.assign(pkg.scripts, {
-      "setup:mobile": "node scripts/setup-android.cjs",
-      "dev:mobile": "npm run build && npx cap sync android && npx cap run android",
-      "open:android": "npx cap open android",
-      "open:ios": "npx cap open ios",
-      "build:mobile": "indjs build && npx cap sync",
-      // Aliases
-      "android": "npm run dev:mobile"
-    });
-    // Mobile Deps
-    Object.assign(pkg.dependencies, {
-      "@capacitor/core": "^6.0.0",
-      "@capacitor/app": "^6.0.0",
-      "@capacitor/preferences": "^6.0.0",
-      "@capacitor/android": "^6.0.0",
-      "@capacitor/ios": "^6.0.0"
-    });
-    Object.assign(pkg.devDependencies, {
-      "@capacitor/cli": "^6.0.0"
-    });
-  }
-
-  if (config.type === 'universal' || config.type === 'todo-app') {
-    // Universal specific scripts
-    pkg.scripts['build:all'] = 'npm run build && npm run build:desktop && npm run build:mobile';
-  }
-
-  if (config.type === 'fullstack-saas') {
-    // Add db deps
-    pkg.dependencies['pg'] = '^8.11.3';
-  }
 
   await fs.writeFile(path.join(appPath, 'package.json'), JSON.stringify(pkg, null, 2));
 }
@@ -262,21 +208,10 @@ async function createDirectoryStructure(appPath, type) {
     'utils'
   ];
 
-  if (['desktop', 'universal', 'todo-app'].includes(type)) {
-    dirs.push('electron');
-  }
-  if (['mobile', 'universal', 'todo-app'].includes(type)) {
-    dirs.push('scripts');
-  }
-  // Universal doesn't need platform specific layout folders anymore. Responsive Layout.jsx is enough.
+  // Platform specific
+  dirs.push('electron');
+  dirs.push('scripts');
 
-
-  if (type === 'ai-app') {
-    dirs.push('ai', 'pages/api/ai');
-  }
-  if (type === 'fullstack-saas') {
-    dirs.push('lib/db', 'pages/api/auth');
-  }
 
   for (const dir of dirs) {
     await fs.mkdir(path.join(appPath, dir), { recursive: true });
@@ -328,53 +263,8 @@ module.exports = {
 async function createUI(appPath, config) {
   const ext = config.language === 'ts' ? 'tsx' : 'jsx';
 
-  // Layout Generation
-  let layoutContent = '';
-  // Default Web Layout
-  layoutContent = `import React from 'react';
-export default function Layout({ children }) {
-  return (
-    <div className="min-h-screen flex flex-col">
-      <nav className="bg-white border-b px-6 py-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold text-indigo-600">App</h1>
-      </nav>
-      <main className="flex-1 container mx-auto p-6">{children}</main>
-    </div>
-  );
-}`;
-
-  if (config.type === 'desktop') {
-    layoutContent = `import React from 'react';
-export default function Layout({ children }) {
-  return (
-    <div className="min-h-screen flex">
-      <aside className="w-64 bg-gray-900 text-white p-6">
-        <div className="text-2xl font-bold mb-8">Desktop</div>
-      </aside>
-      <main className="flex-1 bg-gray-100 p-8 overflow-auto">{children}</main>
-    </div>
-  );
-}`;
-  } else if (config.type === 'mobile') {
-    layoutContent = `import React from 'react';
-import { SafeAreaView, View, Text } from 'indjs';
-
-export default function Layout({ children }) {
-  return (
-    <SafeAreaView className="flex-1 bg-gray-50">
-      <View className="bg-white border-b px-4 py-3 sticky top-0 z-10">
-         <Text className="text-center font-bold text-lg">Mobile App</Text>
-      </View>
-      <View className="flex-1 p-4">{children}</View>
-      <View className="bg-white border-t flex-row justify-around p-3 pb-8">
-        <Text>Home</Text>
-        <Text>Profile</Text>
-      </View>
-    </SafeAreaView>
-  );
-}`;
-  } else if (config.type === 'universal') {
-    layoutContent = `import React from 'react';
+  // Universal Layout
+  const layoutContent = `import React from 'react';
 import { SafeAreaView, View, Text } from 'indjs';
 
 export default function Layout({ children }) {
@@ -398,82 +288,29 @@ export default function Layout({ children }) {
     </SafeAreaView>
   );
 }`;
-  }
 
   await fs.writeFile(path.join(appPath, 'pages', `_layout.${ext}`), layoutContent);
 
+
   // Home Page
-  let homeContent = `import React from 'react';
-export default function Home() {
-  return <div className="p-10 text-center"><h1 className="text-4xl font-bold">Welcome</h1></div>;
-}`;
+  const homeContent = `import React from 'react';
+import { View, Text, Button } from 'indjs';
 
-  if (config.type === 'mobile') {
-    homeContent = `import React from 'react';
 export default function Home() {
   return (
-    <div className="space-y-4">
-      <div className="bg-indigo-600 rounded-xl p-6 text-white shadow-lg">
-        <h2 className="text-2xl font-bold">Balance</h2>
-        <p className="text-4xl mt-2">$12,450.00</p>
-      </div>
-    </div>
+    <View className="space-y-4 p-4">
+      <View className="bg-indigo-600 rounded-xl p-6 shadow-lg">
+        <Text className="text-2xl font-bold text-white">Welcome</Text>
+        <Text className="text-white opacity-90 mt-2">This is your new Universal App.</Text>
+      </View>
+      <View className="bg-white p-6 rounded-xl border border-gray-200">
+         <Text className="text-gray-800 text-lg font-semibold">Get Started</Text>
+         <Text className="text-gray-600 mt-2">Edit pages/index.js to change this screen.</Text>
+         <Button className="mt-4" onClick={() => alert('Hello!')}>Click Me</Button>
+      </View>
+    </View>
   );
 }`;
-  }
-
-  // Advanced Templates Overrides
-  if (config.type === 'todo-app') {
-    const todoPage = `import React, { useState, useEffect } from 'react';
-
-export default function TodoApp() {
-  const [todos, setTodos] = useState([]);
-  const [input, setInput] = useState('');
-
-  useEffect(() => {
-    const saved = localStorage.getItem('todos');
-    if (saved) setTodos(JSON.parse(saved));
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos));
-  }, [todos]);
-
-  const add = (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-    setTodos([...todos, { id: Date.now(), text: input, done: false }]);
-    setInput('');
-  };
-
-  const toggle = (id) => setTodos(todos.map(t => t.id === id ? { ...t, done: !t.done } : t));
-
-  return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-md mx-auto bg-white rounded-xl shadow p-6">
-        <h1 className="text-2xl font-bold mb-4">Todo App</h1>
-        <form onSubmit={add} className="flex gap-2 mb-4">
-          <input value={input} onChange={e => setInput(e.target.value)} className="border p-2 flex-1 rounded" placeholder="Add task..." />
-          <button className="bg-indigo-600 text-white px-4 py-2 rounded">Add</button>
-        </form>
-        <ul className="space-y-2">
-          {todos.map(t => (
-            <li key={t.id} className="flex items-center gap-2 p-2 border-b cursor-pointer" onClick={() => toggle(t.id)}>
-              <span className={t.done ? 'line-through text-gray-400' : ''}>{t.text}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-}`;
-    homeContent = todoPage;
-  }
-
-  if (config.type === 'ai-app') {
-    homeContent = `import React from 'react';
-export default function AI() { return <div className="p-8"><h1>AI Playground</h1></div>; }`;
-  }
 
   await fs.writeFile(path.join(appPath, 'pages', `index.${ext}`), homeContent);
   await fs.writeFile(path.join(appPath, 'pages', `about.${ext}`), `export default function About() { return <div className="p-10"><h1>About</h1></div> }`);

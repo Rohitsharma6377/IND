@@ -273,6 +273,7 @@ export async function run() {
           const target = args._[2] || 'android'; // default to android
 
           console.log(chalk.green(`🚀 Launching ${target} app and Metro-like Dev Server...`));
+          console.log(chalk.cyan('💡 To debug: Open chrome://inspect in your browser to inspect the WebView.'));
 
           // Use current CLI script path for recursive call
           const indjsBin = process.argv[1];
