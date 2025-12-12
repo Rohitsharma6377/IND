@@ -40,10 +40,11 @@ export async function startVite({ app, root, bus }) {
     },
     esbuild: {
       loader: "jsx",
-      include: /.*\.m?js$/, // Apply to .js and .mjs
+      include: /.*\.(m?js|jsx|tsx)$/, // Apply to .js, .mjs, .jsx, .tsx
       exclude: [],
     },
     resolve: {
+      extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {
         'pg': emptyMock,
         'sqlite': emptyMock,

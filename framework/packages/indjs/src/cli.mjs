@@ -261,6 +261,10 @@ export async function run() {
               capConfig.server = { ...capConfig.server, url: url, cleartext: true };
               await fs.writeFile(capConfigPath, JSON.stringify(capConfig, null, 2));
 
+              // Ensure android assets folder exists to avoid Capacitor sync error
+              const androidAssets = path.join(root, 'android/app/src/main/assets');
+              try { await fs.mkdir(androidAssets, { recursive: true }); } catch { }
+
               // 3. Sync config to native
               console.log(chalk.yellow('   → Syncing config to Android/iOS...'));
               await runShell('npx cap copy', { cwd: root });

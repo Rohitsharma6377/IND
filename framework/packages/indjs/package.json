@@ -1,6 +1,6 @@
 {
   "name": "indjs",
-  "version": "2.1.0",
+  "version": "2.1.2",
   "description": "A modern, fast, and lightweight full-stack React framework with file-based routing, SSR, and built-in optimizations",
   "type": "module",
   "author": "INDJS Team || Rohit sharma",
@@ -90,7 +90,9 @@
     "pg": "^8.11.3",
     "preact": "^10.25.1",
     "prisma": "^5.7.1",
+    "sqlite": "^5.1.1",
     "sqlite3": "^5.1.6",
+    "node-mocks-http": "^1.13.0",
     "vite": "^5.4.0"
   },
   "devDependencies": {

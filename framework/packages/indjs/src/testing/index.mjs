@@ -1,10 +1,17 @@
-import { createMocks } from 'node-mocks-http';
+// Dynamic import wrapper
+let createMocks;
+import('node-mocks-http').then(m => createMocks = m.createMocks).catch(() => { });
+
+// Fallback if missing
+if (!createMocks) {
+  createMocks = () => ({ req: {}, res: {} });
+}
 import React from 'react';
 
 // Mock INDJS context for testing
 export function createMockContext(overrides = {}) {
   const { req: reqOverrides = {}, res: resOverrides = {}, ...otherOverrides } = overrides;
-  
+
   const mockReq = {
     method: 'GET',
     url: '/',
@@ -16,7 +23,7 @@ export function createMockContext(overrides = {}) {
     user: null,
     ...reqOverrides
   };
-  
+
   const mockRes = {
     status: jest.fn().mockReturnThis(),
     json: jest.fn().mockReturnThis(),
@@ -29,7 +36,7 @@ export function createMockContext(overrides = {}) {
     headersSent: false,
     ...resOverrides
   };
-  
+
   return {
     req: mockReq,
     res: mockRes,
@@ -59,7 +66,7 @@ export async function testAPIHandler(handler, options = {}) {
     user = null,
     ...contextOverrides
   } = options;
-  
+
   const context = createMockContext({
     req: {
       method,
@@ -71,16 +78,16 @@ export async function testAPIHandler(handler, options = {}) {
     },
     ...contextOverrides
   });
-  
+
   let result;
   let error;
-  
+
   try {
     result = await handler(context);
   } catch (err) {
     error = err;
   }
-  
+
   return {
     result,
     error,
@@ -105,17 +112,17 @@ export class TestDatabase {
     this.adapter = adapter;
     this.originalData = new Map();
   }
-  
+
   async setup() {
     // Store original data for cleanup
     await this.adapter.connect();
   }
-  
+
   async cleanup() {
     // Clean up test data
     await this.adapter.disconnect();
   }
-  
+
   async seed(tableName, data) {
     if (Array.isArray(data)) {
       for (const item of data) {
@@ -125,7 +132,7 @@ export class TestDatabase {
       await this.adapter.insert(tableName, data);
     }
   }
-  
+
   async truncate(tableName) {
     await this.adapter.query(`DELETE FROM ${tableName}`);
   }
@@ -143,13 +150,13 @@ export class TestAuth {
       ...overrides
     };
   }
-  
+
   static createMockToken(user = null) {
     const mockUser = user || this.createMockUser();
     // In real implementation, this would use the actual JWT library
     return `mock-token-${mockUser.id}`;
   }
-  
+
   static mockAuthMiddleware(user = null) {
     return jest.fn().mockImplementation(async ({ req }) => {
       if (user) {
@@ -168,19 +175,19 @@ export function renderWithProviders(ui, options = {}) {
     providers = [],
     ...renderOptions
   } = options;
-  
+
   function AllProviders({ children }) {
     let wrapped = children;
-    
+
     // Wrap with providers in reverse order
     for (let i = providers.length - 1; i >= 0; i--) {
       const Provider = providers[i];
       wrapped = React.createElement(Provider, {}, wrapped);
     }
-    
+
     return wrapped;
   }
-  
+
   // This would use @testing-library/react in a real implementation
   return {
     ...renderOptions,
@@ -195,14 +202,14 @@ export class MockService {
     this.calls = [];
     this.responses = new Map();
   }
-  
+
   mockResponse(method, response) {
     this.responses.set(method.toLowerCase(), response);
   }
-  
+
   async call(method, ...args) {
     this.calls.push({ method, args, timestamp: new Date() });
-    
+
     const response = this.responses.get(method.toLowerCase());
     if (response) {
       if (typeof response === 'function') {
@@ -210,21 +217,21 @@ export class MockService {
       }
       return response;
     }
-    
+
     throw new Error(`No mock response defined for ${this.name}.${method}`);
   }
-  
+
   getCalls(method = null) {
     if (method) {
       return this.calls.filter(call => call.method === method);
     }
     return this.calls;
   }
-  
+
   clearCalls() {
     this.calls = [];
   }
-  
+
   reset() {
     this.calls = [];
     this.responses.clear();
@@ -242,7 +249,7 @@ export const factories = {
     updatedAt: new Date().toISOString(),
     ...overrides
   }),
-  
+
   post: (overrides = {}) => ({
     id: Math.random().toString(36).substr(2, 9),
     title: 'Test Post',
@@ -254,7 +261,7 @@ export const factories = {
     updatedAt: new Date().toISOString(),
     ...overrides
   }),
-  
+
   comment: (overrides = {}) => ({
     id: Math.random().toString(36).substr(2, 9),
     content: 'This is a test comment',
@@ -275,41 +282,41 @@ export class TestSuite {
     this.beforeAllHooks = [];
     this.afterAllHooks = [];
   }
-  
+
   beforeEach(fn) {
     this.beforeEachHooks.push(fn);
   }
-  
+
   afterEach(fn) {
     this.afterEachHooks.push(fn);
   }
-  
+
   beforeAll(fn) {
     this.beforeAllHooks.push(fn);
   }
-  
+
   afterAll(fn) {
     this.afterAllHooks.push(fn);
   }
-  
+
   async runBeforeAll() {
     for (const hook of this.beforeAllHooks) {
       await hook();
     }
   }
-  
+
   async runAfterAll() {
     for (const hook of this.afterAllHooks) {
       await hook();
     }
   }
-  
+
   async runBeforeEach() {
     for (const hook of this.beforeEachHooks) {
       await hook();
     }
   }
-  
+
   async runAfterEach() {
     for (const hook of this.afterEachHooks) {
       await hook();
@@ -332,26 +339,26 @@ export class PerformanceTest {
     this.name = name;
     this.measurements = [];
   }
-  
+
   async measure(fn) {
     const start = process.hrtime.bigint();
     const result = await fn();
     const end = process.hrtime.bigint();
-    
+
     const duration = Number(end - start) / 1000000; // Convert to milliseconds
     this.measurements.push(duration);
-    
+
     return { result, duration };
   }
-  
+
   getStats() {
     if (this.measurements.length === 0) {
       return null;
     }
-    
+
     const sorted = [...this.measurements].sort((a, b) => a - b);
     const sum = this.measurements.reduce((a, b) => a + b, 0);
-    
+
     return {
       count: this.measurements.length,
       min: sorted[0],
@@ -362,7 +369,7 @@ export class PerformanceTest {
       p99: sorted[Math.floor(sorted.length * 0.99)]
     };
   }
-  
+
   reset() {
     this.measurements = [];
   }
@@ -374,14 +381,14 @@ export class IntegrationTest {
     this.baseUrl = options.baseUrl || 'http://localhost:3000';
     this.timeout = options.timeout || 30000;
   }
-  
+
   async request(path, options = {}) {
     const url = `${this.baseUrl}${path}`;
     const response = await fetch(url, {
       timeout: this.timeout,
       ...options
     });
-    
+
     return {
       status: response.status,
       headers: Object.fromEntries(response.headers.entries()),
@@ -389,11 +396,11 @@ export class IntegrationTest {
       json: async () => JSON.parse(await response.text())
     };
   }
-  
+
   async get(path, options = {}) {
     return this.request(path, { method: 'GET', ...options });
   }
-  
+
   async post(path, data, options = {}) {
     return this.request(path, {
       method: 'POST',
@@ -405,7 +412,7 @@ export class IntegrationTest {
       ...options
     });
   }
-  
+
   async put(path, data, options = {}) {
     return this.request(path, {
       method: 'PUT',
@@ -417,7 +424,7 @@ export class IntegrationTest {
       ...options
     });
   }
-  
+
   async delete(path, options = {}) {
     return this.request(path, { method: 'DELETE', ...options });
   }

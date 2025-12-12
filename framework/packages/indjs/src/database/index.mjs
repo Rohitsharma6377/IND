@@ -20,7 +20,7 @@ export function configure(newConfig) {
 // Connect to database
 export async function connect(customConfig = null) {
   const dbConfig = customConfig || config;
-  
+
   try {
     switch (dbConfig.type) {
       case 'mongodb':
@@ -67,7 +67,7 @@ export async function connect(customConfig = null) {
     if (lastErr) throw lastErr;
     isConnected = true;
     console.log(`✅ Connected to ${dbConfig.type} database`);
-    
+
     return currentAdapter;
   } catch (error) {
     console.error('❌ Database connection failed:', error.message);
@@ -79,7 +79,7 @@ export async function connect(customConfig = null) {
 export async function healthCheck() {
   try {
     if (!currentAdapter || !isConnected) return { ok: false };
-    try { await query('SELECT 1'); return { ok: true }; } catch {}
+    try { await query('SELECT 1'); return { ok: true }; } catch { }
     return { ok: true };
   } catch {
     return { ok: false };
@@ -119,28 +119,28 @@ export async function transaction(callback) {
 // MongoDB Adapter
 async function createMongoAdapter(config) {
   const { MongoClient } = await import('mongodb');
-  
+
   let client = null;
   let db = null;
-  
+
   return {
     async connect() {
       client = new MongoClient(config.url, config.options);
       await client.connect();
       db = client.db();
     },
-    
+
     async disconnect() {
       if (client) {
         await client.close();
       }
     },
-    
+
     async query(collection, operation, ...args) {
       if (!db) throw new Error('MongoDB not connected');
       return db.collection(collection)[operation](...args);
     },
-    
+
     async transaction(callback) {
       const session = client.startSession();
       try {
@@ -149,46 +149,46 @@ async function createMongoAdapter(config) {
         await session.endSession();
       }
     },
-    
+
     // MongoDB specific methods
     collection(name) {
       if (!db) throw new Error('MongoDB not connected');
       return db.collection(name);
     },
-    
+
     async insertOne(collection, doc) {
       return this.query(collection, 'insertOne', doc);
     },
-    
+
     async insertMany(collection, docs) {
       return this.query(collection, 'insertMany', docs);
     },
-    
+
     async findOne(collection, filter, options = {}) {
       return this.query(collection, 'findOne', filter, options);
     },
-    
+
     async find(collection, filter = {}, options = {}) {
       const cursor = await this.query(collection, 'find', filter, options);
       return cursor.toArray();
     },
-    
+
     async updateOne(collection, filter, update, options = {}) {
       return this.query(collection, 'updateOne', filter, update, options);
     },
-    
+
     async updateMany(collection, filter, update, options = {}) {
       return this.query(collection, 'updateMany', filter, update, options);
     },
-    
+
     async deleteOne(collection, filter) {
       return this.query(collection, 'deleteOne', filter);
     },
-    
+
     async deleteMany(collection, filter) {
       return this.query(collection, 'deleteMany', filter);
     },
-    
+
     async countDocuments(collection, filter = {}) {
       return this.query(collection, 'countDocuments', filter);
     }
@@ -198,33 +198,33 @@ async function createMongoAdapter(config) {
 // PostgreSQL Adapter
 async function createPostgresAdapter(config) {
   const { Pool } = await import('pg');
-  
+
   let pool = null;
-  
+
   return {
     async connect() {
       pool = new Pool({
         connectionString: config.url,
         ...config.options
       });
-      
+
       // Test connection
       const client = await pool.connect();
       client.release();
     },
-    
+
     async disconnect() {
       if (pool) {
         await pool.end();
       }
     },
-    
+
     async query(sql, params = []) {
       if (!pool) throw new Error('PostgreSQL not connected');
       const result = await pool.query(sql, params);
       return result.rows;
     },
-    
+
     async transaction(callback) {
       const client = await pool.connect();
       try {
@@ -239,22 +239,22 @@ async function createPostgresAdapter(config) {
         client.release();
       }
     },
-    
+
     // PostgreSQL specific methods
     async insert(table, data) {
       const keys = Object.keys(data);
       const values = Object.values(data);
       const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
-      
+
       const sql = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${placeholders}) RETURNING *`;
       const result = await this.query(sql, values);
       return result[0];
     },
-    
+
     async select(table, where = {}, options = {}) {
       let sql = `SELECT * FROM ${table}`;
       const params = [];
-      
+
       if (Object.keys(where).length > 0) {
         const conditions = Object.keys(where).map((key, i) => {
           params.push(where[key]);
@@ -262,38 +262,38 @@ async function createPostgresAdapter(config) {
         });
         sql += ` WHERE ${conditions.join(' AND ')}`;
       }
-      
+
       if (options.orderBy) {
         sql += ` ORDER BY ${options.orderBy}`;
       }
-      
+
       if (options.limit) {
         sql += ` LIMIT ${options.limit}`;
       }
-      
+
       if (options.offset) {
         sql += ` OFFSET ${options.offset}`;
       }
-      
+
       return this.query(sql, params);
     },
-    
+
     async update(table, data, where) {
       const setClause = Object.keys(data).map((key, i) => `${key} = $${i + 1}`).join(', ');
       const whereClause = Object.keys(where).map((key, i) => `${key} = $${i + 1 + Object.keys(data).length}`).join(' AND ');
-      
+
       const sql = `UPDATE ${table} SET ${setClause} WHERE ${whereClause} RETURNING *`;
       const params = [...Object.values(data), ...Object.values(where)];
-      
+
       const result = await this.query(sql, params);
       return result[0];
     },
-    
+
     async delete(table, where) {
       const whereClause = Object.keys(where).map((key, i) => `${key} = $${i + 1}`).join(' AND ');
       const sql = `DELETE FROM ${table} WHERE ${whereClause} RETURNING *`;
       const params = Object.values(where);
-      
+
       return this.query(sql, params);
     }
   };
@@ -301,44 +301,54 @@ async function createPostgresAdapter(config) {
 
 // SQLite Adapter
 async function createSQLiteAdapter(config) {
-  const sqlite3 = await import('sqlite3');
-  const { open } = await import('sqlite');
-  
+  const sqlite3 = await import('sqlite3').catch(() => null);
+  let open;
+  try {
+    const sql = await import('sqlite');
+    open = sql.open;
+  } catch (e) { }
+
+  if (!sqlite3 || !open) {
+    return {
+      connect: () => { throw new Error('SQLite dependencies not found. Please install sqlite3 and sqlite.'); },
+    };
+  }
+
   let db = null;
-  
+
   return {
     async connect() {
       const dbPath = config.url.replace('sqlite:', '');
-      
+
       // Ensure directory exists
       const dir = path.dirname(dbPath);
       await fs.mkdir(dir, { recursive: true });
-      
+
       db = await open({
         filename: dbPath,
         driver: sqlite3.Database
       });
     },
-    
+
     async disconnect() {
       if (db) {
         await db.close();
       }
     },
-    
+
     async query(sql, params = []) {
       if (!db) throw new Error('SQLite not connected');
-      
+
       if (sql.trim().toLowerCase().startsWith('select')) {
         return db.all(sql, params);
       } else {
         return db.run(sql, params);
       }
     },
-    
+
     async transaction(callback) {
       if (!db) throw new Error('SQLite not connected');
-      
+
       await db.run('BEGIN TRANSACTION');
       try {
         const result = await callback(db);
@@ -349,24 +359,24 @@ async function createSQLiteAdapter(config) {
         throw error;
       }
     },
-    
+
     // SQLite specific methods
     async insert(table, data) {
       const keys = Object.keys(data);
       const values = Object.values(data);
       const placeholders = keys.map(() => '?').join(', ');
-      
+
       const sql = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${placeholders})`;
       const result = await db.run(sql, values);
-      
+
       // Return the inserted row
       return db.get(`SELECT * FROM ${table} WHERE rowid = ?`, [result.lastID]);
     },
-    
+
     async select(table, where = {}, options = {}) {
       let sql = `SELECT * FROM ${table}`;
       const params = [];
-      
+
       if (Object.keys(where).length > 0) {
         const conditions = Object.keys(where).map(key => {
           params.push(where[key]);
@@ -374,40 +384,40 @@ async function createSQLiteAdapter(config) {
         });
         sql += ` WHERE ${conditions.join(' AND ')}`;
       }
-      
+
       if (options.orderBy) {
         sql += ` ORDER BY ${options.orderBy}`;
       }
-      
+
       if (options.limit) {
         sql += ` LIMIT ${options.limit}`;
       }
-      
+
       if (options.offset) {
         sql += ` OFFSET ${options.offset}`;
       }
-      
+
       return db.all(sql, params);
     },
-    
+
     async update(table, data, where) {
       const setClause = Object.keys(data).map(key => `${key} = ?`).join(', ');
       const whereClause = Object.keys(where).map(key => `${key} = ?`).join(' AND ');
-      
+
       const sql = `UPDATE ${table} SET ${setClause} WHERE ${whereClause}`;
       const params = [...Object.values(data), ...Object.values(where)];
-      
+
       await db.run(sql, params);
-      
+
       // Return updated row
       return db.get(`SELECT * FROM ${table} WHERE ${whereClause}`, Object.values(where));
     },
-    
+
     async delete(table, where) {
       const whereClause = Object.keys(where).map(key => `${key} = ?`).join(' AND ');
       const sql = `DELETE FROM ${table} WHERE ${whereClause}`;
       const params = Object.values(where);
-      
+
       return db.run(sql, params);
     }
   };
@@ -416,31 +426,31 @@ async function createSQLiteAdapter(config) {
 // Prisma Adapter
 async function createPrismaAdapter(config) {
   const { PrismaClient } = await import('@prisma/client');
-  
+
   let prisma = null;
-  
+
   return {
     async connect() {
       prisma = new PrismaClient(config.options);
       await prisma.$connect();
     },
-    
+
     async disconnect() {
       if (prisma) {
         await prisma.$disconnect();
       }
     },
-    
+
     async query(sql, params = []) {
       if (!prisma) throw new Error('Prisma not connected');
       return prisma.$queryRaw`${sql}`;
     },
-    
+
     async transaction(callback) {
       if (!prisma) throw new Error('Prisma not connected');
       return prisma.$transaction(callback);
     },
-    
+
     // Direct Prisma client access
     get client() {
       if (!prisma) throw new Error('Prisma not connected');
@@ -467,7 +477,7 @@ export function addMigration(name, up, down) {
 
 export async function runMigrations() {
   const adapter = getAdapter();
-  
+
   // Create migrations table if it doesn't exist
   try {
     await adapter.query(`
@@ -482,16 +492,16 @@ export async function runMigrations() {
     // Handle different SQL dialects
     console.warn('Migration table creation warning:', error.message);
   }
-  
+
   // Get executed migrations
   const executedMigrations = await adapter.query('SELECT name FROM migrations');
   const executedNames = executedMigrations.map(m => m.name);
-  
+
   // Run pending migrations
   for (const migration of migrations) {
     if (!executedNames.includes(migration.name)) {
       console.log(`Running migration: ${migration.name}`);
-      
+
       try {
         await adapter.transaction(async () => {
           await migration.up(adapter);
@@ -500,7 +510,7 @@ export async function runMigrations() {
             [migration.name, migration.timestamp]
           );
         });
-        
+
         console.log(`✅ Migration completed: ${migration.name}`);
       } catch (error) {
         console.error(`❌ Migration failed: ${migration.name}`, error);
@@ -513,19 +523,19 @@ export async function runMigrations() {
 export async function rollbackMigration(name) {
   const adapter = getAdapter();
   const migration = migrations.find(m => m.name === name);
-  
+
   if (!migration) {
     throw new Error(`Migration not found: ${name}`);
   }
-  
+
   console.log(`Rolling back migration: ${name}`);
-  
+
   try {
     await adapter.transaction(async () => {
       await migration.down(adapter);
       await adapter.query('DELETE FROM migrations WHERE name = ?', [name]);
     });
-    
+
     console.log(`✅ Migration rolled back: ${name}`);
   } catch (error) {
     console.error(`❌ Rollback failed: ${name}`, error);
@@ -539,46 +549,45 @@ export class Model {
     this.tableName = tableName;
     this.schema = schema;
   }
-  
+
   async create(data) {
     const adapter = getAdapter();
     return adapter.insert(this.tableName, data);
   }
-  
+
   async findById(id) {
     const adapter = getAdapter();
     const results = await adapter.select(this.tableName, { id });
     return results[0] || null;
   }
-  
+
   async findOne(where) {
     const adapter = getAdapter();
     const results = await adapter.select(this.tableName, where);
     return results[0] || null;
   }
-  
+
   async findMany(where = {}, options = {}) {
     const adapter = getAdapter();
     return adapter.select(this.tableName, where, options);
   }
-  
+
   async update(id, data) {
     const adapter = getAdapter();
     return adapter.update(this.tableName, data, { id });
   }
-  
+
   async delete(id) {
     const adapter = getAdapter();
     return adapter.delete(this.tableName, { id });
   }
-  
+
   async count(where = {}) {
     const adapter = getAdapter();
     const result = await adapter.query(
-      `SELECT COUNT(*) as count FROM ${this.tableName}${
-        Object.keys(where).length > 0 
-          ? ` WHERE ${Object.keys(where).map(k => `${k} = ?`).join(' AND ')}`
-          : ''
+      `SELECT COUNT(*) as count FROM ${this.tableName}${Object.keys(where).length > 0
+        ? ` WHERE ${Object.keys(where).map(k => `${k} = ?`).join(' AND ')}`
+        : ''
       }`,
       Object.values(where)
     );
