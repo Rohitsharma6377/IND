@@ -52,6 +52,11 @@ export async function startVite({ app, root, bus }) {
         'mock-aws-s3': emptyMock,
         'nock': emptyMock,
         'node-fetch': emptyMock,
+        'fs': emptyMock,
+        'path': emptyMock,
+        'stream': emptyMock,
+        'util': emptyMock,
+        'http': emptyMock,
       }
     }
   });
