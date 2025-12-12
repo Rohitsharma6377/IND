@@ -33,7 +33,8 @@ export async function create({ name, template, root, language, state, useTailwin
       choices: [
         { name: '🌍 Universal App (Web + Desktop + Mobile)', value: 'universal' }
       ],
-      when: !initialType
+      when: false, // Always default to universal if not specified
+      default: 'universal'
     },
     {
       type: 'list',
@@ -59,7 +60,7 @@ export async function create({ name, template, root, language, state, useTailwin
   // Merge CLI args with answers
   const config = {
     name: name || answers.name,
-    type: 'universal', // Force universal type
+    type: answers.type || 'universal', // Force universal type
     language: language || answers.language || 'js',
     root: root || process.cwd()
   };
