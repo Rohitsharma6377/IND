@@ -12,8 +12,8 @@ const templates = {
     description: 'A minimal INDJS application with essential files'
   },
   universal: {
-    name: 'Universal App',
-    description: 'Web + Mobile (iOS/Android) + Desktop (Electron) from one codebase'
+    name: 'Universal App (Recommended)',
+    description: 'Unified Fullstack App for Web, Mobile, and Desktop'
   },
   'todo-app': {
     name: 'Todo App Template',
@@ -195,10 +195,10 @@ async function createPackageJson(appPath, config) {
 
   pkg.scripts = { ...commonScripts };
 
-  if (isDesktop) {
+  if (isDesktop || config.type === 'universal') {
     Object.assign(pkg.scripts, {
-      "desktop:dev": "concurrently -k \"indjs dev\" \"wait-on http://localhost:3000 && electron .\"",
-      "desktop:build": "indjs build && electron-builder"
+      "dev:desktop": "concurrently -k \"indjs dev\" \"wait-on http://localhost:3000 && electron .\"",
+      "build:desktop": "indjs build && electron-builder"
     });
     // Desktop Deps
     Object.assign(pkg.devDependencies, {
@@ -216,15 +216,15 @@ async function createPackageJson(appPath, config) {
     }
   }
 
-  if (isMobile) {
+  if (isMobile || config.type === 'universal') {
     Object.assign(pkg.scripts, {
-      "android:setup": "node scripts/setup-android.cjs",
-      "android:dev": "npm run build && npx cap sync android && npx cap run android",
-      "android:open": "npx cap open android",
-      "mobile:dev": "npm run android:dev", // Alias
-      "mobile:android": "npm run android:dev",
-      "mobile:ios": "npx cap open ios",
-      "mobile:build": "indjs build && npx cap sync"
+      "setup:mobile": "node scripts/setup-android.cjs",
+      "dev:mobile": "npm run build && npx cap sync android && npx cap run android",
+      "open:android": "npx cap open android",
+      "open:ios": "npx cap open ios",
+      "build:mobile": "indjs build && npx cap sync",
+      // Aliases
+      "android": "npm run dev:mobile"
     });
     // Mobile Deps
     Object.assign(pkg.dependencies, {
@@ -241,7 +241,7 @@ async function createPackageJson(appPath, config) {
 
   if (config.type === 'universal' || config.type === 'todo-app') {
     // Universal specific scripts
-    pkg.scripts['build:all'] = 'npm run build && npm run desktop:build && npm run mobile:build';
+    pkg.scripts['build:all'] = 'npm run build && npm run build:desktop && npm run build:mobile';
   }
 
   if (config.type === 'fullstack-saas') {
@@ -268,9 +268,8 @@ async function createDirectoryStructure(appPath, type) {
   if (['mobile', 'universal', 'todo-app'].includes(type)) {
     dirs.push('scripts');
   }
-  if (type === 'universal') {
-    dirs.push('layouts', 'layouts/web', 'layouts/mobile', 'layouts/desktop');
-  }
+  // Universal doesn't need platform specific layout folders anymore. Responsive Layout.jsx is enough.
+
 
   if (type === 'ai-app') {
     dirs.push('ai', 'pages/api/ai');
@@ -358,22 +357,46 @@ export default function Layout({ children }) {
 }`;
   } else if (config.type === 'mobile') {
     layoutContent = `import React from 'react';
+import { SafeAreaView, View, Text } from 'indjs';
+
 export default function Layout({ children }) {
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <header className="bg-white border-b p-4 sticky top-0 z-10 text-center font-bold">Mobile App</header>
-      <main className="p-4">{children}</main>
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 safe-area-pb">
-        <span>Home</span>
-        <span>Profile</span>
-      </nav>
-    </div>
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <View className="bg-white border-b px-4 py-3 sticky top-0 z-10">
+         <Text className="text-center font-bold text-lg">Mobile App</Text>
+      </View>
+      <View className="flex-1 p-4">{children}</View>
+      <View className="bg-white border-t flex-row justify-around p-3 pb-8">
+        <Text>Home</Text>
+        <Text>Profile</Text>
+      </View>
+    </SafeAreaView>
   );
 }`;
   } else if (config.type === 'universal') {
     layoutContent = `import React from 'react';
+import { SafeAreaView, View, Text } from 'indjs';
+
 export default function Layout({ children }) {
-  return <div className="min-h-screen bg-white">{children}</div>;
+  return (
+    <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-row items-center justify-between px-6 py-4 bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
+        <Text className="text-xl font-bold text-indigo-600">Universal App</Text>
+        <View className="hidden md:flex flex-row gap-4">
+           <Text className="text-gray-600 hover:text-indigo-600 cursor-pointer">Start</Text>
+           <Text className="text-gray-600 hover:text-indigo-600 cursor-pointer">About</Text>
+        </View>
+      </View>
+      <View className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 lg:p-8">
+        {children}
+      </View>
+      {/* Mobile Tab Bar (Visible only on small screens) */}
+      <View className="md:hidden flex-row justify-around p-4 border-t border-gray-100 bg-white pb-safe">
+         <Text className="text-sm font-medium text-indigo-600">Home</Text>
+         <Text className="text-sm font-medium text-gray-500">Settings</Text>
+      </View>
+    </SafeAreaView>
+  );
 }`;
   }
 
@@ -555,6 +578,7 @@ try {
 `;
   await fs.writeFile(path.join(appPath, 'scripts', 'setup-android.cjs'), setupAndroid);
 }
+
 
 async function createStyles(appPath) {
   await fs.writeFile(path.join(appPath, 'styles', 'globals.css'), `@tailwind base;
