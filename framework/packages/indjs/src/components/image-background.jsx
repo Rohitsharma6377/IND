@@ -1,7 +1,7 @@
 
 import React, { forwardRef } from 'react';
-import View from './view.mjs';
-import Image from './image.mjs';
+import View from './view.jsx';
+import Image from './image.jsx';
 
 const ImageBackground = forwardRef(({ source, style, imageStyle, children, ...rest }, ref) => {
     return (

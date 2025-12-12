@@ -1,6 +1,6 @@
 
 import React, { forwardRef } from 'react';
-import View from './view.mjs';
+import View from './view.jsx';
 
 const Pressable = forwardRef(({ children, style, onPress, onPressIn, onPressOut, disabled, ...rest }, ref) => {
     const [pressed, setPressed] = React.useState(false);

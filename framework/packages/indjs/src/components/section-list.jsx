@@ -1,8 +1,8 @@
 
 import React, { forwardRef } from 'react';
-import ScrollView from './scroll-view.mjs';
-import View from './view.mjs';
-import Text from './text.mjs';
+import ScrollView from './scroll-view.jsx';
+import View from './view.jsx';
+import Text from './text.jsx';
 
 const SectionList = forwardRef(({
     sections,

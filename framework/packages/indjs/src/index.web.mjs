@@ -2,25 +2,25 @@
 // Exposes only modules that are safe on the client without optional server deps.
 
 // Components
-export { default as Image } from './components/image.mjs';
-export { default as Link } from './components/link.mjs';
-export { default as Script } from './components/script.mjs';
-export { default as Head } from './components/head.mjs';
-export { default as ErrorBoundary } from './components/error-boundary.mjs';
-export { default as View } from './components/view.mjs';
-export { default as Text } from './components/text.mjs';
-export { default as ScrollView } from './components/scroll-view.mjs';
-export { default as TextInput } from './components/text-input.mjs';
-export { default as Button } from './components/button.mjs';
-export { default as ActivityIndicator } from './components/activity-indicator.mjs';
-export { default as Switch } from './components/switch.mjs';
-export { default as FlatList } from './components/flat-list.mjs';
-export { default as TouchableOpacity } from './components/touchable-opacity.mjs';
-export { default as Pressable } from './components/pressable.mjs';
-export { default as ImageBackground } from './components/image-background.mjs';
-export { default as Modal } from './components/modal.mjs';
-export { default as SafeAreaView } from './components/safe-area-view.mjs';
-export { default as StatusBar } from './components/status-bar.mjs';
+export { default as Image } from './components/image.jsx';
+export { default as Link } from './components/link.jsx';
+export { default as Script } from './components/script.jsx';
+export { default as Head } from './components/head.jsx';
+export { default as ErrorBoundary } from './components/error-boundary.jsx';
+export { default as View } from './components/view.jsx';
+export { default as Text } from './components/text.jsx';
+export { default as ScrollView } from './components/scroll-view.jsx';
+export { default as TextInput } from './components/text-input.jsx';
+export { default as Button } from './components/button.jsx';
+export { default as ActivityIndicator } from './components/activity-indicator.jsx';
+export { default as Switch } from './components/switch.jsx';
+export { default as FlatList } from './components/flat-list.jsx';
+export { default as TouchableOpacity } from './components/touchable-opacity.jsx';
+export { default as Pressable } from './components/pressable.jsx';
+export { default as ImageBackground } from './components/image-background.jsx';
+export { default as Modal } from './components/modal.jsx';
+export { default as SafeAreaView } from './components/safe-area-view.jsx';
+export { default as StatusBar } from './components/status-bar.jsx';
 
 // Routing utilities (pure)
 export { discoverRoutes, matchDynamic, isDynamicRoute, fileToRoute } from './routes.mjs';
@@ -33,11 +33,11 @@ export { useRouter, Router } from './router.mjs';
 export * as Platform from './platform.mjs';
 
 // Platform detection
-export { default as SectionList } from './components/section-list.mjs';
-export { default as KeyboardAvoidingView } from './components/keyboard-avoiding-view.mjs';
-export { default as RefreshControl } from './components/refresh-control.mjs';
-export { default as TouchableHighlight } from './components/touchable-highlight.mjs';
-export { default as TouchableWithoutFeedback } from './components/touchable-without-feedback.mjs';
+export { default as SectionList } from './components/section-list.jsx';
+export { default as KeyboardAvoidingView } from './components/keyboard-avoiding-view.jsx';
+export { default as RefreshControl } from './components/refresh-control.jsx';
+export { default as TouchableHighlight } from './components/touchable-highlight.jsx';
+export { default as TouchableWithoutFeedback } from './components/touchable-without-feedback.jsx';
 export { default as StyleSheet } from './apis/style-sheet.mjs';
 export { default as Alert } from './apis/alert.mjs';
 export { default as Dimensions } from './apis/dimensions.mjs';

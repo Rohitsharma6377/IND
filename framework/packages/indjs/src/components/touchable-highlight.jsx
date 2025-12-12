@@ -1,6 +1,6 @@
 
 import React, { forwardRef, useState } from 'react';
-import View from './view.mjs';
+import View from './view.jsx';
 
 const TouchableHighlight = forwardRef(({ activeOpacity = 0.85, underlayColor = 'black', style, children, onPress, onShowUnderlay, onHideUnderlay, disabled, ...rest }, ref) => {
     const [isPressing, setIsPressing] = useState(false);

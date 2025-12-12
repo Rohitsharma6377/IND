@@ -1,6 +1,6 @@
 
 import React, { forwardRef } from 'react';
-import View from './view.mjs';
+import View from './view.jsx';
 
 const ActivityIndicator = forwardRef(({ size = 'small', color = '#1976D2', style, className, ...rest }, ref) => {
     const sizePx = size === 'large' ? 36 : 20;

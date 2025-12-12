@@ -1,7 +1,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import View from './view.mjs';
+import View from './view.jsx';
 
 function Modal({ visible, transparent, animationType = 'none', onRequestClose, children, style }) {
     if (!visible) return null;

@@ -1,7 +1,7 @@
 
 import React, { forwardRef } from 'react';
-import ScrollView from './scroll-view.mjs';
-import View from './view.mjs';
+import ScrollView from './scroll-view.jsx';
+import View from './view.jsx';
 import StyleSheet from '../apis/style-sheet.mjs';
 
 const FlatList = forwardRef(({ data, renderItem, keyExtractor, ListHeaderComponent, ListFooterComponent, ListEmptyComponent, contentContainerStyle, numColumns = 1, horizontal = false, ...rest }, ref) => {

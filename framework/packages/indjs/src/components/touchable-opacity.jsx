@@ -1,6 +1,6 @@
 
 import React, { forwardRef } from 'react';
-import View from './view.mjs';
+import View from './view.jsx';
 
 const TouchableOpacity = forwardRef(({ activeOpacity = 0.2, style, children, onPress, disabled, ...rest }, ref) => {
     const [isPressing, setIsPressing] = React.useState(false);

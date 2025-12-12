@@ -1,6 +1,6 @@
 
 import React, { forwardRef } from 'react';
-import View from './view.mjs';
+import View from './view.jsx';
 
 const Switch = forwardRef(({ value = false, onValueChange, disabled = false, trackColor, thumbColor, style, className, ...rest }, ref) => {
     const handleChange = (e) => {

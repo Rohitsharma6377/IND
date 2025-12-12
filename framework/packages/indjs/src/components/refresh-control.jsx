@@ -1,7 +1,7 @@
 
 import React from 'react';
-import ActivityIndicator from './activity-indicator.mjs';
-import View from './view.mjs';
+import ActivityIndicator from './activity-indicator.jsx';
+import View from './view.jsx';
 
 // Simple RefreshControl simulation
 // In a real web app, pull-to-refresh is complex to implement purely with JS without native browser support or heavy libraries.

@@ -1,7 +1,7 @@
 
 import React, { forwardRef } from 'react';
-import View from './view.mjs';
-import Text from './text.mjs';
+import View from './view.jsx';
+import Text from './text.jsx';
 
 const Button = forwardRef(({ title, onPress, color = '#2196F3', disabled = false, style, textStyle, ...rest }, ref) => {
     const buttonStyle = {

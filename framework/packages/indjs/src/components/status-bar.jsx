@@ -1,6 +1,6 @@
 
 import React from 'react';
-import View from './view.mjs';
+import View from './view.jsx';
 
 // Web mock of StatusBar. In native it would change the bar style.
 // In web, maybe it changes the meta theme-color tag.

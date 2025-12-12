@@ -19,32 +19,44 @@ export async function startVite({ app, root, bus }) {
 
   const vite = await createServer({
     root: appRoot,
-    plugins: [reactPlugin({ include: [/\.(jsx|tsx|mjs|js)$/] })],
+    // Explicitly include indjs files in react plugin processing, even though they are in node_modules
+    plugins: [
+      reactPlugin({
+        include: /\.(jsx|tsx|mjs|js)$/,
+        exclude: /node_modules\/(?!indjs)/,
+        babel: {
+          parserOpts: {
+            plugins: ['decorators-legacy', 'classProperties']
+          }
+        }
+      })
+    ],
     server: {
       middlewareMode: true,
       hmr: {
-        // Ensure HMR client connects to the correct port if proxied or mapped
         clientPort: typeof cfg?.port === 'number' ? cfg.port : undefined
       }
     },
     appType: 'custom',
     clearScreen: false,
     optimizeDeps: {
+      // Exclude indjs so it uses the plugin pipeline (loading .mjs as JSX)
+      exclude: ['indjs'],
       esbuildOptions: {
         loader: {
           '.js': 'jsx',
           '.mjs': 'jsx',
+          '.jsx': 'jsx',
         },
       },
-      include: ['indjs'], // ensure indjs is optimized using the custom loader
     },
     esbuild: {
       loader: "jsx",
-      include: /.*\.(m?js|jsx|tsx)$/, // Apply to .js, .mjs, .jsx, .tsx
+      include: /.*\.(m?js|jsx|tsx)$/,
       exclude: [],
     },
     resolve: {
-      extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json'],
+      extensions: ['.jsx', '.mjs', '.js', '.ts', '.tsx', '.json'],
       alias: {
         'pg': emptyMock,
         'sqlite': emptyMock,

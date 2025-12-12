@@ -1,6 +1,6 @@
 
 import React, { forwardRef } from 'react';
-import View from './view.mjs';
+import View from './view.jsx';
 
 const KeyboardAvoidingView = forwardRef(({ behavior, contentContainerStyle, enabled = true, keyboardVerticalOffset = 0, style, children, ...rest }, ref) => {
     // On web, keyboard avoidance is mostly handled by the browser. 

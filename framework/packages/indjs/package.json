@@ -1,6 +1,6 @@
 {
   "name": "indjs",
-  "version": "2.1.3",
+  "version": "3.0.0",
   "description": "A modern, fast, and lightweight full-stack React framework with file-based routing, SSR, and built-in optimizations",
   "type": "module",
   "author": "INDJS Team || Rohit sharma",
