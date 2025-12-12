@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import inquirer from 'inquirer';
 import { fileURLToPath } from 'url';
-import sharp from 'sharp';
+
 
 const templates = {
   universal: {
