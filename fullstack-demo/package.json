@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "indjs": "file:../framework/packages/indjs"
-  }
-}

@@ -53,12 +53,21 @@ export function resolveElement(type) {
             button: 'Button',
         };
         const rnName = mobileMap[type.toLowerCase().replace(/-/g, '')] || capitalize(type);
+
+        // Safety check for React Native environment
+        // react-native-web might be aliased, or we might be in a real RN environment
         try {
-            return require('react-native')[rnName];
+            // Using global check or safe require
+            if (typeof require !== 'undefined') {
+                return require('react-native')[rnName];
+            } else if (typeof window !== 'undefined' && window.React && window.React.Native) {
+                return window.React.Native[rnName];
+            }
         } catch (e) {
             console.warn(`React Native component ${rnName} not found`);
-            return 'View';
         }
+        // Fallback to View or div depending on context, but View is safe enough for logical return if mocked
+        return 'View';
     }
 
     return 'div';

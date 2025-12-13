@@ -9,7 +9,7 @@ import fs from 'fs/promises';
 import { buildClientBundles, routeToClientPath } from './build_client.mjs';
 import { loadModule } from './load.mjs';
 import { watchCss } from './css.mjs';
-import sharp from 'sharp';
+
 import net from 'net';
 import fsSync from 'fs';
 import { EventEmitter } from 'events';
@@ -165,6 +165,19 @@ export async function dev({ root, port }) {
     try {
       const { src, w, q } = req.query;
       if (!src || typeof src !== 'string' || /^(https?:)?\/\//.test(src)) return res.status(400).send('Invalid src');
+
+      let sharp;
+      try {
+        const mod = await import('sharp');
+        sharp = mod.default;
+      } catch (e) {
+        console.warn('[indjs] sharp not found, skipping image optimization');
+        // Fallback: Redirect to original image or stream it directly
+        // For now, just stream the original file
+        const filePath = path.join(root, 'public', src.replace(/^\//, ''));
+        return res.sendFile(filePath);
+      }
+
       const width = w ? parseInt(String(w), 10) : undefined;
       const quality = q ? parseInt(String(q), 10) : 80;
       const filePath = path.join(root, 'public', src.replace(/^\//, ''));

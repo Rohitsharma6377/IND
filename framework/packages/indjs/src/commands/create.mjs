@@ -145,7 +145,7 @@ async function createPackageJson(appPath, config) {
 
   // Base Dependencies (Universal)
   pkg.dependencies = {
-    "indjs": "^2.0.29",
+    "indjs": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "electron-serve": "^1.3.0",
