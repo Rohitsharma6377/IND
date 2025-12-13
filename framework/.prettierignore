@@ -1,6 +1,0 @@
-node_modules
-dist
-.indjs
-build
-coverage
-*.log
