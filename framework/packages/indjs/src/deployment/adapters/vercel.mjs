@@ -2,9 +2,9 @@
 // Usage (Edge): export default handler
 // Usage (Node Function): export default handler
 
-import { discoverRoutes, matchDynamic } from '../routes.mjs';
-import { renderPageModule } from '../ssr.mjs';
-import { routeToClientPath } from '../build_client.mjs';
+import { discoverRoutes, matchDynamic } from '../../routing/routes.mjs';
+import { renderPageModule } from '../../ssr.mjs';
+import { routeToClientPath } from '../../build/client.mjs';
 
 export default async function handler(req, res) {
   try {

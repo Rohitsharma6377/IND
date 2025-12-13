@@ -1,6 +1,6 @@
 import { dev } from './dev.mjs';
 import { start } from './start.mjs';
-import { build } from './build.mjs';
+import { build } from './build/index.mjs';
 import { create } from './commands/create.mjs';
 import { generate } from './commands/generate.mjs';
 import { deploy } from './commands/deploy.mjs';

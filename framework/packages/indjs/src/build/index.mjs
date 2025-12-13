@@ -1,8 +1,8 @@
-import { discoverRoutes, isDynamicRoute } from './routes.mjs';
-import { buildClientBundles } from './build_client.mjs';
-import { buildCss } from './css.mjs';
-import { renderPageModule } from './ssr.mjs';
-import { loadModule } from './load.mjs';
+import { discoverRoutes, isDynamicRoute } from '../routing/routes.mjs';
+import { buildClientBundles } from './client.mjs';
+import { buildCss } from '../css.mjs';
+import { renderPageModule } from '../ssr.mjs';
+import { loadModule } from '../load.mjs';
 import path from 'path';
 import fs from 'fs/promises';
 

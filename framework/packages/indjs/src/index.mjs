@@ -1,26 +1,40 @@
 // Core framework functions
-export { dev } from './dev.mjs';
-export { start } from './start.mjs';
-export { build } from './build.mjs';
+import { dev } from './dev.mjs';
+import { start } from './start.mjs';
+import { build } from './build/index.mjs';
 
 // Routing utilities
-export { discoverRoutes, matchDynamic, isDynamicRoute, fileToRoute } from './routes.mjs';
+import { discoverRoutes, matchDynamic, isDynamicRoute, fileToRoute } from './routing/routes.mjs';
 
 // SSR utilities
-export { renderPageModule } from './ssr.mjs';
+import { renderPageModule } from './ssr.mjs';
 
 // Build utilities
-export { buildClientBundles, routeToClientPath } from './build_client.mjs';
+import { buildClientBundles, routeToClientPath } from './build/client.mjs';
 
 // CSS utilities
-export { buildCss, watchCss, cssHref } from './css.mjs';
+import { buildCss, watchCss, cssHref } from './css.mjs';
 
 // Module loading
-export { loadModule } from './load.mjs';
+import { loadModule } from './load.mjs';
 
 // Platform detection
-export * as Platform from './platform.mjs';
-export { isWeb, isDesktop, isMobile, isAndroid, isIOS, platform } from './platform.mjs';
+import * as Platform from './platform.mjs';
+import { isWeb, isDesktop, isMobile, isAndroid, isIOS, platform } from './platform.mjs';
+
+// CLI runner
+import { run as runCLI } from './cli.mjs';
+
+// Re-export specific named exports
+export { dev, start, build };
+export { discoverRoutes, matchDynamic, isDynamicRoute, fileToRoute };
+export { renderPageModule };
+export { buildClientBundles, routeToClientPath };
+export { buildCss, watchCss, cssHref };
+export { loadModule };
+export { Platform };
+export { isWeb, isDesktop, isMobile, isAndroid, isIOS, platform };
+export { runCLI };
 
 // Components
 export { default as Image } from './components/image.jsx';
@@ -49,9 +63,6 @@ export { default as Alert } from './apis/alert.mjs';
 export { default as Dimensions } from './apis/dimensions.mjs';
 export { default as PixelRatio } from './apis/pixel-ratio.mjs';
 export { default as Linking } from './apis/linking.mjs';
-
-// CLI runner
-export { run as runCLI } from './cli.mjs';
 
 // Re-export all modules for convenience
 export * as Auth from './auth/index.mjs';

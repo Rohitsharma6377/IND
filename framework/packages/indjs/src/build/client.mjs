@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs/promises';
 import fsSync from 'fs';
 import crypto from 'crypto';
-import { getConfig } from './config.mjs';
+import { getConfig } from '../config.mjs';
 import { createRequire } from 'module';
 
 function routeToFileSegment(route) {

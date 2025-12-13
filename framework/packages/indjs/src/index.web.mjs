@@ -23,13 +23,13 @@ export { default as SafeAreaView } from './components/safe-area-view.jsx';
 export { default as StatusBar } from './components/status-bar.jsx';
 
 // Routing utilities (pure)
-export { discoverRoutes, matchDynamic, isDynamicRoute, fileToRoute } from './routes.mjs';
+export { discoverRoutes, matchDynamic, isDynamicRoute, fileToRoute } from './routing/routes.mjs';
 
 // Code splitting
-export { default as dynamic } from './dynamic.mjs';
+export { default as dynamic } from './routing/dynamic.mjs';
 
 // Router hooks/utilities
-export { useRouter, Router } from './router.mjs';
+export { useRouter, Router } from './routing/router.mjs';
 export * as Platform from './platform.mjs';
 
 // Platform detection
