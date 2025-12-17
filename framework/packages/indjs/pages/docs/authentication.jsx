@@ -1,101 +1,102 @@
-import React from 'react';
+import React from "react";
 
 export default function Authentication() {
   const ui = {
     page: {
-      fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-      minHeight: '100vh',
+      fontFamily:
+        "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
+      minHeight: "100vh",
       margin: 0,
-      background: 'linear-gradient(180deg, #0ea5e9 0%, #111827 60%)',
-      color: '#0f172a'
+      background: "linear-gradient(180deg, #0ea5e9 0%, #111827 60%)",
+      color: "#0f172a",
     },
     wrap: {
       maxWidth: 980,
-      margin: '0 auto',
-      padding: '48px 20px'
+      margin: "0 auto",
+      padding: "48px 20px",
     },
     hero: {
-      background: 'white',
+      background: "white",
       borderRadius: 16,
       padding: 28,
-      boxShadow: '0 10px 30px rgba(0,0,0,0.12)'
+      boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
     },
     h1: {
       fontSize: 32,
       lineHeight: 1.1,
       margin: 0,
-      color: '#0b1220'
+      color: "#0b1220",
     },
     nav: {
-      marginBottom: 20
+      marginBottom: 20,
     },
     backLink: {
-      color: '#0ea5e9',
-      textDecoration: 'none',
-      fontSize: 14
+      color: "#0ea5e9",
+      textDecoration: "none",
+      fontSize: 14,
     },
     section: {
-      marginBottom: 32
+      marginBottom: 32,
     },
     h2: {
       fontSize: 24,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 16,
-      borderBottom: '2px solid #e2e8f0',
-      paddingBottom: 8
+      borderBottom: "2px solid #e2e8f0",
+      paddingBottom: 8,
     },
     h3: {
       fontSize: 20,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 12,
-      marginTop: 24
+      marginTop: 24,
     },
     p: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
-      marginBottom: 16
+      marginBottom: 16,
     },
     ul: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
       marginBottom: 16,
-      paddingLeft: 20
+      paddingLeft: 20,
     },
     li: {
-      marginBottom: 8
+      marginBottom: 8,
     },
     code: {
-      background: '#f1f5f9',
-      padding: '2px 6px',
+      background: "#f1f5f9",
+      padding: "2px 6px",
       borderRadius: 4,
       fontSize: 14,
-      fontFamily: 'monospace'
+      fontFamily: "monospace",
     },
     codeBlock: {
-      background: '#1e293b',
-      color: '#e2e8f0',
+      background: "#1e293b",
+      color: "#e2e8f0",
       padding: 20,
       borderRadius: 8,
       fontSize: 14,
-      fontFamily: 'monospace',
-      overflow: 'auto',
+      fontFamily: "monospace",
+      overflow: "auto",
       marginBottom: 20,
-      lineHeight: 1.5
+      lineHeight: 1.5,
     },
     warning: {
-      background: '#fef3c7',
-      border: '1px solid #f59e0b',
+      background: "#fef3c7",
+      border: "1px solid #f59e0b",
       borderRadius: 8,
       padding: 16,
-      marginBottom: 20
+      marginBottom: 20,
     },
     warningTitle: {
       fontWeight: 600,
-      color: '#92400e',
-      marginBottom: 8
-    }
+      color: "#92400e",
+      marginBottom: 8,
+    },
   };
 
   return (
@@ -103,25 +104,30 @@ export default function Authentication() {
       <div style={ui.wrap}>
         <section style={ui.hero}>
           <nav style={ui.nav}>
-            <a href="/docs" style={ui.backLink}>← Back to Documentation</a>
+            <a href="/docs" style={ui.backLink}>
+              ← Back to Documentation
+            </a>
           </nav>
-          
+
           <h1 style={ui.h1}>Authentication</h1>
-          
+
           <div style={ui.section}>
             <h2 style={ui.h2}>Overview</h2>
             <p style={ui.p}>
-              INDJS provides built-in authentication utilities supporting JWT tokens, OAuth providers, 
-              and session-based authentication. The auth system is flexible and can be customized for your needs.
+              INDJS provides built-in authentication utilities supporting JWT
+              tokens, OAuth providers, and session-based authentication. The
+              auth system is flexible and can be customized for your needs.
             </p>
           </div>
 
           <div style={ui.section}>
             <h2 style={ui.h2}>JWT Authentication</h2>
             <p style={ui.p}>
-              JSON Web Tokens (JWT) provide a stateless way to authenticate users. INDJS includes utilities for creating, verifying, and managing JWT tokens.
+              JSON Web Tokens (JWT) provide a stateless way to authenticate
+              users. INDJS includes utilities for creating, verifying, and
+              managing JWT tokens.
             </p>
-            
+
             <h3 style={ui.h3}>Basic JWT Setup</h3>
             <div style={ui.codeBlock}>
               {`// lib/auth/jwt.js
@@ -302,7 +308,7 @@ export default async function handler({ req, res }) {
             <p style={ui.p}>
               Create middleware to protect routes and verify authentication:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// lib/middleware/auth.js
 import { verifyToken } from '../auth/jwt';
@@ -382,7 +388,7 @@ export default requireRole(['admin'])(handler);`}
             <p style={ui.p}>
               Integrate with OAuth providers like Google, GitHub, and Facebook:
             </p>
-            
+
             <h3 style={ui.h3}>Google OAuth</h3>
             <div style={ui.codeBlock}>
               {`// lib/auth/oauth.js
@@ -482,7 +488,7 @@ export default async function handler({ req, res }) {
             <p style={ui.p}>
               For applications that prefer server-side sessions:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// lib/auth/session.js
 import { randomBytes } from 'crypto';
@@ -546,9 +552,10 @@ export function requireSession(handler) {
           <div style={ui.section}>
             <h2 style={ui.h2}>Client-Side Authentication</h2>
             <p style={ui.p}>
-              Create React hooks and components for authentication state management:
+              Create React hooks and components for authentication state
+              management:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// hooks/useAuth.js
 import { createContext, useContext, useState, useEffect } from 'react';
@@ -691,7 +698,7 @@ export default function Admin() {
 
           <div style={ui.warning}>
             <div style={ui.warningTitle}>🔒 Security Best Practices</div>
-            <ul style={{ margin: 0, fontSize: 14, color: '#92400e' }}>
+            <ul style={{ margin: 0, fontSize: 14, color: "#92400e" }}>
               <li>Always use HTTPS in production</li>
               <li>Store JWT secrets securely (environment variables)</li>
               <li>Use HTTP-only cookies for token storage</li>

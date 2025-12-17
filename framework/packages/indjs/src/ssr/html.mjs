@@ -1,30 +1,43 @@
-import { getConfig } from '../config.mjs';
+import { getConfig } from "../config.mjs";
 
 function escapeHtml(unsafe) {
-    return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
-export function generateHtmlDoc({ body, title, description, head, props, clientSrc, cssHref, dev, manifest, devViteScripts }) {
-    const serialized = serializeProps(props || {});
-    const client = clientSrc ? `<script src="${clientSrc}" defer></script>` : '';
-    const css = cssHref ? `<link rel="stylesheet" href="${cssHref}" />` : '';
-    const manifestScript = manifest ? `<script>window.__IND_MANIFEST__ = ${manifest};</script>` : '';
-    const security = securityHeadTags();
-    const overlay = dev ? generateDevOverlay() : '';
-    return `<!doctype html>
+export function generateHtmlDoc({
+  body,
+  title,
+  description,
+  head,
+  props,
+  clientSrc,
+  cssHref,
+  dev,
+  manifest,
+  devViteScripts,
+}) {
+  const serialized = serializeProps(props || {});
+  const client = clientSrc ? `<script src="${clientSrc}" defer></script>` : "";
+  const css = cssHref ? `<link rel="stylesheet" href="${cssHref}" />` : "";
+  const manifestScript = manifest
+    ? `<script>window.__IND_MANIFEST__ = ${manifest};</script>`
+    : "";
+  const security = securityHeadTags();
+  const overlay = dev ? generateDevOverlay() : "";
+  return `<!doctype html>
 <html>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  ${description ? `<meta name="description" content="${escapeHtml(description)}" />` : ''}
+  ${description ? `<meta name="description" content="${escapeHtml(description)}" />` : ""}
   ${css}
   ${security}
-  ${head || ''}
+  ${head || ""}
   <script>window.__IND_PROPS__ = ${serialized};</script>
   ${manifestScript}
   ${devViteScripts || client}
@@ -78,39 +91,53 @@ export function generateHtmlDoc({ body, title, description, head, props, clientS
 }
 
 function serializeProps(obj) {
-    return JSON.stringify(obj)
-        .replace(/</g, '\\u003c')
-        .replace(/>/g, '\\u003e')
-        .replace(/\u2028/g, '\\u2028')
-        .replace(/\u2029/g, '\\u2029');
+  return JSON.stringify(obj)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
 }
 
 function securityHeadTags() {
-    try {
-        const cfg = getConfig();
-        const s = cfg?.securityMeta || {};
-        const tags = [];
-        if (s.referrerPolicy) tags.push(`<meta name="referrer" content="${escapeHtml(s.referrerPolicy)}" />`);
-        if (s.csp?.enabled && s.csp.policy) {
-            // Note: Best practice is header via helmet; this meta is supplemental for development/static.
-            tags.push(`<meta http-equiv="Content-Security-Policy" content="${escapeHtml(s.csp.policy)}" />`);
-        }
-        if (s.crossOriginOpenerPolicy) tags.push(`<meta http-equiv="Cross-Origin-Opener-Policy" content="${escapeHtml(s.crossOriginOpenerPolicy)}" />`);
-        if (s.crossOriginEmbedderPolicy) tags.push(`<meta http-equiv="Cross-Origin-Embedder-Policy" content="${escapeHtml(s.crossOriginEmbedderPolicy)}" />`);
-        if (s.dnsPrefetch) tags.push('<meta http-equiv="x-dns-prefetch-control" content="on" />');
-        if (Array.isArray(s.preconnect)) {
-            for (const url of s.preconnect) {
-                tags.push(`<link rel="preconnect" href="${escapeHtml(url)}" crossorigin>`);
-            }
-        }
-        return tags.join('\n');
-    } catch {
-        return '';
+  try {
+    const cfg = getConfig();
+    const s = cfg?.securityMeta || {};
+    const tags = [];
+    if (s.referrerPolicy)
+      tags.push(
+        `<meta name="referrer" content="${escapeHtml(s.referrerPolicy)}" />`,
+      );
+    if (s.csp?.enabled && s.csp.policy) {
+      // Note: Best practice is header via helmet; this meta is supplemental for development/static.
+      tags.push(
+        `<meta http-equiv="Content-Security-Policy" content="${escapeHtml(s.csp.policy)}" />`,
+      );
     }
+    if (s.crossOriginOpenerPolicy)
+      tags.push(
+        `<meta http-equiv="Cross-Origin-Opener-Policy" content="${escapeHtml(s.crossOriginOpenerPolicy)}" />`,
+      );
+    if (s.crossOriginEmbedderPolicy)
+      tags.push(
+        `<meta http-equiv="Cross-Origin-Embedder-Policy" content="${escapeHtml(s.crossOriginEmbedderPolicy)}" />`,
+      );
+    if (s.dnsPrefetch)
+      tags.push('<meta http-equiv="x-dns-prefetch-control" content="on" />');
+    if (Array.isArray(s.preconnect)) {
+      for (const url of s.preconnect) {
+        tags.push(
+          `<link rel="preconnect" href="${escapeHtml(url)}" crossorigin>`,
+        );
+      }
+    }
+    return tags.join("\n");
+  } catch {
+    return "";
+  }
 }
 
 function generateDevOverlay() {
-    return `
+  return `
   <script>
   (function(){
     try{

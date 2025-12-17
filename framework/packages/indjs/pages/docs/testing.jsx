@@ -1,113 +1,114 @@
-import React from 'react';
+import React from "react";
 
 export default function Testing() {
   const ui = {
     page: {
-      fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-      minHeight: '100vh',
+      fontFamily:
+        "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
+      minHeight: "100vh",
       margin: 0,
-      background: 'linear-gradient(180deg, #0ea5e9 0%, #111827 60%)',
-      color: '#0f172a'
+      background: "linear-gradient(180deg, #0ea5e9 0%, #111827 60%)",
+      color: "#0f172a",
     },
     wrap: {
       maxWidth: 980,
-      margin: '0 auto',
-      padding: '48px 20px'
+      margin: "0 auto",
+      padding: "48px 20px",
     },
     hero: {
-      background: 'white',
+      background: "white",
       borderRadius: 16,
       padding: 28,
-      boxShadow: '0 10px 30px rgba(0,0,0,0.12)'
+      boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
     },
     h1: {
       fontSize: 32,
       lineHeight: 1.1,
       margin: 0,
-      color: '#0b1220'
+      color: "#0b1220",
     },
     nav: {
-      marginBottom: 20
+      marginBottom: 20,
     },
     backLink: {
-      color: '#0ea5e9',
-      textDecoration: 'none',
-      fontSize: 14
+      color: "#0ea5e9",
+      textDecoration: "none",
+      fontSize: 14,
     },
     section: {
-      marginBottom: 32
+      marginBottom: 32,
     },
     h2: {
       fontSize: 24,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 16,
-      borderBottom: '2px solid #e2e8f0',
-      paddingBottom: 8
+      borderBottom: "2px solid #e2e8f0",
+      paddingBottom: 8,
     },
     h3: {
       fontSize: 20,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 12,
-      marginTop: 24
+      marginTop: 24,
     },
     p: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
-      marginBottom: 16
+      marginBottom: 16,
     },
     ul: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
       marginBottom: 16,
-      paddingLeft: 20
+      paddingLeft: 20,
     },
     li: {
-      marginBottom: 8
+      marginBottom: 8,
     },
     code: {
-      background: '#f1f5f9',
-      padding: '2px 6px',
+      background: "#f1f5f9",
+      padding: "2px 6px",
       borderRadius: 4,
       fontSize: 14,
-      fontFamily: 'monospace'
+      fontFamily: "monospace",
     },
     codeBlock: {
-      background: '#1e293b',
-      color: '#e2e8f0',
+      background: "#1e293b",
+      color: "#e2e8f0",
       padding: 20,
       borderRadius: 8,
       fontSize: 14,
-      fontFamily: 'monospace',
-      overflow: 'auto',
+      fontFamily: "monospace",
+      overflow: "auto",
       marginBottom: 20,
-      lineHeight: 1.5
+      lineHeight: 1.5,
     },
     info: {
-      background: '#dbeafe',
-      border: '1px solid #3b82f6',
+      background: "#dbeafe",
+      border: "1px solid #3b82f6",
       borderRadius: 8,
       padding: 16,
-      marginBottom: 20
+      marginBottom: 20,
     },
     infoTitle: {
       fontWeight: 600,
-      color: '#1e40af',
-      marginBottom: 8
+      color: "#1e40af",
+      marginBottom: 8,
     },
     success: {
-      background: '#dcfce7',
-      border: '1px solid #16a34a',
+      background: "#dcfce7",
+      border: "1px solid #16a34a",
       borderRadius: 8,
       padding: 16,
-      marginBottom: 20
+      marginBottom: 20,
     },
     successTitle: {
       fontWeight: 600,
-      color: '#15803d',
-      marginBottom: 8
-    }
+      color: "#15803d",
+      marginBottom: 8,
+    },
   };
 
   return (
@@ -115,25 +116,29 @@ export default function Testing() {
       <div style={ui.wrap}>
         <section style={ui.hero}>
           <nav style={ui.nav}>
-            <a href="/docs" style={ui.backLink}>← Back to Documentation</a>
+            <a href="/docs" style={ui.backLink}>
+              ← Back to Documentation
+            </a>
           </nav>
-          
+
           <h1 style={ui.h1}>Testing</h1>
-          
+
           <div style={ui.section}>
             <h2 style={ui.h2}>Overview</h2>
             <p style={ui.p}>
-              INDJS includes comprehensive testing utilities built on Vitest and Playwright. 
-              Write unit tests, integration tests, and end-to-end tests with confidence.
+              INDJS includes comprehensive testing utilities built on Vitest and
+              Playwright. Write unit tests, integration tests, and end-to-end
+              tests with confidence.
             </p>
           </div>
 
           <div style={ui.section}>
             <h2 style={ui.h2}>Unit Testing with Vitest</h2>
             <p style={ui.p}>
-              Vitest provides a fast and modern testing experience with built-in TypeScript support.
+              Vitest provides a fast and modern testing experience with built-in
+              TypeScript support.
             </p>
-            
+
             <h3 style={ui.h3}>Basic Test Setup</h3>
             <div style={ui.codeBlock}>
               {`# Install testing dependencies (already included in INDJS)
@@ -237,7 +242,7 @@ describe('useCounter Hook', () => {
             <p style={ui.p}>
               Test your API routes with HTTP requests and mock databases.
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// tests/api/users.test.js
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
@@ -330,7 +335,7 @@ describe('/api/users', () => {
             <p style={ui.p}>
               Test complete user flows and component interactions.
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// tests/integration/auth.test.jsx
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -428,9 +433,10 @@ describe('Authentication Flow', () => {
           <div style={ui.section}>
             <h2 style={ui.h2}>End-to-End Testing with Playwright</h2>
             <p style={ui.p}>
-              Test your application from a user's perspective with real browser automation.
+              Test your application from a user's perspective with real browser
+              automation.
             </p>
-            
+
             <h3 style={ui.h3}>Playwright Configuration</h3>
             <div style={ui.codeBlock}>
               {`// playwright.config.js
@@ -581,9 +587,10 @@ test.describe('Blog', () => {
           <div style={ui.section}>
             <h2 style={ui.h2}>Mocking and Test Utilities</h2>
             <p style={ui.p}>
-              INDJS provides utilities for mocking external dependencies and creating test data.
+              INDJS provides utilities for mocking external dependencies and
+              creating test data.
             </p>
-            
+
             <h3 style={ui.h3}>Database Mocking</h3>
             <div style={ui.codeBlock}>
               {`// tests/utils/mockDb.js
@@ -733,7 +740,7 @@ describe('User service', () => {
             <p style={ui.p}>
               Set up npm scripts for different types of testing.
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// package.json
 {
@@ -760,11 +767,13 @@ npm run test:all          # Run all tests`}
 
           <div style={ui.success}>
             <div style={ui.successTitle}>✅ Testing Best Practices</div>
-            <ul style={{ margin: 0, fontSize: 14, color: '#15803d' }}>
+            <ul style={{ margin: 0, fontSize: 14, color: "#15803d" }}>
               <li>Write tests as you develop features (TDD)</li>
               <li>Aim for high test coverage (80%+)</li>
               <li>Test user behavior, not implementation details</li>
-              <li>Use descriptive test names and organize with describe blocks</li>
+              <li>
+                Use descriptive test names and organize with describe blocks
+              </li>
               <li>Mock external dependencies and APIs</li>
               <li>Use factories for test data generation</li>
               <li>Run tests in CI/CD pipeline</li>
@@ -774,8 +783,11 @@ npm run test:all          # Run all tests`}
 
           <div style={ui.info}>
             <div style={ui.infoTitle}>💡 Testing Tips</div>
-            <ul style={{ margin: 0, fontSize: 14, color: '#1e40af' }}>
-              <li>Use <code style={ui.code}>data-testid</code> attributes for reliable element selection</li>
+            <ul style={{ margin: 0, fontSize: 14, color: "#1e40af" }}>
+              <li>
+                Use <code style={ui.code}>data-testid</code> attributes for
+                reliable element selection
+              </li>
               <li>Test error states and edge cases</li>
               <li>Use visual regression testing for UI components</li>
               <li>Mock time-dependent functions for consistent tests</li>

@@ -1,3 +1,3 @@
-import { dev } from './dev/index.mjs';
+import { dev } from "./dev/index.mjs";
 
 export { dev };

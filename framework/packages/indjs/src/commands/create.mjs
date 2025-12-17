@@ -1,76 +1,87 @@
-import fs from 'fs/promises';
-import path from 'path';
-import chalk from 'chalk';
-import ora from 'ora';
-import inquirer from 'inquirer';
-import { fileURLToPath } from 'url';
-
+import fs from "fs/promises";
+import path from "path";
+import chalk from "chalk";
+import ora from "ora";
+import inquirer from "inquirer";
+import { fileURLToPath } from "url";
 
 const templates = {
   universal: {
-    name: 'Universal App (Recommended)',
-    description: 'Unified Fullstack App for Web, Mobile, and Desktop'
-  }
+    name: "Universal App (Recommended)",
+    description: "Unified Fullstack App for Web, Mobile, and Desktop",
+  },
 };
 
-export async function create({ name, template, root, language, state, useTailwind } = {}) {
+export async function create({
+  name,
+  template,
+  root,
+  language,
+  state,
+  useTailwind,
+} = {}) {
   // Interactive Wizard
-  console.log(chalk.blue.bold('\n🚀 INDJS Project Setup Wizard\n'));
+  console.log(chalk.blue.bold("\n🚀 INDJS Project Setup Wizard\n"));
 
   // If a template is passed via terminal but is one of our types, map it
   let initialType = template;
-  if (['web', 'desktop', 'mobile'].includes(template)) {
+  if (["web", "desktop", "mobile"].includes(template)) {
     initialType = template;
-  } else if (template === 'universal') {
-    initialType = 'universal';
+  } else if (template === "universal") {
+    initialType = "universal";
   }
 
   const answers = await inquirer.prompt([
     {
-      type: 'list',
-      name: 'type',
-      message: 'What template do you want to use?',
+      type: "list",
+      name: "type",
+      message: "What template do you want to use?",
       choices: [
-        { name: '🌍 Universal App (Web + Desktop + Mobile)', value: 'universal' }
+        {
+          name: "🌍 Universal App (Web + Desktop + Mobile)",
+          value: "universal",
+        },
       ],
       when: false, // Always default to universal if not specified
-      default: 'universal'
+      default: "universal",
     },
     {
-      type: 'list',
-      name: 'language',
-      message: 'Which language do you want to use?',
+      type: "list",
+      name: "language",
+      message: "Which language do you want to use?",
       choices: [
-        { name: 'JavaScript', value: 'js' },
-        { name: 'TypeScript', value: 'ts' }
+        { name: "JavaScript", value: "js" },
+        { name: "TypeScript", value: "ts" },
       ],
-      default: 'js',
-      when: !language
+      default: "js",
+      when: !language,
     },
     {
-      type: 'input',
-      name: 'name',
-      message: 'Enter project name:',
-      default: 'my-indjs-app',
-      validate: (v) => v.trim() ? true : 'Name is required',
-      when: !name
-    }
+      type: "input",
+      name: "name",
+      message: "Enter project name:",
+      default: "my-indjs-app",
+      validate: (v) => (v.trim() ? true : "Name is required"),
+      when: !name,
+    },
   ]);
 
   // Merge CLI args with answers
   const config = {
     name: name || answers.name,
-    type: answers.type || 'universal', // Force universal type
-    language: language || answers.language || 'js',
-    root: root || process.cwd()
+    type: answers.type || "universal", // Force universal type
+    language: language || answers.language || "js",
+    root: root || process.cwd(),
   };
 
   const appPath = path.resolve(config.root, config.name);
-  const spinner = ora(`Creating ${config.type} application: ${config.name}...`).start();
+  const spinner = ora(
+    `Creating ${config.type} application: ${config.name}...`,
+  ).start();
 
   try {
     // 1. Create Directory
-    if ((await fs.stat(appPath).catch(() => false))) {
+    if (await fs.stat(appPath).catch(() => false)) {
       throw new Error(`Directory ${config.name} already exists.`);
     }
     await fs.mkdir(appPath, { recursive: true });
@@ -89,10 +100,10 @@ export async function create({ name, template, root, language, state, useTailwin
     await createComponents(appPath, config);
 
     // 6. Platform Specifics
-    if (['desktop', 'universal', 'todo-app'].includes(config.type)) {
+    if (["desktop", "universal", "todo-app"].includes(config.type)) {
       await createElectronSetup(appPath);
     }
-    if (['mobile', 'universal', 'todo-app'].includes(config.type)) {
+    if (["mobile", "universal", "todo-app"].includes(config.type)) {
       await createCapacitorSetup(appPath, config);
     }
 
@@ -105,68 +116,71 @@ export async function create({ name, template, root, language, state, useTailwin
 
     spinner.succeed(chalk.green(`✅ Project created successfully`));
 
-    console.log(chalk.bold('\nProject Details:'));
-    console.log(`✅ Type: ${config.type.charAt(0).toUpperCase() + config.type.slice(1)}`);
-    console.log(`✅ Language: ${config.language === 'ts' ? 'TypeScript' : 'JavaScript'}`);
+    console.log(chalk.bold("\nProject Details:"));
+    console.log(
+      `✅ Type: ${config.type.charAt(0).toUpperCase() + config.type.slice(1)}`,
+    );
+    console.log(
+      `✅ Language: ${config.language === "ts" ? "TypeScript" : "JavaScript"}`,
+    );
     console.log(`✅ Location: ${appPath}`);
 
-    console.log('\nNext steps:');
+    console.log("\nNext steps:");
     console.log(chalk.cyan(`  cd ${config.name}`));
-    console.log(chalk.cyan('  npm install'));
-    if (config.type === 'universal') {
-      console.log(chalk.cyan('  npm run dev:mobile  (for App)'));
-      console.log(chalk.cyan('  npm run dev:desktop (for Desktop)'));
-      console.log(chalk.cyan('  npm run dev:web     (for Web)'));
-      console.log(chalk.cyan('  npm run dev         (Default: Web)'));
+    console.log(chalk.cyan("  npm install"));
+    if (config.type === "universal") {
+      console.log(chalk.cyan("  npm run dev:mobile  (for App)"));
+      console.log(chalk.cyan("  npm run dev:desktop (for Desktop)"));
+      console.log(chalk.cyan("  npm run dev:web     (for Web)"));
+      console.log(chalk.cyan("  npm run dev         (Default: Web)"));
     } else {
-      console.log(chalk.cyan('  npm run dev'));
+      console.log(chalk.cyan("  npm run dev"));
     }
-    console.log('');
-
+    console.log("");
   } catch (error) {
-    spinner.fail(chalk.red('Failed to create application'));
+    spinner.fail(chalk.red("Failed to create application"));
     console.error(chalk.red(error.message));
     process.exit(1);
   }
 }
 
 async function createPackageJson(appPath, config) {
-  const isTS = config.language === 'ts';
+  const isTS = config.language === "ts";
 
   const pkg = {
-    name: config.name.toLowerCase().replace(/\s+/g, '-'),
-    version: '0.1.0',
+    name: config.name.toLowerCase().replace(/\s+/g, "-"),
+    version: "0.1.0",
     private: true,
-    type: 'module',
+    type: "module",
     scripts: {},
     dependencies: {},
-    devDependencies: {}
+    devDependencies: {},
   };
 
   // Base Dependencies (Universal)
   pkg.dependencies = {
-    "indjs": "^3.0.1",
-    "react": "^18.2.0",
+    indjs: "^3.0.1",
+    react: "^18.2.0",
     "react-dom": "^18.2.0",
     "electron-serve": "^1.3.0",
     "@capacitor/core": "^6.0.0",
     "@capacitor/app": "^6.0.0",
     "@capacitor/preferences": "^6.0.0",
     "@capacitor/android": "^6.0.0",
-    "@capacitor/ios": "^6.0.0"
+    "@capacitor/ios": "^6.0.0",
   };
 
   pkg.devDependencies = {
-    "vite": "^5.4.0",
+    vite: "^5.4.0",
     "@vitejs/plugin-react": "^4.3.0",
-    "tailwindcss": "^3.4.1",
-    "autoprefixer": "^10.4.17",
-    "postcss": "^8.4.35",
-    "electron": "^28.0.0",
+    tailwindcss: "^3.4.1",
+    autoprefixer: "^10.4.17",
+    postcss: "^8.4.35",
+    electron: "^28.0.0",
     "electron-builder": "^24.9.1",
-    "concurrently": "^8.2.2",
+    concurrently: "^8.2.2",
     "wait-on": "^7.2.0",
-    "@capacitor/cli": "^6.0.0"
+    "@capacitor/cli": "^6.0.0",
   };
 
   pkg.main = "electron/main.cjs";
@@ -175,44 +189,48 @@ async function createPackageJson(appPath, config) {
     Object.assign(pkg.devDependencies, {
       "@types/react": "^18.2.0",
       "@types/react-dom": "^18.2.0",
-      "typescript": "^5.0.0"
+      typescript: "^5.0.0",
     });
   }
 
   // Scripts Generation
   pkg.scripts = {
-    "dev": "indjs dev",
+    dev: "indjs dev",
     "dev:web": "indjs dev",
-    "dev:desktop": "concurrently -k \"indjs dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "dev:desktop":
+      'concurrently -k "indjs dev" "wait-on http://localhost:3000 && electron ."',
     "dev:mobile": "indjs mobile dev",
     "open:android": "npx cap open android",
     "open:ios": "npx cap open ios",
     "setup:mobile": "node scripts/setup-android.cjs",
-    "build": "indjs build",
+    build: "indjs build",
     "build:desktop": "indjs build && electron-builder",
     "build:mobile": "indjs build && npx cap sync",
-    "build:all": "npm run build && npm run build:desktop && npm run build:mobile",
-    "start": "indjs start",
-    "test": "indjs test"
+    "build:all":
+      "npm run build && npm run build:desktop && npm run build:mobile",
+    start: "indjs start",
+    test: "indjs test",
   };
 
-  await fs.writeFile(path.join(appPath, 'package.json'), JSON.stringify(pkg, null, 2));
+  await fs.writeFile(
+    path.join(appPath, "package.json"),
+    JSON.stringify(pkg, null, 2),
+  );
 }
 
 async function createDirectoryStructure(appPath, type) {
   const dirs = [
-    'pages',
-    'pages/api',
-    'components',
-    'styles',
-    'public',
-    'utils'
+    "pages",
+    "pages/api",
+    "components",
+    "styles",
+    "public",
+    "utils",
   ];
 
   // Platform specific
-  dirs.push('electron');
-  dirs.push('scripts');
-
+  dirs.push("electron");
+  dirs.push("scripts");
 
   for (const dir of dirs) {
     await fs.mkdir(path.join(appPath, dir), { recursive: true });
@@ -220,49 +238,68 @@ async function createDirectoryStructure(appPath, type) {
 }
 
 async function createConfigFiles(appPath, config) {
-  const isTS = config.language === 'ts';
+  const isTS = config.language === "ts";
 
   // indjs.config.js
-  await fs.writeFile(path.join(appPath, 'indjs.config.js'), `export default {
+  await fs.writeFile(
+    path.join(appPath, "indjs.config.js"),
+    `export default {
   experimental: { devBundler: 'vite' }
-};`);
+};`,
+  );
 
   // Tailwind
-  await fs.writeFile(path.join(appPath, 'tailwind.config.cjs'), `/** @type {import('tailwindcss').Config} */
+  await fs.writeFile(
+    path.join(appPath, "tailwind.config.cjs"),
+    `/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}', './layouts/**/*.{js,ts,jsx,tsx}'],
   theme: { extend: {} },
   plugins: [],
-}`);
-  await fs.writeFile(path.join(appPath, 'postcss.config.cjs'), `module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } }`);
+}`,
+  );
+  await fs.writeFile(
+    path.join(appPath, "postcss.config.cjs"),
+    `module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } }`,
+  );
 
   // TSConfig
   if (isTS) {
-    await fs.writeFile(path.join(appPath, 'tsconfig.json'), JSON.stringify({
-      compilerOptions: {
-        target: 'es5',
-        lib: ['dom', 'dom.iterable', 'es6'],
-        allowJs: true,
-        skipLibCheck: true,
-        strict: true,
-        jsx: 'preserve',
-        module: 'esnext',
-        moduleResolution: 'node',
-        resolveJsonModule: true,
-        isolatedModules: true,
-        noEmit: true
-      },
-      include: ['**/*.ts', '**/*.tsx'],
-      exclude: ['node_modules']
-    }, null, 2));
+    await fs.writeFile(
+      path.join(appPath, "tsconfig.json"),
+      JSON.stringify(
+        {
+          compilerOptions: {
+            target: "es5",
+            lib: ["dom", "dom.iterable", "es6"],
+            allowJs: true,
+            skipLibCheck: true,
+            strict: true,
+            jsx: "preserve",
+            module: "esnext",
+            moduleResolution: "node",
+            resolveJsonModule: true,
+            isolatedModules: true,
+            noEmit: true,
+          },
+          include: ["**/*.ts", "**/*.tsx"],
+          exclude: ["node_modules"],
+        },
+        null,
+        2,
+      ),
+    );
   }
 
   // Env example
-  await fs.writeFile(path.join(appPath, '.env.example'), 'DATABASE_URL=\nJWT_SECRET=secret\n');
+  await fs.writeFile(
+    path.join(appPath, ".env.example"),
+    "DATABASE_URL=\nJWT_SECRET=secret\n",
+  );
 }
 
 async function createUI(appPath, config) {
-  const ext = config.language === 'ts' ? 'tsx' : 'jsx';
+  const ext = config.language === "ts" ? "tsx" : "jsx";
 
   // Universal Layout
   const layoutContent = `import React from 'react';
@@ -290,8 +327,10 @@ export default function Layout({ children }) {
   );
 }`;
 
-  await fs.writeFile(path.join(appPath, 'pages', `_layout.${ext}`), layoutContent);
-
+  await fs.writeFile(
+    path.join(appPath, "pages", `_layout.${ext}`),
+    layoutContent,
+  );
 
   // Home Page
   const homeContent = `import React from 'react';
@@ -313,17 +352,20 @@ export default function Home() {
   );
 }`;
 
-  await fs.writeFile(path.join(appPath, 'pages', `index.${ext}`), homeContent);
-  await fs.writeFile(path.join(appPath, 'pages', `about.${ext}`), `export default function About() { return <div className="p-10"><h1>About</h1></div> }`);
+  await fs.writeFile(path.join(appPath, "pages", `index.${ext}`), homeContent);
+  await fs.writeFile(
+    path.join(appPath, "pages", `about.${ext}`),
+    `export default function About() { return <div className="p-10"><h1>About</h1></div> }`,
+  );
 }
 
 async function createComponents(appPath, config) {
-  const ext = config.language === 'ts' ? 'tsx' : 'jsx';
+  const ext = config.language === "ts" ? "tsx" : "jsx";
   const btn = `import React from 'react';
 export default function Button({ children, ...props }) {
   return <button className="px-4 py-2 bg-indigo-600 text-white rounded" {...props}>{children}</button>;
 }`;
-  await fs.writeFile(path.join(appPath, 'components', `Button.${ext}`), btn);
+  await fs.writeFile(path.join(appPath, "components", `Button.${ext}`), btn);
 }
 
 async function createElectronSetup(appPath) {
@@ -370,19 +412,25 @@ app.on('activate', () => {
   if (mainWindow === null) createWindow();
 });
 `;
-  await fs.writeFile(path.join(appPath, 'electron', 'main.cjs'), mainCjs);
-  await fs.writeFile(path.join(appPath, 'electron', 'preload.cjs'), `const { contextBridge, ipcRenderer } = require('electron');\ncontextBridge.exposeInMainWorld('electron', {});`);
+  await fs.writeFile(path.join(appPath, "electron", "main.cjs"), mainCjs);
+  await fs.writeFile(
+    path.join(appPath, "electron", "preload.cjs"),
+    `const { contextBridge, ipcRenderer } = require('electron');\ncontextBridge.exposeInMainWorld('electron', {});`,
+  );
 }
 
 async function createCapacitorSetup(appPath, config) {
-  const appId = `com.indjs.${config.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+  const appId = `com.indjs.${config.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
   const capConfig = {
     appId,
     appName: config.name,
-    webDir: '.indjs/static',
-    server: { androidScheme: 'https' }
+    webDir: ".indjs/static",
+    server: { androidScheme: "https" },
   };
-  await fs.writeFile(path.join(appPath, 'capacitor.config.json'), JSON.stringify(capConfig, null, 2));
+  await fs.writeFile(
+    path.join(appPath, "capacitor.config.json"),
+    JSON.stringify(capConfig, null, 2),
+  );
 
   // Android setup script
   const setupAndroid = `const fs = require('fs');
@@ -414,12 +462,16 @@ try {
   process.exit(1);
 }
 `;
-  await fs.writeFile(path.join(appPath, 'scripts', 'setup-android.cjs'), setupAndroid);
+  await fs.writeFile(
+    path.join(appPath, "scripts", "setup-android.cjs"),
+    setupAndroid,
+  );
 }
 
-
 async function createStyles(appPath) {
-  await fs.writeFile(path.join(appPath, 'styles', 'globals.css'), `@tailwind base;
+  await fs.writeFile(
+    path.join(appPath, "styles", "globals.css"),
+    `@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -428,28 +480,40 @@ body {
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
-}`);
+}`,
+  );
 }
 
 async function createPublicAssets(appPath) {
-  await fs.writeFile(path.join(appPath, 'public', 'robots.txt'), 'User-agent: *\nAllow: /');
+  await fs.writeFile(
+    path.join(appPath, "public", "robots.txt"),
+    "User-agent: *\nAllow: /",
+  );
 
   // Try to copy default assets from framework if possible
   try {
     const thisFile = fileURLToPath(import.meta.url);
-    const pkgRoot = path.resolve(path.dirname(thisFile), '..', '..'); // indjs/src/commands/create.mjs -> indjs/
-    const assetsDir = path.join(pkgRoot, 'assets');
+    const pkgRoot = path.resolve(path.dirname(thisFile), "..", ".."); // indjs/src/commands/create.mjs -> indjs/
+    const assetsDir = path.join(pkgRoot, "assets");
     // We ignore if it fails, just best effort
-    await fs.copyFile(path.join(assetsDir, 'indjs2.png'), path.join(appPath, 'public', 'favicon.png')).catch(() => { });
-  } catch { }
+    await fs
+      .copyFile(
+        path.join(assetsDir, "indjs2.png"),
+        path.join(appPath, "public", "favicon.png"),
+      )
+      .catch(() => {});
+  } catch {}
 }
 
 async function createGitignore(appPath) {
-  await fs.writeFile(path.join(appPath, '.gitignore'), `node_modules
+  await fs.writeFile(
+    path.join(appPath, ".gitignore"),
+    `node_modules
 .indjs
 dist
 .env
 android
 ios
-`);
+`,
+  );
 }

@@ -1,105 +1,106 @@
-import React from 'react';
+import React from "react";
 
 export default function Routing() {
   const ui = {
     page: {
-      fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-      minHeight: '100vh',
+      fontFamily:
+        "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
+      minHeight: "100vh",
       margin: 0,
-      background: 'linear-gradient(180deg, #0ea5e9 0%, #111827 60%)',
-      color: '#0f172a'
+      background: "linear-gradient(180deg, #0ea5e9 0%, #111827 60%)",
+      color: "#0f172a",
     },
     wrap: {
       maxWidth: 980,
-      margin: '0 auto',
-      padding: '48px 20px'
+      margin: "0 auto",
+      padding: "48px 20px",
     },
     hero: {
-      background: 'white',
+      background: "white",
       borderRadius: 16,
       padding: 28,
-      boxShadow: '0 10px 30px rgba(0,0,0,0.12)'
+      boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
     },
     h1: {
       fontSize: 32,
       lineHeight: 1.1,
       margin: 0,
-      color: '#0b1220'
+      color: "#0b1220",
     },
     nav: {
-      marginBottom: 20
+      marginBottom: 20,
     },
     backLink: {
-      color: '#0ea5e9',
-      textDecoration: 'none',
-      fontSize: 14
+      color: "#0ea5e9",
+      textDecoration: "none",
+      fontSize: 14,
     },
     section: {
-      marginBottom: 32
+      marginBottom: 32,
     },
     h2: {
       fontSize: 24,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 16,
-      borderBottom: '2px solid #e2e8f0',
-      paddingBottom: 8
+      borderBottom: "2px solid #e2e8f0",
+      paddingBottom: 8,
     },
     h3: {
       fontSize: 20,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 12,
-      marginTop: 24
+      marginTop: 24,
     },
     p: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
-      marginBottom: 16
+      marginBottom: 16,
     },
     ul: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
       marginBottom: 16,
-      paddingLeft: 20
+      paddingLeft: 20,
     },
     li: {
-      marginBottom: 8
+      marginBottom: 8,
     },
     code: {
-      background: '#f1f5f9',
-      padding: '2px 6px',
+      background: "#f1f5f9",
+      padding: "2px 6px",
       borderRadius: 4,
       fontSize: 14,
-      fontFamily: 'monospace'
+      fontFamily: "monospace",
     },
     codeBlock: {
-      background: '#1e293b',
-      color: '#e2e8f0',
+      background: "#1e293b",
+      color: "#e2e8f0",
       padding: 20,
       borderRadius: 8,
       fontSize: 14,
-      fontFamily: 'monospace',
-      overflow: 'auto',
+      fontFamily: "monospace",
+      overflow: "auto",
       marginBottom: 20,
-      lineHeight: 1.5
+      lineHeight: 1.5,
     },
     table: {
-      width: '100%',
-      borderCollapse: 'collapse',
-      marginBottom: 20
+      width: "100%",
+      borderCollapse: "collapse",
+      marginBottom: 20,
     },
     th: {
-      background: '#f8fafc',
+      background: "#f8fafc",
       padding: 12,
-      textAlign: 'left',
-      borderBottom: '2px solid #e2e8f0',
-      fontWeight: 600
+      textAlign: "left",
+      borderBottom: "2px solid #e2e8f0",
+      fontWeight: 600,
     },
     td: {
       padding: 12,
-      borderBottom: '1px solid #e2e8f0'
-    }
+      borderBottom: "1px solid #e2e8f0",
+    },
   };
 
   return (
@@ -107,18 +108,22 @@ export default function Routing() {
       <div style={ui.wrap}>
         <section style={ui.hero}>
           <nav style={ui.nav}>
-            <a href="/docs" style={ui.backLink}>← Back to Documentation</a>
+            <a href="/docs" style={ui.backLink}>
+              ← Back to Documentation
+            </a>
           </nav>
-          
+
           <h1 style={ui.h1}>Routing</h1>
-          
+
           <div style={ui.section}>
             <h2 style={ui.h2}>File-based Routing</h2>
             <p style={ui.p}>
-              INDJS uses file-based routing, which means the file structure in your <code style={ui.code}>pages</code> directory 
-              automatically becomes your application's routes. This approach is intuitive and requires zero configuration.
+              INDJS uses file-based routing, which means the file structure in
+              your <code style={ui.code}>pages</code> directory automatically
+              becomes your application's routes. This approach is intuitive and
+              requires zero configuration.
             </p>
-            
+
             <table style={ui.table}>
               <thead>
                 <tr>
@@ -129,23 +134,39 @@ export default function Routing() {
               </thead>
               <tbody>
                 <tr>
-                  <td style={ui.td}><code style={ui.code}>pages/index.jsx</code></td>
-                  <td style={ui.td}><code style={ui.code}>/</code></td>
+                  <td style={ui.td}>
+                    <code style={ui.code}>pages/index.jsx</code>
+                  </td>
+                  <td style={ui.td}>
+                    <code style={ui.code}>/</code>
+                  </td>
                   <td style={ui.td}>Home page</td>
                 </tr>
                 <tr>
-                  <td style={ui.td}><code style={ui.code}>pages/about.jsx</code></td>
-                  <td style={ui.td}><code style={ui.code}>/about</code></td>
+                  <td style={ui.td}>
+                    <code style={ui.code}>pages/about.jsx</code>
+                  </td>
+                  <td style={ui.td}>
+                    <code style={ui.code}>/about</code>
+                  </td>
                   <td style={ui.td}>About page</td>
                 </tr>
                 <tr>
-                  <td style={ui.td}><code style={ui.code}>pages/blog/index.jsx</code></td>
-                  <td style={ui.td}><code style={ui.code}>/blog</code></td>
+                  <td style={ui.td}>
+                    <code style={ui.code}>pages/blog/index.jsx</code>
+                  </td>
+                  <td style={ui.td}>
+                    <code style={ui.code}>/blog</code>
+                  </td>
                   <td style={ui.td}>Blog listing page</td>
                 </tr>
                 <tr>
-                  <td style={ui.td}><code style={ui.code}>pages/blog/post.jsx</code></td>
-                  <td style={ui.td}><code style={ui.code}>/blog/post</code></td>
+                  <td style={ui.td}>
+                    <code style={ui.code}>pages/blog/post.jsx</code>
+                  </td>
+                  <td style={ui.td}>
+                    <code style={ui.code}>/blog/post</code>
+                  </td>
                   <td style={ui.td}>Static blog post page</td>
                 </tr>
               </tbody>
@@ -155,10 +176,12 @@ export default function Routing() {
           <div style={ui.section}>
             <h2 style={ui.h2}>Dynamic Routes</h2>
             <p style={ui.p}>
-              Dynamic routes allow you to create pages that match multiple URLs with parameters. 
-              Use square brackets <code style={ui.code}>[param]</code> in your filename to create dynamic segments.
+              Dynamic routes allow you to create pages that match multiple URLs
+              with parameters. Use square brackets{" "}
+              <code style={ui.code}>[param]</code> in your filename to create
+              dynamic segments.
             </p>
-            
+
             <h3 style={ui.h3}>Single Dynamic Route</h3>
             <div style={ui.codeBlock}>
               {`// pages/blog/[slug].jsx
@@ -205,7 +228,10 @@ export default function Product({ params }) {
             </div>
 
             <h3 style={ui.h3}>Catch-all Routes</h3>
-            <p style={ui.p}>Use <code style={ui.code}>[...slug]</code> to catch all remaining path segments:</p>
+            <p style={ui.p}>
+              Use <code style={ui.code}>[...slug]</code> to catch all remaining
+              path segments:
+            </p>
             <div style={ui.codeBlock}>
               {`// pages/docs/[...slug].jsx
 export default function DocsPage({ params }) {
@@ -225,9 +251,10 @@ export default function DocsPage({ params }) {
           <div style={ui.section}>
             <h2 style={ui.h2}>Navigation</h2>
             <p style={ui.p}>
-              INDJS provides a built-in <code style={ui.code}>Link</code> component for client-side navigation:
+              INDJS provides a built-in <code style={ui.code}>Link</code>{" "}
+              component for client-side navigation:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`import React from 'react';
 import { Link } from 'indjs';
@@ -279,9 +306,10 @@ export default function MyComponent() {
           <div style={ui.section}>
             <h2 style={ui.h2}>Route Groups</h2>
             <p style={ui.p}>
-              Organize your routes without affecting the URL structure using parentheses <code style={ui.code}>(group)</code>:
+              Organize your routes without affecting the URL structure using
+              parentheses <code style={ui.code}>(group)</code>:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`pages/
 ├── (marketing)/
@@ -296,10 +324,8 @@ export default function MyComponent() {
 
           <div style={ui.section}>
             <h2 style={ui.h2}>Layouts</h2>
-            <p style={ui.p}>
-              Create shared layouts that wrap multiple pages:
-            </p>
-            
+            <p style={ui.p}>Create shared layouts that wrap multiple pages:</p>
+
             <h3 style={ui.h3}>Root Layout</h3>
             <div style={ui.codeBlock}>
               {`// pages/_layout.jsx
@@ -344,7 +370,7 @@ export default function DashboardLayout({ children }) {
             <p style={ui.p}>
               Add global middleware that runs before every request:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// pages/_middleware.js
 export default async function middleware({ req, res, root }) {
@@ -367,12 +393,20 @@ export default async function middleware({ req, res, root }) {
 
           <div style={ui.section}>
             <h2 style={ui.h2}>Advanced Routing Features</h2>
-            
+
             <h3 style={ui.h3}>Route Priorities</h3>
-            <p style={ui.p}>Static routes take precedence over dynamic routes:</p>
+            <p style={ui.p}>
+              Static routes take precedence over dynamic routes:
+            </p>
             <ul style={ui.ul}>
-              <li style={ui.li}><code style={ui.code}>pages/blog/featured.jsx</code> → <code style={ui.code}>/blog/featured</code></li>
-              <li style={ui.li}><code style={ui.code}>pages/blog/[slug].jsx</code> → <code style={ui.code}>/blog/other-posts</code></li>
+              <li style={ui.li}>
+                <code style={ui.code}>pages/blog/featured.jsx</code> →{" "}
+                <code style={ui.code}>/blog/featured</code>
+              </li>
+              <li style={ui.li}>
+                <code style={ui.code}>pages/blog/[slug].jsx</code> →{" "}
+                <code style={ui.code}>/blog/other-posts</code>
+              </li>
             </ul>
 
             <h3 style={ui.h3}>Optional Catch-all Routes</h3>
@@ -417,7 +451,9 @@ export async function getServerSideProps({ params }) {
             </div>
 
             <h3 style={ui.h3}>Parallel Routes</h3>
-            <p style={ui.p}>Render multiple pages simultaneously in the same layout:</p>
+            <p style={ui.p}>
+              Render multiple pages simultaneously in the same layout:
+            </p>
             <div style={ui.codeBlock}>
               {`// pages/dashboard/@analytics/page.jsx
 export default function Analytics() {
@@ -485,7 +521,7 @@ export default function PhotoPage({ params }) {
 
           <div style={ui.section}>
             <h2 style={ui.h2}>Route Performance Optimization</h2>
-            
+
             <h3 style={ui.h3}>Route Prefetching</h3>
             <div style={ui.codeBlock}>
               {`// Automatic prefetching with Link component
@@ -611,7 +647,7 @@ export default async function handler({ req, res }) {
 
           <div style={ui.section}>
             <h2 style={ui.h2}>Advanced Layout Patterns</h2>
-            
+
             <h3 style={ui.h3}>Conditional Layouts</h3>
             <div style={ui.codeBlock}>
               {`// pages/admin/users.jsx

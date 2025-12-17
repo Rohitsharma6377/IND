@@ -1,10 +1,15 @@
-import { createSQLiteAdapter } from './adapters/sqlite.mjs';
-import { createPostgresAdapter } from './adapters/postgres.mjs';
-import { createMongoAdapter } from './adapters/mongo.mjs';
-import { createPrismaAdapter } from './adapters/prisma.mjs';
-import { Migration, addMigration, runMigrations, rollbackMigration } from './migrations.mjs';
-import { Model } from './model.mjs';
-import { isMobile } from '../platform.mjs';
+import { createSQLiteAdapter } from "./adapters/sqlite.mjs";
+import { createPostgresAdapter } from "./adapters/postgres.mjs";
+import { createMongoAdapter } from "./adapters/mongo.mjs";
+import { createPrismaAdapter } from "./adapters/prisma.mjs";
+import {
+  Migration,
+  addMigration,
+  runMigrations,
+  rollbackMigration,
+} from "./migrations.mjs";
+import { Model } from "./model.mjs";
+import { isMobile } from "../platform.mjs";
 
 // Database adapters
 let currentAdapter = null;
@@ -12,18 +17,18 @@ let isConnected = false;
 
 // Database configuration
 const config = {
-  type: process.env.DATABASE_TYPE || 'sqlite',
-  url: process.env.DATABASE_URL || 'sqlite:./data/app.db',
-  options: {}
+  type: process.env.DATABASE_TYPE || "sqlite",
+  url: process.env.DATABASE_URL || "sqlite:./data/app.db",
+  options: {},
 };
 
 export class Database {
   constructor(initialConfig) {
     this.config = {
-      type: process.env.DATABASE_TYPE || 'sqlite',
-      url: process.env.DATABASE_URL || 'sqlite:./data/app.db',
+      type: process.env.DATABASE_TYPE || "sqlite",
+      url: process.env.DATABASE_URL || "sqlite:./data/app.db",
       options: {},
-      ...initialConfig
+      ...initialConfig,
     };
     this.adapter = null;
     this.connected = false;
@@ -38,31 +43,33 @@ export class Database {
   async connect(customConfig = null) {
     // Mobile check - no direct DB access
     if (isMobile) {
-      console.warn('Database access is not available in mobile environment directly. Use API calls.');
+      console.warn(
+        "Database access is not available in mobile environment directly. Use API calls.",
+      );
       return;
     }
 
     const dbConfig = customConfig || this.config;
-    const type = dbConfig.type || process.env.DATABASE_TYPE || 'memory';
+    const type = dbConfig.type || process.env.DATABASE_TYPE || "memory";
 
     try {
       switch (type) {
-        case 'mongodb':
+        case "mongodb":
           this.adapter = await createMongoAdapter(dbConfig);
           break;
-        case 'postgresql':
-        case 'postgres':
+        case "postgresql":
+        case "postgres":
           this.adapter = await createPostgresAdapter(dbConfig);
           break;
-        case 'sqlite':
+        case "sqlite":
           this.adapter = await createSQLiteAdapter(dbConfig);
           break;
-        case 'prisma':
+        case "prisma":
           this.adapter = await createPrismaAdapter(dbConfig);
           break;
-        case 'mysql':
-        case 'redis':
-        case 'firebase':
+        case "mysql":
+        case "redis":
+        case "firebase":
           throw new Error(`Database type ${type} is not currently supported.`);
         default:
           throw new Error(`Unsupported database type: ${type}`);
@@ -80,7 +87,7 @@ export class Database {
         } catch (e) {
           lastErr = e;
           if (attempt < Math.max(1, retries)) {
-            await new Promise(r => setTimeout(r, delayMs));
+            await new Promise((r) => setTimeout(r, delayMs));
           }
         }
       }
@@ -95,7 +102,7 @@ export class Database {
 
       return this.adapter;
     } catch (error) {
-      console.error('❌ Database connection failed:', error.message);
+      console.error("❌ Database connection failed:", error.message);
       throw error;
     }
   }
@@ -104,7 +111,10 @@ export class Database {
   async healthCheck() {
     try {
       if (!this.adapter || !this.connected) return { ok: false };
-      try { await this.query('SELECT 1'); return { ok: true }; } catch { }
+      try {
+        await this.query("SELECT 1");
+        return { ok: true };
+      } catch {}
       return { ok: true };
     } catch {
       return { ok: false };
@@ -123,14 +133,14 @@ export class Database {
         currentAdapter = null;
         isConnected = false;
       }
-      console.log('✅ Database disconnected');
+      console.log("✅ Database disconnected");
     }
   }
 
   // Get current adapter
   getAdapter() {
     if (!this.adapter || !this.connected) {
-      throw new Error('Database not connected. Call connect() first.');
+      throw new Error("Database not connected. Call connect() first.");
     }
     return this.adapter;
   }
@@ -161,7 +171,10 @@ export async function connect(customConfig = null) {
 export async function healthCheck() {
   try {
     if (!currentAdapter || !isConnected) return { ok: false };
-    try { await currentAdapter.query('SELECT 1'); return { ok: true }; } catch { }
+    try {
+      await currentAdapter.query("SELECT 1");
+      return { ok: true };
+    } catch {}
     return { ok: true };
   } catch {
     return { ok: false };
@@ -173,13 +186,13 @@ export async function disconnect() {
     await currentAdapter.disconnect();
     currentAdapter = null;
     isConnected = false;
-    console.log('✅ Database disconnected');
+    console.log("✅ Database disconnected");
   }
 }
 
 export function getAdapter() {
   if (!currentAdapter || !isConnected) {
-    throw new Error('Database not connected. Call connect() first.');
+    throw new Error("Database not connected. Call connect() first.");
   }
   return currentAdapter;
 }
@@ -209,5 +222,5 @@ export default {
   runMigrations,
   rollbackMigration,
   Model,
-  Database
+  Database,
 };

@@ -1,101 +1,102 @@
-import React from 'react';
+import React from "react";
 
 export default function Styling() {
   const ui = {
     page: {
-      fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-      minHeight: '100vh',
+      fontFamily:
+        "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
+      minHeight: "100vh",
       margin: 0,
-      background: 'linear-gradient(180deg, #0ea5e9 0%, #111827 60%)',
-      color: '#0f172a'
+      background: "linear-gradient(180deg, #0ea5e9 0%, #111827 60%)",
+      color: "#0f172a",
     },
     wrap: {
       maxWidth: 980,
-      margin: '0 auto',
-      padding: '48px 20px'
+      margin: "0 auto",
+      padding: "48px 20px",
     },
     hero: {
-      background: 'white',
+      background: "white",
       borderRadius: 16,
       padding: 28,
-      boxShadow: '0 10px 30px rgba(0,0,0,0.12)'
+      boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
     },
     h1: {
       fontSize: 32,
       lineHeight: 1.1,
       margin: 0,
-      color: '#0b1220'
+      color: "#0b1220",
     },
     nav: {
-      marginBottom: 20
+      marginBottom: 20,
     },
     backLink: {
-      color: '#0ea5e9',
-      textDecoration: 'none',
-      fontSize: 14
+      color: "#0ea5e9",
+      textDecoration: "none",
+      fontSize: 14,
     },
     section: {
-      marginBottom: 32
+      marginBottom: 32,
     },
     h2: {
       fontSize: 24,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 16,
-      borderBottom: '2px solid #e2e8f0',
-      paddingBottom: 8
+      borderBottom: "2px solid #e2e8f0",
+      paddingBottom: 8,
     },
     h3: {
       fontSize: 20,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 12,
-      marginTop: 24
+      marginTop: 24,
     },
     p: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
-      marginBottom: 16
+      marginBottom: 16,
     },
     ul: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
       marginBottom: 16,
-      paddingLeft: 20
+      paddingLeft: 20,
     },
     li: {
-      marginBottom: 8
+      marginBottom: 8,
     },
     code: {
-      background: '#f1f5f9',
-      padding: '2px 6px',
+      background: "#f1f5f9",
+      padding: "2px 6px",
       borderRadius: 4,
       fontSize: 14,
-      fontFamily: 'monospace'
+      fontFamily: "monospace",
     },
     codeBlock: {
-      background: '#1e293b',
-      color: '#e2e8f0',
+      background: "#1e293b",
+      color: "#e2e8f0",
       padding: 20,
       borderRadius: 8,
       fontSize: 14,
-      fontFamily: 'monospace',
-      overflow: 'auto',
+      fontFamily: "monospace",
+      overflow: "auto",
       marginBottom: 20,
-      lineHeight: 1.5
+      lineHeight: 1.5,
     },
     info: {
-      background: '#dbeafe',
-      border: '1px solid #3b82f6',
+      background: "#dbeafe",
+      border: "1px solid #3b82f6",
       borderRadius: 8,
       padding: 16,
-      marginBottom: 20
+      marginBottom: 20,
     },
     infoTitle: {
       fontWeight: 600,
-      color: '#1e40af',
-      marginBottom: 8
-    }
+      color: "#1e40af",
+      marginBottom: 8,
+    },
   };
 
   return (
@@ -103,17 +104,21 @@ export default function Styling() {
       <div style={ui.wrap}>
         <section style={ui.hero}>
           <nav style={ui.nav}>
-            <a href="/docs" style={ui.backLink}>← Back to Documentation</a>
+            <a href="/docs" style={ui.backLink}>
+              ← Back to Documentation
+            </a>
           </nav>
-          
+
           <h1 style={ui.h1}>Styling</h1>
-          
+
           <div style={ui.section}>
             <h2 style={ui.h2}>Built-in Tailwind CSS</h2>
             <p style={ui.p}>
-              INDJS comes with Tailwind CSS pre-configured and ready to use. No setup required – just start using Tailwind classes in your components.
+              INDJS comes with Tailwind CSS pre-configured and ready to use. No
+              setup required – just start using Tailwind classes in your
+              components.
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// pages/styled-page.jsx
 import React from 'react';
@@ -145,9 +150,11 @@ export default function StyledPage() {
           <div style={ui.section}>
             <h2 style={ui.h2}>Tailwind Configuration</h2>
             <p style={ui.p}>
-              Customize Tailwind by creating a <code style={ui.code}>tailwind.config.js</code> file in your project root:
+              Customize Tailwind by creating a{" "}
+              <code style={ui.code}>tailwind.config.js</code> file in your
+              project root:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// tailwind.config.js
 module.exports = {
@@ -215,9 +222,10 @@ export default {
           <div style={ui.section}>
             <h2 style={ui.h2}>CSS Modules</h2>
             <p style={ui.p}>
-              Use CSS Modules for component-scoped styling by naming your CSS files with <code style={ui.code}>.module.css</code>:
+              Use CSS Modules for component-scoped styling by naming your CSS
+              files with <code style={ui.code}>.module.css</code>:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`/* components/Button.module.css */
 .button {
@@ -293,9 +301,10 @@ export function MyPage() {
           <div style={ui.section}>
             <h2 style={ui.h2}>Global CSS</h2>
             <p style={ui.p}>
-              Add global styles by creating CSS files in the <code style={ui.code}>styles</code> directory:
+              Add global styles by creating CSS files in the{" "}
+              <code style={ui.code}>styles</code> directory:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`/* styles/globals.css */
 @import 'tailwindcss/base';
@@ -352,16 +361,18 @@ body {
             </div>
 
             <p style={ui.p}>
-              INDJS automatically imports <code style={ui.code}>styles/globals.css</code> if it exists.
+              INDJS automatically imports{" "}
+              <code style={ui.code}>styles/globals.css</code> if it exists.
             </p>
           </div>
 
           <div style={ui.section}>
             <h2 style={ui.h2}>Styled Components</h2>
             <p style={ui.p}>
-              Use CSS-in-JS libraries like styled-components for dynamic styling:
+              Use CSS-in-JS libraries like styled-components for dynamic
+              styling:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// Install styled-components
 npm install styled-components
@@ -408,9 +419,10 @@ export function MyComponent() {
           <div style={ui.section}>
             <h2 style={ui.h2}>Sass/SCSS Support</h2>
             <p style={ui.p}>
-              INDJS supports Sass/SCSS out of the box. Just install sass and start using .scss files:
+              INDJS supports Sass/SCSS out of the box. Just install sass and
+              start using .scss files:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`# Install Sass
 npm install sass
@@ -479,10 +491,8 @@ $border-radius: 0.5rem;
 
           <div style={ui.section}>
             <h2 style={ui.h2}>CSS Variables</h2>
-            <p style={ui.p}>
-              Use CSS custom properties for dynamic theming:
-            </p>
-            
+            <p style={ui.p}>Use CSS custom properties for dynamic theming:</p>
+
             <div style={ui.codeBlock}>
               {`/* styles/theme.css */
 :root {
@@ -570,9 +580,10 @@ export default function ThemeToggle() {
           <div style={ui.section}>
             <h2 style={ui.h2}>Responsive Design</h2>
             <p style={ui.p}>
-              Use Tailwind's responsive utilities or CSS media queries for responsive design:
+              Use Tailwind's responsive utilities or CSS media queries for
+              responsive design:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// Tailwind responsive classes
 export default function ResponsiveComponent() {
@@ -631,8 +642,10 @@ export default function ResponsiveComponent() {
 
           <div style={ui.info}>
             <div style={ui.infoTitle}>💡 Styling Best Practices</div>
-            <ul style={{ margin: 0, fontSize: 14, color: '#1e40af' }}>
-              <li>Use Tailwind for rapid prototyping and utility-first styling</li>
+            <ul style={{ margin: 0, fontSize: 14, color: "#1e40af" }}>
+              <li>
+                Use Tailwind for rapid prototyping and utility-first styling
+              </li>
               <li>Use CSS Modules for component-specific styles</li>
               <li>Use CSS variables for theming and dynamic values</li>
               <li>Keep global styles minimal and focused</li>

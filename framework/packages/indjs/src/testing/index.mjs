@@ -1,27 +1,33 @@
 // Dynamic import wrapper
 let createMocks;
-import('node-mocks-http').then(m => createMocks = m.createMocks).catch(() => { });
+import("node-mocks-http")
+  .then((m) => (createMocks = m.createMocks))
+  .catch(() => {});
 
 // Fallback if missing
 if (!createMocks) {
   createMocks = () => ({ req: {}, res: {} });
 }
-import React from 'react';
+import React from "react";
 
 // Mock INDJS context for testing
 export function createMockContext(overrides = {}) {
-  const { req: reqOverrides = {}, res: resOverrides = {}, ...otherOverrides } = overrides;
+  const {
+    req: reqOverrides = {},
+    res: resOverrides = {},
+    ...otherOverrides
+  } = overrides;
 
   const mockReq = {
-    method: 'GET',
-    url: '/',
+    method: "GET",
+    url: "/",
     headers: {},
     query: {},
     body: {},
     cookies: {},
     params: {},
     user: null,
-    ...reqOverrides
+    ...reqOverrides,
   };
 
   const mockRes = {
@@ -34,7 +40,7 @@ export function createMockContext(overrides = {}) {
     redirect: jest.fn().mockReturnThis(),
     end: jest.fn().mockReturnThis(),
     headersSent: false,
-    ...resOverrides
+    ...resOverrides,
   };
 
   return {
@@ -43,9 +49,9 @@ export function createMockContext(overrides = {}) {
     params: {},
     query: {},
     body: {},
-    root: '/test',
+    root: "/test",
     dev: true,
-    ...otherOverrides
+    ...otherOverrides,
   };
 }
 
@@ -58,8 +64,8 @@ export function createMockRequest(options = {}) {
 // Mock API handler testing
 export async function testAPIHandler(handler, options = {}) {
   const {
-    method = 'GET',
-    url = '/',
+    method = "GET",
+    url = "/",
     body = null,
     query = {},
     headers = {},
@@ -74,9 +80,9 @@ export async function testAPIHandler(handler, options = {}) {
       body,
       query,
       headers,
-      user
+      user,
     },
-    ...contextOverrides
+    ...contextOverrides,
   });
 
   let result;
@@ -94,7 +100,7 @@ export async function testAPIHandler(handler, options = {}) {
     context,
     status: context.res.status,
     json: context.res.json,
-    send: context.res.send
+    send: context.res.send,
   };
 }
 
@@ -102,7 +108,7 @@ export async function testAPIHandler(handler, options = {}) {
 export function createMockPageProps(props = {}) {
   return {
     ...props,
-    __INDJS_PAGE_PROPS__: true
+    __INDJS_PAGE_PROPS__: true,
   };
 }
 
@@ -142,12 +148,12 @@ export class TestDatabase {
 export class TestAuth {
   static createMockUser(overrides = {}) {
     return {
-      id: '1',
-      email: 'test@example.com',
-      name: 'Test User',
-      role: 'user',
+      id: "1",
+      email: "test@example.com",
+      name: "Test User",
+      role: "user",
       createdAt: new Date().toISOString(),
-      ...overrides
+      ...overrides,
     };
   }
 
@@ -170,11 +176,7 @@ export class TestAuth {
 
 // Component testing utilities
 export function renderWithProviders(ui, options = {}) {
-  const {
-    initialState = {},
-    providers = [],
-    ...renderOptions
-  } = options;
+  const { initialState = {}, providers = [], ...renderOptions } = options;
 
   function AllProviders({ children }) {
     let wrapped = children;
@@ -191,7 +193,7 @@ export function renderWithProviders(ui, options = {}) {
   // This would use @testing-library/react in a real implementation
   return {
     ...renderOptions,
-    wrapper: AllProviders
+    wrapper: AllProviders,
   };
 }
 
@@ -212,7 +214,7 @@ export class MockService {
 
     const response = this.responses.get(method.toLowerCase());
     if (response) {
-      if (typeof response === 'function') {
+      if (typeof response === "function") {
         return response(...args);
       }
       return response;
@@ -223,7 +225,7 @@ export class MockService {
 
   getCalls(method = null) {
     if (method) {
-      return this.calls.filter(call => call.method === method);
+      return this.calls.filter((call) => call.method === method);
     }
     return this.calls;
   }
@@ -243,34 +245,34 @@ export const factories = {
   user: (overrides = {}) => ({
     id: Math.random().toString(36).substr(2, 9),
     email: `user${Math.random().toString(36).substr(2, 5)}@example.com`,
-    name: 'Test User',
-    role: 'user',
+    name: "Test User",
+    role: "user",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    ...overrides
+    ...overrides,
   }),
 
   post: (overrides = {}) => ({
     id: Math.random().toString(36).substr(2, 9),
-    title: 'Test Post',
-    content: 'This is a test post content',
+    title: "Test Post",
+    content: "This is a test post content",
     slug: `test-post-${Math.random().toString(36).substr(2, 5)}`,
     published: true,
     authorId: factories.user().id,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    ...overrides
+    ...overrides,
   }),
 
   comment: (overrides = {}) => ({
     id: Math.random().toString(36).substr(2, 9),
-    content: 'This is a test comment',
+    content: "This is a test comment",
     postId: factories.post().id,
     authorId: factories.user().id,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    ...overrides
-  })
+    ...overrides,
+  }),
 };
 
 // Test suite utilities
@@ -366,7 +368,7 @@ export class PerformanceTest {
       average: sum / this.measurements.length,
       median: sorted[Math.floor(sorted.length / 2)],
       p95: sorted[Math.floor(sorted.length * 0.95)],
-      p99: sorted[Math.floor(sorted.length * 0.99)]
+      p99: sorted[Math.floor(sorted.length * 0.99)],
     };
   }
 
@@ -378,7 +380,7 @@ export class PerformanceTest {
 // Integration test utilities
 export class IntegrationTest {
   constructor(options = {}) {
-    this.baseUrl = options.baseUrl || 'http://localhost:3000';
+    this.baseUrl = options.baseUrl || "http://localhost:3000";
     this.timeout = options.timeout || 30000;
   }
 
@@ -386,47 +388,47 @@ export class IntegrationTest {
     const url = `${this.baseUrl}${path}`;
     const response = await fetch(url, {
       timeout: this.timeout,
-      ...options
+      ...options,
     });
 
     return {
       status: response.status,
       headers: Object.fromEntries(response.headers.entries()),
       body: await response.text(),
-      json: async () => JSON.parse(await response.text())
+      json: async () => JSON.parse(await response.text()),
     };
   }
 
   async get(path, options = {}) {
-    return this.request(path, { method: 'GET', ...options });
+    return this.request(path, { method: "GET", ...options });
   }
 
   async post(path, data, options = {}) {
     return this.request(path, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
+        "Content-Type": "application/json",
+        ...options.headers,
       },
       body: JSON.stringify(data),
-      ...options
+      ...options,
     });
   }
 
   async put(path, data, options = {}) {
     return this.request(path, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
+        "Content-Type": "application/json",
+        ...options.headers,
       },
       body: JSON.stringify(data),
-      ...options
+      ...options,
     });
   }
 
   async delete(path, options = {}) {
-    return this.request(path, { method: 'DELETE', ...options });
+    return this.request(path, { method: "DELETE", ...options });
   }
 }
 
@@ -445,5 +447,5 @@ export default {
   createSnapshot,
   compareSnapshots,
   PerformanceTest,
-  IntegrationTest
+  IntegrationTest,
 };

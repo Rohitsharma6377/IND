@@ -1,35 +1,36 @@
-import fs from 'fs/promises';
-import path from 'path';
-import chalk from 'chalk';
-import ora from 'ora';
+import fs from "fs/promises";
+import path from "path";
+import chalk from "chalk";
+import ora from "ora";
 
 export async function test({ root, watch = false }) {
-  const spinner = ora('Setting up test environment...').start();
+  const spinner = ora("Setting up test environment...").start();
 
   try {
     // Check if test setup exists
     const hasTests = await checkTestSetup(root);
 
     if (!hasTests) {
-      spinner.text = 'Creating test setup...';
+      spinner.text = "Creating test setup...";
       await createTestSetup(root);
-      spinner.succeed(chalk.green('✅ Test setup created!'));
+      spinner.succeed(chalk.green("✅ Test setup created!"));
 
-      console.log(chalk.blue('\n🧪 Test environment is ready!'));
-      console.log('Next steps:');
-      console.log('1. Install test dependencies: npm install --save-dev jest @testing-library/react @testing-library/jest-dom');
-      console.log('2. Run tests: npm test');
-      console.log('3. Write your tests in the __tests__ directory\n');
+      console.log(chalk.blue("\n🧪 Test environment is ready!"));
+      console.log("Next steps:");
+      console.log(
+        "1. Install test dependencies: npm install --save-dev jest @testing-library/react @testing-library/jest-dom",
+      );
+      console.log("2. Run tests: npm test");
+      console.log("3. Write your tests in the __tests__ directory\n");
       return;
     }
 
     // Run tests
-    spinner.text = 'Running tests...';
+    spinner.text = "Running tests...";
     await runTests(root, watch);
-    spinner.succeed(chalk.green('✅ Tests completed!'));
-
+    spinner.succeed(chalk.green("✅ Tests completed!"));
   } catch (error) {
-    spinner.fail(chalk.red('Failed to run tests'));
+    spinner.fail(chalk.red("Failed to run tests"));
     console.error(error.message);
     process.exit(1);
   }
@@ -37,8 +38,8 @@ export async function test({ root, watch = false }) {
 
 async function checkTestSetup(root) {
   try {
-    await fs.access(path.join(root, '__tests__'));
-    await fs.access(path.join(root, 'jest.config.js'));
+    await fs.access(path.join(root, "__tests__"));
+    await fs.access(path.join(root, "jest.config.js"));
     return true;
   } catch {
     return false;
@@ -47,7 +48,7 @@ async function checkTestSetup(root) {
 
 async function createTestSetup(root) {
   // Create __tests__ directory
-  const testsDir = path.join(root, '__tests__');
+  const testsDir = path.join(root, "__tests__");
   await fs.mkdir(testsDir, { recursive: true });
 
   // Create Jest configuration
@@ -70,7 +71,7 @@ async function createTestSetup(root) {
   ],
 };`;
 
-  await fs.writeFile(path.join(root, 'jest.config.js'), jestConfig);
+  await fs.writeFile(path.join(root, "jest.config.js"), jestConfig);
 
   // Create Jest setup file
   const jestSetup = `import '@testing-library/jest-dom';
@@ -98,7 +99,7 @@ jest.mock('indjs', () => {
 });
 `;
 
-  await fs.writeFile(path.join(root, 'jest.setup.js'), jestSetup);
+  await fs.writeFile(path.join(root, "jest.setup.js"), jestSetup);
 
   // Create sample test files
   await createSampleTests(testsDir);
@@ -121,7 +122,7 @@ describe('Component Tests', () => {
   });
 });`;
 
-  await fs.writeFile(path.join(testsDir, 'components.test.jsx'), componentTest);
+  await fs.writeFile(path.join(testsDir, "components.test.jsx"), componentTest);
 
   // API test example
   const apiTest = `import { createMocks } from 'node-mocks-http';
@@ -146,7 +147,7 @@ describe('/api/hello', () => {
   });
 });`;
 
-  await fs.writeFile(path.join(testsDir, 'api.test.js'), apiTest);
+  await fs.writeFile(path.join(testsDir, "api.test.js"), apiTest);
 
   // Utility test example
   const utilTest = `// Example utility test
@@ -157,7 +158,7 @@ describe('Utility Functions', () => {
   });
 });`;
 
-  await fs.writeFile(path.join(testsDir, 'utils.test.js'), utilTest);
+  await fs.writeFile(path.join(testsDir, "utils.test.js"), utilTest);
 
   // Integration test example
   const integrationTest = `import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -196,11 +197,14 @@ describe('Integration Tests', () => {
   });
 });`;
 
-  await fs.writeFile(path.join(testsDir, 'integration.test.jsx'), integrationTest);
+  await fs.writeFile(
+    path.join(testsDir, "integration.test.jsx"),
+    integrationTest,
+  );
 }
 
 async function createTestUtils(root) {
-  const utilsDir = path.join(root, '__tests__', 'utils');
+  const utilsDir = path.join(root, "__tests__", "utils");
   await fs.mkdir(utilsDir, { recursive: true });
 
   // Test utilities
@@ -281,7 +285,7 @@ export const testData = {
 
 export * from '@testing-library/react';`;
 
-  await fs.writeFile(path.join(utilsDir, 'test-utils.jsx'), testUtils);
+  await fs.writeFile(path.join(utilsDir, "test-utils.jsx"), testUtils);
 
   // Mock data
   const mockData = `// Mock data for tests
@@ -332,17 +336,17 @@ export const mockApiResponses = {
   },
 };`;
 
-  await fs.writeFile(path.join(utilsDir, 'mock-data.js'), mockData);
+  await fs.writeFile(path.join(utilsDir, "mock-data.js"), mockData);
 }
 
 async function runTests(root, watch) {
   // This would typically run Jest or another test runner
   // For now, we'll just simulate running tests
-  console.log(chalk.blue('\n🧪 Running tests...'));
+  console.log(chalk.blue("\n🧪 Running tests..."));
 
   if (watch) {
-    console.log(chalk.yellow('👀 Watching for changes...'));
-    console.log('Press Ctrl+C to stop watching');
+    console.log(chalk.yellow("👀 Watching for changes..."));
+    console.log("Press Ctrl+C to stop watching");
   }
 
   // In a real implementation, you would:
@@ -350,5 +354,5 @@ async function runTests(root, watch) {
   // 2. Run Jest with appropriate flags
   // 3. Parse and display results
 
-  console.log(chalk.green('✅ All tests passed!'));
+  console.log(chalk.green("✅ All tests passed!"));
 }

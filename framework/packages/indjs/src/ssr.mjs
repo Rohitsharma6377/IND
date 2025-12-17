@@ -1,3 +1,3 @@
-import { renderPageModule } from './ssr/index.mjs';
+import { renderPageModule } from "./ssr/index.mjs";
 
 export { renderPageModule };

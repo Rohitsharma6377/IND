@@ -1,40 +1,40 @@
-import fs from 'fs/promises';
-import path from 'path';
-import chalk from 'chalk';
-import ora from 'ora';
+import fs from "fs/promises";
+import path from "path";
+import chalk from "chalk";
+import ora from "ora";
 
 // Deployment configurations for different platforms
 const deploymentConfigs = {
   vercel: {
-    name: 'Vercel',
-    configFile: 'vercel.json',
-    buildCommand: 'npx indjs build',
-    outputDirectory: '.indjs/static'
+    name: "Vercel",
+    configFile: "vercel.json",
+    buildCommand: "npx indjs build",
+    outputDirectory: ".indjs/static",
   },
   netlify: {
-    name: 'Netlify',
-    configFile: 'netlify.toml',
-    buildCommand: 'npx indjs build',
-    outputDirectory: '.indjs/static'
+    name: "Netlify",
+    configFile: "netlify.toml",
+    buildCommand: "npx indjs build",
+    outputDirectory: ".indjs/static",
   },
   docker: {
-    name: 'Docker',
-    configFile: 'Dockerfile',
-    buildCommand: 'docker build',
-    outputDirectory: null
+    name: "Docker",
+    configFile: "Dockerfile",
+    buildCommand: "docker build",
+    outputDirectory: null,
   },
   aws: {
-    name: 'AWS',
-    configFile: 'aws-config.json',
-    buildCommand: 'npx indjs build',
-    outputDirectory: '.indjs/static'
+    name: "AWS",
+    configFile: "aws-config.json",
+    buildCommand: "npx indjs build",
+    outputDirectory: ".indjs/static",
   },
   gcp: {
-    name: 'Google Cloud Platform',
-    configFile: 'app.yaml',
-    buildCommand: 'npx indjs build',
-    outputDirectory: '.indjs/static'
-  }
+    name: "Google Cloud Platform",
+    configFile: "app.yaml",
+    buildCommand: "npx indjs build",
+    outputDirectory: ".indjs/static",
+  },
 };
 
 // Generate Vercel configuration
@@ -44,36 +44,36 @@ export async function generateVercelConfig(root, options = {}) {
     name: options.name || path.basename(root),
     builds: [
       {
-        src: 'package.json',
-        use: '@vercel/node'
-      }
+        src: "package.json",
+        use: "@vercel/node",
+      },
     ],
     routes: [
       {
-        src: '/api/(.*)',
-        dest: '/api/$1'
+        src: "/api/(.*)",
+        dest: "/api/$1",
       },
       {
-        src: '/_image',
-        dest: '/_image'
+        src: "/_image",
+        dest: "/_image",
       },
       {
-        src: '/(.*)',
-        dest: '/$1'
-      }
+        src: "/(.*)",
+        dest: "/$1",
+      },
     ],
     functions: {
-      'pages/api/**/*.js': {
-        runtime: 'nodejs18.x'
-      }
+      "pages/api/**/*.js": {
+        runtime: "nodejs18.x",
+      },
     },
     env: options.env || {},
-    ...options.vercelConfig
+    ...options.vercelConfig,
   };
 
   await fs.writeFile(
-    path.join(root, 'vercel.json'),
-    JSON.stringify(config, null, 2)
+    path.join(root, "vercel.json"),
+    JSON.stringify(config, null, 2),
   );
 
   return config;
@@ -82,8 +82,8 @@ export async function generateVercelConfig(root, options = {}) {
 // Generate Netlify configuration
 export async function generateNetlifyConfig(root, options = {}) {
   const config = `[build]
-  command = "${options.buildCommand || 'npx indjs build'}"
-  publish = "${options.outputDirectory || '.indjs/static'}"
+  command = "${options.buildCommand || "npx indjs build"}"
+  publish = "${options.outputDirectory || ".indjs/static"}"
 
 [build.environment]
   NODE_VERSION = "18"
@@ -108,25 +108,39 @@ export async function generateNetlifyConfig(root, options = {}) {
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-${options.headers ? `
+${
+  options.headers
+    ? `
 [[headers]]
   for = "/*"
   [headers.values]
-${Object.entries(options.headers).map(([key, value]) => `    ${key} = "${value}"`).join('\n')}
-` : ''}
+${Object.entries(options.headers)
+  .map(([key, value]) => `    ${key} = "${value}"`)
+  .join("\n")}
+`
+    : ""
+}
 
-${options.redirects ? options.redirects.map(redirect => `
+${
+  options.redirects
+    ? options.redirects
+        .map(
+          (redirect) => `
 [[redirects]]
   from = "${redirect.from}"
   to = "${redirect.to}"
   status = ${redirect.status || 301}
-`).join('') : ''}
+`,
+        )
+        .join("")
+    : ""
+}
 `;
 
-  await fs.writeFile(path.join(root, 'netlify.toml'), config);
+  await fs.writeFile(path.join(root, "netlify.toml"), config);
 
   // Create Netlify functions directory
-  const functionsDir = path.join(root, 'netlify', 'functions');
+  const functionsDir = path.join(root, "netlify", "functions");
   await fs.mkdir(functionsDir, { recursive: true });
 
   // Create image optimizer function
@@ -166,15 +180,18 @@ exports.handler = async (event, context) => {
   }
 };`;
 
-  await fs.writeFile(path.join(functionsDir, 'image-optimizer.js'), imageOptimizer);
+  await fs.writeFile(
+    path.join(functionsDir, "image-optimizer.js"),
+    imageOptimizer,
+  );
 
   return config;
 }
 
 // Generate Docker configuration
 export async function generateDockerConfig(root, options = {}) {
-  const dockerfile = `# Use Node.js ${options.nodeVersion || '18'} Alpine image
-FROM node:${options.nodeVersion || '18'}-alpine
+  const dockerfile = `# Use Node.js ${options.nodeVersion || "18"} Alpine image
+FROM node:${options.nodeVersion || "18"}-alpine
 
 # Set working directory
 WORKDIR /app
@@ -213,7 +230,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \\
 CMD ["npx", "indjs", "start"]
 `;
 
-  await fs.writeFile(path.join(root, 'Dockerfile'), dockerfile);
+  await fs.writeFile(path.join(root, "Dockerfile"), dockerfile);
 
   // Generate docker-compose.yml
   const dockerCompose = `version: '3.8'
@@ -261,7 +278,7 @@ volumes:
   redis_data:
 `;
 
-  await fs.writeFile(path.join(root, 'docker-compose.yml'), dockerCompose);
+  await fs.writeFile(path.join(root, "docker-compose.yml"), dockerCompose);
 
   // Generate .dockerignore
   const dockerignore = `node_modules
@@ -286,7 +303,7 @@ coverage
 *~
 `;
 
-  await fs.writeFile(path.join(root, '.dockerignore'), dockerignore);
+  await fs.writeFile(path.join(root, ".dockerignore"), dockerignore);
 
   return { dockerfile, dockerCompose, dockerignore };
 }
@@ -296,17 +313,17 @@ export async function generateAWSConfig(root, options = {}) {
   // Generate AWS Lambda configuration
   const lambdaConfig = {
     name: options.name || path.basename(root),
-    runtime: 'nodejs18.x',
-    handler: 'lambda.handler',
+    runtime: "nodejs18.x",
+    handler: "lambda.handler",
     timeout: options.timeout || 30,
     memorySize: options.memorySize || 512,
     environment: options.env || {},
-    layers: options.layers || []
+    layers: options.layers || [],
   };
 
   await fs.writeFile(
-    path.join(root, 'aws-config.json'),
-    JSON.stringify(lambdaConfig, null, 2)
+    path.join(root, "aws-config.json"),
+    JSON.stringify(lambdaConfig, null, 2),
   );
 
   // Generate Lambda handler
@@ -359,50 +376,51 @@ exports.handler = async (event, context) => {
   });
 };`;
 
-  await fs.writeFile(path.join(root, 'lambda.js'), lambdaHandler);
+  await fs.writeFile(path.join(root, "lambda.js"), lambdaHandler);
 
   // Generate CloudFormation template
   const cloudFormationTemplate = {
-    AWSTemplateFormatVersion: '2010-09-09',
-    Transform: 'AWS::Serverless-2016-10-31',
+    AWSTemplateFormatVersion: "2010-09-09",
+    Transform: "AWS::Serverless-2016-10-31",
     Description: `INDJS application: ${options.name || path.basename(root)}`,
     Resources: {
       INDJSFunction: {
-        Type: 'AWS::Serverless::Function',
+        Type: "AWS::Serverless::Function",
         Properties: {
-          CodeUri: '.',
-          Handler: 'lambda.handler',
-          Runtime: 'nodejs18.x',
+          CodeUri: ".",
+          Handler: "lambda.handler",
+          Runtime: "nodejs18.x",
           Timeout: options.timeout || 30,
           MemorySize: options.memorySize || 512,
           Environment: {
-            Variables: options.env || {}
+            Variables: options.env || {},
           },
           Events: {
             Api: {
-              Type: 'Api',
+              Type: "Api",
               Properties: {
-                Path: '/{proxy+}',
-                Method: 'ANY'
-              }
-            }
-          }
-        }
-      }
+                Path: "/{proxy+}",
+                Method: "ANY",
+              },
+            },
+          },
+        },
+      },
     },
     Outputs: {
       ApiUrl: {
-        Description: 'API Gateway endpoint URL',
+        Description: "API Gateway endpoint URL",
         Value: {
-          'Fn::Sub': 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/'
-        }
-      }
-    }
+          "Fn::Sub":
+            "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/",
+        },
+      },
+    },
   };
 
   await fs.writeFile(
-    path.join(root, 'template.yaml'),
-    JSON.stringify(cloudFormationTemplate, null, 2)
+    path.join(root, "template.yaml"),
+    JSON.stringify(cloudFormationTemplate, null, 2),
   );
 
   return { lambdaConfig, lambdaHandler, cloudFormationTemplate };
@@ -414,7 +432,9 @@ export async function generateGCPConfig(root, options = {}) {
 
 env_variables:
   NODE_ENV: production
-${Object.entries(options.env || {}).map(([key, value]) => `  ${key}: "${value}"`).join('\n')}
+${Object.entries(options.env || {})
+  .map(([key, value]) => `  ${key}: "${value}"`)
+  .join("\n")}
 
 automatic_scaling:
   min_instances: ${options.minInstances || 1}
@@ -432,31 +452,31 @@ handlers:
   secure: always
 `;
 
-  await fs.writeFile(path.join(root, 'app.yaml'), appYaml);
+  await fs.writeFile(path.join(root, "app.yaml"), appYaml);
 
   // Generate Cloud Build configuration
   const cloudBuildConfig = {
     steps: [
       {
-        name: 'node:18',
-        entrypoint: 'npm',
-        args: ['install']
+        name: "node:18",
+        entrypoint: "npm",
+        args: ["install"],
       },
       {
-        name: 'node:18',
-        entrypoint: 'npm',
-        args: ['run', 'build']
+        name: "node:18",
+        entrypoint: "npm",
+        args: ["run", "build"],
       },
       {
-        name: 'gcr.io/cloud-builders/gcloud',
-        args: ['app', 'deploy']
-      }
-    ]
+        name: "gcr.io/cloud-builders/gcloud",
+        args: ["app", "deploy"],
+      },
+    ],
   };
 
   await fs.writeFile(
-    path.join(root, 'cloudbuild.yaml'),
-    JSON.stringify(cloudBuildConfig, null, 2)
+    path.join(root, "cloudbuild.yaml"),
+    JSON.stringify(cloudBuildConfig, null, 2),
   );
 
   return { appYaml, cloudBuildConfig };
@@ -491,45 +511,45 @@ export async function get({ req, res }) {
   return health;
 }`;
 
-  const apiDir = path.join(root, 'pages', 'api');
+  const apiDir = path.join(root, "pages", "api");
   await fs.mkdir(apiDir, { recursive: true });
-  await fs.writeFile(path.join(apiDir, 'health.js'), healthCheckAPI);
+  await fs.writeFile(path.join(apiDir, "health.js"), healthCheckAPI);
 }
 
 // Environment configuration generator
 export async function generateEnvConfig(root, platform, options = {}) {
   const envVars = {
-    NODE_ENV: 'production',
+    NODE_ENV: "production",
     PORT: options.port || 3000,
-    DATABASE_URL: options.databaseUrl || '',
-    JWT_SECRET: options.jwtSecret || 'your-secret-key',
-    ...options.env
+    DATABASE_URL: options.databaseUrl || "",
+    JWT_SECRET: options.jwtSecret || "your-secret-key",
+    ...options.env,
   };
 
   // Platform-specific environment files
   const envFiles = {
-    vercel: '.env.production',
-    netlify: '.env.production',
-    docker: '.env.production',
-    aws: '.env.production',
-    gcp: '.env.yaml'
+    vercel: ".env.production",
+    netlify: ".env.production",
+    docker: ".env.production",
+    aws: ".env.production",
+    gcp: ".env.yaml",
   };
 
-  const envFile = envFiles[platform] || '.env.production';
-  
-  if (platform === 'gcp' && envFile.endsWith('.yaml')) {
+  const envFile = envFiles[platform] || ".env.production";
+
+  if (platform === "gcp" && envFile.endsWith(".yaml")) {
     // GCP uses YAML format
     const yamlContent = Object.entries(envVars)
       .map(([key, value]) => `${key}: "${value}"`)
-      .join('\n');
-    
+      .join("\n");
+
     await fs.writeFile(path.join(root, envFile), yamlContent);
   } else {
     // Standard .env format
     const envContent = Object.entries(envVars)
       .map(([key, value]) => `${key}=${value}`)
-      .join('\n');
-    
+      .join("\n");
+
     await fs.writeFile(path.join(root, envFile), envContent);
   }
 
@@ -547,42 +567,42 @@ export async function validateDeployment(root, platform) {
 
   // Check if required files exist
   try {
-    await fs.access(path.join(root, 'package.json'));
+    await fs.access(path.join(root, "package.json"));
   } catch {
-    issues.push('Missing package.json');
+    issues.push("Missing package.json");
   }
 
   try {
-    await fs.access(path.join(root, 'pages'));
+    await fs.access(path.join(root, "pages"));
   } catch {
-    issues.push('Missing pages directory');
+    issues.push("Missing pages directory");
   }
 
   // Platform-specific validations
-  if (platform === 'vercel') {
+  if (platform === "vercel") {
     try {
       const packageJson = JSON.parse(
-        await fs.readFile(path.join(root, 'package.json'), 'utf8')
+        await fs.readFile(path.join(root, "package.json"), "utf8"),
       );
       if (!packageJson.scripts?.build) {
-        issues.push('Missing build script in package.json');
+        issues.push("Missing build script in package.json");
       }
     } catch {
-      issues.push('Invalid package.json');
+      issues.push("Invalid package.json");
     }
   }
 
-  if (platform === 'docker') {
+  if (platform === "docker") {
     try {
-      await fs.access(path.join(root, 'Dockerfile'));
+      await fs.access(path.join(root, "Dockerfile"));
     } catch {
-      issues.push('Missing Dockerfile');
+      issues.push("Missing Dockerfile");
     }
   }
 
   return {
     valid: issues.length === 0,
-    issues
+    issues,
   };
 }
 
@@ -591,15 +611,15 @@ export class DeploymentStatus {
   constructor(platform, deploymentId) {
     this.platform = platform;
     this.deploymentId = deploymentId;
-    this.status = 'pending';
+    this.status = "pending";
     this.logs = [];
   }
 
-  addLog(message, level = 'info') {
+  addLog(message, level = "info") {
     this.logs.push({
       message,
       level,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -614,7 +634,7 @@ export class DeploymentStatus {
       deploymentId: this.deploymentId,
       status: this.status,
       logs: this.logs,
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
   }
 }
@@ -630,5 +650,5 @@ export default {
   generateHealthCheck,
   generateEnvConfig,
   validateDeployment,
-  DeploymentStatus
+  DeploymentStatus,
 };

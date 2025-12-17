@@ -1,131 +1,132 @@
-import React from 'react';
+import React from "react";
 
 export default function Auth() {
   const ui = {
     page: {
-      fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-      minHeight: '100vh',
+      fontFamily:
+        "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
+      minHeight: "100vh",
       margin: 0,
-      background: 'linear-gradient(180deg, #0ea5e9 0%, #111827 60%)',
-      color: '#0f172a'
+      background: "linear-gradient(180deg, #0ea5e9 0%, #111827 60%)",
+      color: "#0f172a",
     },
     wrap: {
       maxWidth: 980,
-      margin: '0 auto',
-      padding: '48px 20px'
+      margin: "0 auto",
+      padding: "48px 20px",
     },
     hero: {
-      background: 'white',
+      background: "white",
       borderRadius: 16,
       padding: 28,
-      boxShadow: '0 10px 30px rgba(0,0,0,0.12)'
+      boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
     },
     h1: {
       fontSize: 32,
       lineHeight: 1.1,
       margin: 0,
-      color: '#0b1220'
+      color: "#0b1220",
     },
     nav: {
-      marginBottom: 20
+      marginBottom: 20,
     },
     backLink: {
-      color: '#0ea5e9',
-      textDecoration: 'none',
-      fontSize: 14
+      color: "#0ea5e9",
+      textDecoration: "none",
+      fontSize: 14,
     },
     section: {
-      marginBottom: 32
+      marginBottom: 32,
     },
     h2: {
       fontSize: 24,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 16,
-      borderBottom: '2px solid #e2e8f0',
-      paddingBottom: 8
+      borderBottom: "2px solid #e2e8f0",
+      paddingBottom: 8,
     },
     h3: {
       fontSize: 20,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 12,
-      marginTop: 24
+      marginTop: 24,
     },
     p: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
-      marginBottom: 16
+      marginBottom: 16,
     },
     ul: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
       marginBottom: 16,
-      paddingLeft: 20
+      paddingLeft: 20,
     },
     li: {
-      marginBottom: 8
+      marginBottom: 8,
     },
     code: {
-      background: '#f1f5f9',
-      padding: '2px 6px',
+      background: "#f1f5f9",
+      padding: "2px 6px",
       borderRadius: 4,
       fontSize: 14,
-      fontFamily: 'monospace'
+      fontFamily: "monospace",
     },
     codeBlock: {
-      background: '#1e293b',
-      color: '#e2e8f0',
+      background: "#1e293b",
+      color: "#e2e8f0",
       padding: 20,
       borderRadius: 8,
       fontSize: 14,
-      fontFamily: 'monospace',
-      overflow: 'auto',
+      fontFamily: "monospace",
+      overflow: "auto",
       marginBottom: 20,
-      lineHeight: 1.5
+      lineHeight: 1.5,
     },
     warning: {
-      background: '#fef3c7',
-      border: '1px solid #f59e0b',
+      background: "#fef3c7",
+      border: "1px solid #f59e0b",
       borderRadius: 8,
       padding: 16,
-      marginBottom: 20
+      marginBottom: 20,
     },
     warningTitle: {
       fontWeight: 600,
-      color: '#92400e',
-      marginBottom: 8
+      color: "#92400e",
+      marginBottom: 8,
     },
     success: {
-      background: '#dcfce7',
-      border: '1px solid #16a34a',
+      background: "#dcfce7",
+      border: "1px solid #16a34a",
       borderRadius: 8,
       padding: 16,
-      marginBottom: 20
+      marginBottom: 20,
     },
     successTitle: {
       fontWeight: 600,
-      color: '#15803d',
-      marginBottom: 8
+      color: "#15803d",
+      marginBottom: 8,
     },
     grid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
       gap: 20,
-      marginBottom: 32
+      marginBottom: 32,
     },
     card: {
-      background: '#f8fafc',
-      border: '1px solid #e2e8f0',
+      background: "#f8fafc",
+      border: "1px solid #e2e8f0",
       borderRadius: 8,
-      padding: 20
+      padding: 20,
     },
     cardTitle: {
       fontSize: 18,
       fontWeight: 600,
-      color: '#0b1220',
-      marginBottom: 12
-    }
+      color: "#0b1220",
+      marginBottom: 12,
+    },
   };
 
   return (
@@ -133,17 +134,20 @@ export default function Auth() {
       <div style={ui.wrap}>
         <section style={ui.hero}>
           <nav style={ui.nav}>
-            <a href="/docs" style={ui.backLink}>← Back to Documentation</a>
+            <a href="/docs" style={ui.backLink}>
+              ← Back to Documentation
+            </a>
           </nav>
-          
+
           <h1 style={ui.h1}>Authentication Guide</h1>
-          
+
           <div style={ui.section}>
             <h2 style={ui.h2}>Overview</h2>
             <p style={ui.p}>
-              INDJS provides a comprehensive authentication system with built-in support for JWT tokens, 
-              OAuth providers, session management, and role-based access control. This guide will help you 
-              implement secure authentication in your INDJS application.
+              INDJS provides a comprehensive authentication system with built-in
+              support for JWT tokens, OAuth providers, session management, and
+              role-based access control. This guide will help you implement
+              secure authentication in your INDJS application.
             </p>
           </div>
 
@@ -153,28 +157,30 @@ export default function Auth() {
               <div style={ui.card}>
                 <div style={ui.cardTitle}>🔐 JWT Authentication</div>
                 <p style={{ ...ui.p, marginBottom: 0 }}>
-                  Stateless token-based authentication perfect for APIs and SPAs. 
-                  Includes automatic token refresh and secure cookie storage.
+                  Stateless token-based authentication perfect for APIs and
+                  SPAs. Includes automatic token refresh and secure cookie
+                  storage.
                 </p>
               </div>
               <div style={ui.card}>
                 <div style={ui.cardTitle}>🌐 OAuth Integration</div>
                 <p style={{ ...ui.p, marginBottom: 0 }}>
-                  Built-in support for Google, GitHub, Facebook, and custom OAuth providers. 
-                  Simplified setup with automatic user profile management.
+                  Built-in support for Google, GitHub, Facebook, and custom
+                  OAuth providers. Simplified setup with automatic user profile
+                  management.
                 </p>
               </div>
               <div style={ui.card}>
                 <div style={ui.cardTitle}>🍪 Session-Based Auth</div>
                 <p style={{ ...ui.p, marginBottom: 0 }}>
-                  Traditional server-side sessions with secure cookie management. 
-                  Ideal for server-rendered applications.
+                  Traditional server-side sessions with secure cookie
+                  management. Ideal for server-rendered applications.
                 </p>
               </div>
               <div style={ui.card}>
                 <div style={ui.cardTitle}>👥 Role-Based Access</div>
                 <p style={{ ...ui.p, marginBottom: 0 }}>
-                  Flexible role and permission system with middleware support. 
+                  Flexible role and permission system with middleware support.
                   Protect routes and API endpoints based on user roles.
                 </p>
               </div>
@@ -184,9 +190,10 @@ export default function Auth() {
           <div style={ui.section}>
             <h2 style={ui.h2}>Quick Setup</h2>
             <p style={ui.p}>
-              Get authentication up and running in your INDJS app with these simple steps:
+              Get authentication up and running in your INDJS app with these
+              simple steps:
             </p>
-            
+
             <h3 style={ui.h3}>1. Install Dependencies</h3>
             <div style={ui.codeBlock}>
               {`# Install authentication packages
@@ -261,7 +268,7 @@ export function getTokenFromRequest(req) {
 
           <div style={ui.section}>
             <h2 style={ui.h2}>Login & Registration</h2>
-            
+
             <h3 style={ui.h3}>Registration API</h3>
             <div style={ui.codeBlock}>
               {`// pages/api/auth/register.js
@@ -400,7 +407,7 @@ export default async function handler({ req, res }) {
             <p style={ui.p}>
               Protect your API routes and pages with authentication middleware:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// lib/middleware/auth.js
 import { verifyToken, getTokenFromRequest } from '../auth';
@@ -458,7 +465,7 @@ export function requireRole(roles) {
 
           <div style={ui.section}>
             <h2 style={ui.h2}>Client-Side Authentication</h2>
-            
+
             <h3 style={ui.h3}>Auth Context & Hook</h3>
             <div style={ui.codeBlock}>
               {`// hooks/useAuth.js
@@ -607,7 +614,7 @@ export default function ProtectedRoute({
 
           <div style={ui.section}>
             <h2 style={ui.h2}>OAuth Integration</h2>
-            
+
             <h3 style={ui.h3}>Google OAuth Setup</h3>
             <div style={ui.codeBlock}>
               {`// pages/api/auth/google.js
@@ -685,11 +692,13 @@ export default async function handler({ req, res }) {
 
           <div style={ui.success}>
             <div style={ui.successTitle}>✅ Best Practices</div>
-            <ul style={{ margin: 0, fontSize: 14, color: '#15803d' }}>
+            <ul style={{ margin: 0, fontSize: 14, color: "#15803d" }}>
               <li>Always use HTTPS in production</li>
               <li>Store secrets in environment variables</li>
               <li>Use HTTP-only cookies for token storage</li>
-              <li>Implement proper password hashing (bcrypt with salt rounds ≥ 12)</li>
+              <li>
+                Implement proper password hashing (bcrypt with salt rounds ≥ 12)
+              </li>
               <li>Add rate limiting to authentication endpoints</li>
               <li>Validate and sanitize all user inputs</li>
               <li>Implement proper session management and cleanup</li>
@@ -701,22 +710,22 @@ export default async function handler({ req, res }) {
             <h2 style={ui.h2}>Next Steps</h2>
             <ul style={ui.ul}>
               <li style={ui.li}>
-                <a href="/docs/database" style={{ color: '#0ea5e9' }}>
+                <a href="/docs/database" style={{ color: "#0ea5e9" }}>
                   Set up database integration for user storage
                 </a>
               </li>
               <li style={ui.li}>
-                <a href="/docs/api-routes" style={{ color: '#0ea5e9' }}>
+                <a href="/docs/api-routes" style={{ color: "#0ea5e9" }}>
                   Learn more about API routes and middleware
                 </a>
               </li>
               <li style={ui.li}>
-                <a href="/docs/deployment" style={{ color: '#0ea5e9' }}>
+                <a href="/docs/deployment" style={{ color: "#0ea5e9" }}>
                   Deploy your authenticated app securely
                 </a>
               </li>
               <li style={ui.li}>
-                <a href="/docs/testing" style={{ color: '#0ea5e9' }}>
+                <a href="/docs/testing" style={{ color: "#0ea5e9" }}>
                   Test your authentication flows
                 </a>
               </li>

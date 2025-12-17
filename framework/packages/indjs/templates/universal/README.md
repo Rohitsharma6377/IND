@@ -75,7 +75,7 @@ npm run mobile:ios          # Opens Xcode
 ## 📱 Platform Detection
 
 ```javascript
-import { getPlatform, isWeb, isMobile, isDesktop } from './lib/platform';
+import { getPlatform, isWeb, isMobile, isDesktop } from "./lib/platform";
 
 const platform = getPlatform(); // 'web', 'ios', 'android', 'electron'
 
@@ -97,11 +97,11 @@ if (isDesktop()) {
 ### Desktop (Electron)
 
 ```javascript
-import { electron } from './lib/platform';
+import { electron } from "./lib/platform";
 
 // File dialogs
 const files = await electron.showOpenDialog({
-  properties: ['openFile', 'multiSelections']
+  properties: ["openFile", "multiSelections"],
 });
 
 // Window controls
@@ -113,13 +113,13 @@ electron.closeWindow();
 ### Mobile (Capacitor)
 
 ```javascript
-import { mobile } from './lib/platform';
+import { mobile } from "./lib/platform";
 
 // Camera
 const Camera = await mobile.camera();
 const photo = await Camera.getPhoto({
   quality: 90,
-  allowEditing: true
+  allowEditing: true,
 });
 
 // Geolocation
@@ -128,19 +128,19 @@ const position = await Geolocation.getCurrentPosition();
 
 // Storage
 const Storage = await mobile.storage();
-await Storage.set({ key: 'name', value: 'John' });
-const { value } = await Storage.get({ key: 'name' });
+await Storage.set({ key: "name", value: "John" });
+const { value } = await Storage.get({ key: "name" });
 ```
 
 ### Cross-Platform Storage
 
 ```javascript
-import { storage } from './lib/platform';
+import { storage } from "./lib/platform";
 
 // Works on all platforms
-await storage.set('key', 'value');
-const value = await storage.get('key');
-await storage.remove('key');
+await storage.set("key", "value");
+const value = await storage.get("key");
+await storage.remove("key");
 await storage.clear();
 ```
 
@@ -153,6 +153,7 @@ npm run build:all
 ```
 
 This builds:
+
 - Web app → `.indjs/static/`
 - Desktop apps → `dist/` (Windows .exe, Mac .dmg, Linux .AppImage)
 - Mobile apps → Ready for Xcode/Android Studio
@@ -233,8 +234,8 @@ npm run mobile:android
 
 ```jsx
 // pages/index.jsx
-import { useState, useEffect } from 'react';
-import { getPlatform, storage } from '../lib/platform';
+import { useState, useEffect } from "react";
+import { getPlatform, storage } from "../lib/platform";
 
 export default function TodoApp() {
   const [todos, setTodos] = useState([]);
@@ -245,13 +246,13 @@ export default function TodoApp() {
   }, []);
 
   const loadTodos = async () => {
-    const data = await storage.get('todos');
-    setTodos(JSON.parse(data || '[]'));
+    const data = await storage.get("todos");
+    setTodos(JSON.parse(data || "[]"));
   };
 
   const saveTodos = async (newTodos) => {
     setTodos(newTodos);
-    await storage.set('todos', JSON.stringify(newTodos));
+    await storage.set("todos", JSON.stringify(newTodos));
   };
 
   const addTodo = async (text) => {
@@ -275,6 +276,7 @@ This code works on **Web, iOS, Android, Windows, Mac, and Linux**!
 ### Electron (Desktop)
 
 Edit `electron/main.cjs` to customize:
+
 - Window size and behavior
 - Application menus
 - System tray
@@ -284,6 +286,7 @@ Edit `electron/main.cjs` to customize:
 ### Capacitor (Mobile)
 
 Edit `capacitor.config.json` to customize:
+
 - App ID and name
 - Splash screen
 - Status bar

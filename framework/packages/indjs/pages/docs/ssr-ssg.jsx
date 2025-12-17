@@ -1,113 +1,114 @@
-import React from 'react';
+import React from "react";
 
 export default function SsrSsg() {
   const ui = {
     page: {
-      fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-      minHeight: '100vh',
+      fontFamily:
+        "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
+      minHeight: "100vh",
       margin: 0,
-      background: 'linear-gradient(180deg, #0ea5e9 0%, #111827 60%)',
-      color: '#0f172a'
+      background: "linear-gradient(180deg, #0ea5e9 0%, #111827 60%)",
+      color: "#0f172a",
     },
     wrap: {
       maxWidth: 980,
-      margin: '0 auto',
-      padding: '48px 20px'
+      margin: "0 auto",
+      padding: "48px 20px",
     },
     hero: {
-      background: 'white',
+      background: "white",
       borderRadius: 16,
       padding: 28,
-      boxShadow: '0 10px 30px rgba(0,0,0,0.12)'
+      boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
     },
     h1: {
       fontSize: 32,
       lineHeight: 1.1,
       margin: 0,
-      color: '#0b1220'
+      color: "#0b1220",
     },
     nav: {
-      marginBottom: 20
+      marginBottom: 20,
     },
     backLink: {
-      color: '#0ea5e9',
-      textDecoration: 'none',
-      fontSize: 14
+      color: "#0ea5e9",
+      textDecoration: "none",
+      fontSize: 14,
     },
     section: {
-      marginBottom: 32
+      marginBottom: 32,
     },
     h2: {
       fontSize: 24,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 16,
-      borderBottom: '2px solid #e2e8f0',
-      paddingBottom: 8
+      borderBottom: "2px solid #e2e8f0",
+      paddingBottom: 8,
     },
     h3: {
       fontSize: 20,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 12,
-      marginTop: 24
+      marginTop: 24,
     },
     p: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
-      marginBottom: 16
+      marginBottom: 16,
     },
     ul: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
       marginBottom: 16,
-      paddingLeft: 20
+      paddingLeft: 20,
     },
     li: {
-      marginBottom: 8
+      marginBottom: 8,
     },
     code: {
-      background: '#f1f5f9',
-      padding: '2px 6px',
+      background: "#f1f5f9",
+      padding: "2px 6px",
       borderRadius: 4,
       fontSize: 14,
-      fontFamily: 'monospace'
+      fontFamily: "monospace",
     },
     codeBlock: {
-      background: '#1e293b',
-      color: '#e2e8f0',
+      background: "#1e293b",
+      color: "#e2e8f0",
       padding: 20,
       borderRadius: 8,
       fontSize: 14,
-      fontFamily: 'monospace',
-      overflow: 'auto',
+      fontFamily: "monospace",
+      overflow: "auto",
       marginBottom: 20,
-      lineHeight: 1.5
+      lineHeight: 1.5,
     },
     info: {
-      background: '#dbeafe',
-      border: '1px solid #3b82f6',
+      background: "#dbeafe",
+      border: "1px solid #3b82f6",
       borderRadius: 8,
       padding: 16,
-      marginBottom: 20
+      marginBottom: 20,
     },
     infoTitle: {
       fontWeight: 600,
-      color: '#1e40af',
-      marginBottom: 8
+      color: "#1e40af",
+      marginBottom: 8,
     },
     success: {
-      background: '#dcfce7',
-      border: '1px solid #16a34a',
+      background: "#dcfce7",
+      border: "1px solid #16a34a",
       borderRadius: 8,
       padding: 16,
-      marginBottom: 20
+      marginBottom: 20,
     },
     successTitle: {
       fontWeight: 600,
-      color: '#15803d',
-      marginBottom: 8
-    }
+      color: "#15803d",
+      marginBottom: 8,
+    },
   };
 
   return (
@@ -115,21 +116,25 @@ export default function SsrSsg() {
       <div style={ui.wrap}>
         <section style={ui.hero}>
           <nav style={ui.nav}>
-            <a href="/docs" style={ui.backLink}>← Back to Documentation</a>
+            <a href="/docs" style={ui.backLink}>
+              ← Back to Documentation
+            </a>
           </nav>
-          
+
           <h1 style={ui.h1}>SSR & SSG</h1>
-          
+
           <div style={ui.section}>
             <h2 style={ui.h2}>Overview</h2>
             <p style={ui.p}>
-              INDJS supports both Server-Side Rendering (SSR) and Static Site Generation (SSG) out of the box. 
-              This gives you the flexibility to choose the best rendering strategy for each page in your application.
+              INDJS supports both Server-Side Rendering (SSR) and Static Site
+              Generation (SSG) out of the box. This gives you the flexibility to
+              choose the best rendering strategy for each page in your
+              application.
             </p>
-            
+
             <div style={ui.info}>
               <div style={ui.infoTitle}>💡 Key Benefits</div>
-              <ul style={{ margin: 0, fontSize: 14, color: '#1e40af' }}>
+              <ul style={{ margin: 0, fontSize: 14, color: "#1e40af" }}>
                 <li>Better SEO with pre-rendered HTML</li>
                 <li>Faster initial page loads</li>
                 <li>Improved Core Web Vitals</li>
@@ -141,9 +146,10 @@ export default function SsrSsg() {
           <div style={ui.section}>
             <h2 style={ui.h2}>Server-Side Rendering (SSR)</h2>
             <p style={ui.p}>
-              SSR generates HTML on the server for each request. This is perfect for dynamic content that changes frequently.
+              SSR generates HTML on the server for each request. This is perfect
+              for dynamic content that changes frequently.
             </p>
-            
+
             <h3 style={ui.h3}>Basic SSR with getServerSideProps</h3>
             <div style={ui.codeBlock}>
               {`// pages/blog/[slug].jsx
@@ -189,7 +195,10 @@ export async function getServerSideProps({ params, req, res }) {
             </div>
 
             <h3 style={ui.h3}>Context Object</h3>
-            <p style={ui.p}>The context object passed to <code style={ui.code}>getServerSideProps</code> contains:</p>
+            <p style={ui.p}>
+              The context object passed to{" "}
+              <code style={ui.code}>getServerSideProps</code> contains:
+            </p>
             <div style={ui.codeBlock}>
               {`export async function getServerSideProps(context) {
   const {
@@ -229,10 +238,11 @@ export async function getServerSideProps({ params, req, res }) {
           <div style={ui.section}>
             <h2 style={ui.h2}>Static Site Generation (SSG)</h2>
             <p style={ui.p}>
-              SSG pre-renders pages at build time. This is ideal for content that doesn't change often, 
-              providing the fastest possible loading times.
+              SSG pre-renders pages at build time. This is ideal for content
+              that doesn't change often, providing the fastest possible loading
+              times.
             </p>
-            
+
             <h3 style={ui.h3}>Basic SSG with getStaticProps</h3>
             <div style={ui.codeBlock}>
               {`// pages/about.jsx
@@ -330,10 +340,11 @@ export async function getStaticProps({ params }) {
           <div style={ui.section}>
             <h2 style={ui.h2}>Incremental Static Regeneration (ISR)</h2>
             <p style={ui.p}>
-              ISR allows you to update static content after you've built your site. You get the benefits of static generation 
-              with the flexibility of server-side rendering.
+              ISR allows you to update static content after you've built your
+              site. You get the benefits of static generation with the
+              flexibility of server-side rendering.
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// pages/news/[slug].jsx
 export default function NewsArticle({ article }) {
@@ -379,18 +390,28 @@ export async function getStaticPaths() {
 
             <h3 style={ui.h3}>Fallback Options</h3>
             <ul style={ui.ul}>
-              <li style={ui.li}><strong>false:</strong> Any paths not returned by getStaticPaths will result in a 404 page</li>
-              <li style={ui.li}><strong>true:</strong> Show a loading state, then render the page after getStaticProps completes</li>
-              <li style={ui.li}><strong>'blocking':</strong> Wait for getStaticProps to complete before showing the page</li>
+              <li style={ui.li}>
+                <strong>false:</strong> Any paths not returned by getStaticPaths
+                will result in a 404 page
+              </li>
+              <li style={ui.li}>
+                <strong>true:</strong> Show a loading state, then render the
+                page after getStaticProps completes
+              </li>
+              <li style={ui.li}>
+                <strong>'blocking':</strong> Wait for getStaticProps to complete
+                before showing the page
+              </li>
             </ul>
           </div>
 
           <div style={ui.section}>
             <h2 style={ui.h2}>Client-Side Rendering (CSR)</h2>
             <p style={ui.p}>
-              For highly dynamic content, you can use client-side rendering with React hooks:
+              For highly dynamic content, you can use client-side rendering with
+              React hooks:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// pages/dashboard.jsx
 import React, { useState, useEffect } from 'react';
@@ -434,7 +455,7 @@ export default function Dashboard() {
             <p style={ui.p}>
               Combine different rendering strategies in the same application:
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`// pages/hybrid-page.jsx
 import React, { useState, useEffect } from 'react';
@@ -505,7 +526,7 @@ export async function getServerSideProps() {
 
           <div style={ui.section}>
             <h2 style={ui.h2}>Performance Optimization</h2>
-            
+
             <h3 style={ui.h3}>Caching Strategies</h3>
             <div style={ui.codeBlock}>
               {`// pages/api/cached-data.js
@@ -564,7 +585,7 @@ export default function StreamingPage() {
 
           <div style={ui.success}>
             <div style={ui.successTitle}>✅ Best Practices</div>
-            <ul style={{ margin: 0, fontSize: 14, color: '#15803d' }}>
+            <ul style={{ margin: 0, fontSize: 14, color: "#15803d" }}>
               <li>Use SSG for static content (marketing pages, blogs)</li>
               <li>Use SSR for dynamic, user-specific content</li>
               <li>Use ISR for content that changes occasionally</li>

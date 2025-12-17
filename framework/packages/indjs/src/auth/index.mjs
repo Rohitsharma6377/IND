@@ -1,19 +1,19 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 // Default configuration
 const defaultConfig = {
-  secret: process.env.JWT_SECRET || 'your-secret-key',
-  expiresIn: '7d',
+  secret: process.env.JWT_SECRET || "your-secret-key",
+  expiresIn: "7d",
   saltRounds: 12,
-  cookieName: 'indjs-token',
+  cookieName: "indjs-token",
   cookieOptions: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-  }
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  },
 };
 
 let authConfig = { ...defaultConfig };
@@ -35,7 +35,7 @@ export async function verifyPassword(password, hash) {
 // Token utilities
 export function generateToken(payload) {
   return jwt.sign(payload, authConfig.secret, {
-    expiresIn: authConfig.expiresIn
+    expiresIn: authConfig.expiresIn,
   });
 }
 
@@ -43,13 +43,13 @@ export function verifyToken(token) {
   try {
     return jwt.verify(token, authConfig.secret);
   } catch (error) {
-    throw new Error('Invalid token');
+    throw new Error("Invalid token");
   }
 }
 
 // Generate secure random tokens
 export function generateSecureToken(length = 32) {
-  return crypto.randomBytes(length).toString('hex');
+  return crypto.randomBytes(length).toString("hex");
 }
 
 // Session management
@@ -64,15 +64,15 @@ export function clearAuthCookie(res) {
 export function getTokenFromRequest(req) {
   // Try to get token from cookie first
   let token = req.cookies?.[authConfig.cookieName];
-  
+
   // If not in cookie, try Authorization header
   if (!token) {
     const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
+    if (authHeader && authHeader.startsWith("Bearer ")) {
       token = authHeader.substring(7);
     }
   }
-  
+
   return token;
 }
 
@@ -81,32 +81,32 @@ export function requireAuth(options = {}) {
   return async function authMiddleware({ req, res }) {
     try {
       const token = getTokenFromRequest(req);
-      
+
       if (!token) {
         if (options.redirect) {
           res.redirect(options.redirect);
           return false;
         }
-        res.status(401).json({ error: 'Authentication required' });
+        res.status(401).json({ error: "Authentication required" });
         return false;
       }
-      
+
       const decoded = verifyToken(token);
       req.user = decoded;
-      
+
       // Check for role-based access
       if (options.roles && !options.roles.includes(decoded.role)) {
-        res.status(403).json({ error: 'Insufficient permissions' });
+        res.status(403).json({ error: "Insufficient permissions" });
         return false;
       }
-      
+
       return true;
     } catch (error) {
       if (options.redirect) {
         res.redirect(options.redirect);
         return false;
       }
-      res.status(401).json({ error: 'Invalid token' });
+      res.status(401).json({ error: "Invalid token" });
       return false;
     }
   };
@@ -136,20 +136,21 @@ export class UserSession {
     this.createdAt = new Date();
     this.lastActivity = new Date();
   }
-  
+
   updateActivity() {
     this.lastActivity = new Date();
   }
-  
-  isExpired(maxAge = 24 * 60 * 60 * 1000) { // 24 hours default
+
+  isExpired(maxAge = 24 * 60 * 60 * 1000) {
+    // 24 hours default
     return Date.now() - this.lastActivity.getTime() > maxAge;
   }
-  
+
   toJSON() {
     return {
       user: this.user,
       createdAt: this.createdAt,
-      lastActivity: this.lastActivity
+      lastActivity: this.lastActivity,
     };
   }
 }
@@ -200,86 +201,89 @@ export class OAuthProvider {
     this.tokenUrl = config.tokenUrl;
     this.userUrl = config.userUrl;
   }
-  
+
   getAuthUrl(state) {
     const params = new URLSearchParams({
       client_id: this.clientId,
       redirect_uri: this.redirectUri,
-      scope: this.scope.join(' '),
-      response_type: 'code',
-      state
+      scope: this.scope.join(" "),
+      response_type: "code",
+      state,
     });
-    
+
     return `${this.authUrl}?${params.toString()}`;
   }
-  
+
   async exchangeCodeForToken(code) {
     const response = await fetch(this.tokenUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json'
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
       },
       body: new URLSearchParams({
         client_id: this.clientId,
         client_secret: this.clientSecret,
         code,
         redirect_uri: this.redirectUri,
-        grant_type: 'authorization_code'
-      })
+        grant_type: "authorization_code",
+      }),
     });
-    
+
     if (!response.ok) {
-      throw new Error('Failed to exchange code for token');
+      throw new Error("Failed to exchange code for token");
     }
-    
+
     return response.json();
   }
-  
+
   async getUserInfo(accessToken) {
     const response = await fetch(this.userUrl, {
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Accept': 'application/json'
-      }
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
+      },
     });
-    
+
     if (!response.ok) {
-      throw new Error('Failed to fetch user info');
+      throw new Error("Failed to fetch user info");
     }
-    
+
     return response.json();
   }
 }
 
 // Predefined OAuth providers
 export const providers = {
-  google: (config) => new OAuthProvider({
-    name: 'google',
-    authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-    tokenUrl: 'https://oauth2.googleapis.com/token',
-    userUrl: 'https://www.googleapis.com/oauth2/v2/userinfo',
-    scope: ['openid', 'email', 'profile'],
-    ...config
-  }),
-  
-  github: (config) => new OAuthProvider({
-    name: 'github',
-    authUrl: 'https://github.com/login/oauth/authorize',
-    tokenUrl: 'https://github.com/login/oauth/access_token',
-    userUrl: 'https://api.github.com/user',
-    scope: ['user:email'],
-    ...config
-  }),
-  
-  discord: (config) => new OAuthProvider({
-    name: 'discord',
-    authUrl: 'https://discord.com/api/oauth2/authorize',
-    tokenUrl: 'https://discord.com/api/oauth2/token',
-    userUrl: 'https://discord.com/api/users/@me',
-    scope: ['identify', 'email'],
-    ...config
-  })
+  google: (config) =>
+    new OAuthProvider({
+      name: "google",
+      authUrl: "https://accounts.google.com/o/oauth2/v2/auth",
+      tokenUrl: "https://oauth2.googleapis.com/token",
+      userUrl: "https://www.googleapis.com/oauth2/v2/userinfo",
+      scope: ["openid", "email", "profile"],
+      ...config,
+    }),
+
+  github: (config) =>
+    new OAuthProvider({
+      name: "github",
+      authUrl: "https://github.com/login/oauth/authorize",
+      tokenUrl: "https://github.com/login/oauth/access_token",
+      userUrl: "https://api.github.com/user",
+      scope: ["user:email"],
+      ...config,
+    }),
+
+  discord: (config) =>
+    new OAuthProvider({
+      name: "discord",
+      authUrl: "https://discord.com/api/oauth2/authorize",
+      tokenUrl: "https://discord.com/api/oauth2/token",
+      userUrl: "https://discord.com/api/users/@me",
+      scope: ["identify", "email"],
+      ...config,
+    }),
 };
 
 // Rate limiting for auth endpoints
@@ -289,46 +293,59 @@ export function rateLimit(options = {}) {
   const {
     windowMs = 15 * 60 * 1000, // 15 minutes
     max = 5, // 5 attempts
-    keyGenerator = (req) => req.ip || req.connection.remoteAddress
+    keyGenerator = (req) => req.ip || req.connection.remoteAddress,
   } = options;
-  
+
   return async function rateLimitMiddleware({ req, res }) {
     const key = keyGenerator(req);
     const now = Date.now();
     const windowStart = now - windowMs;
-    
+
     // Get or create rate limit data
-    let rateLimitData = rateLimitStore.get(key) || { attempts: [], blocked: false };
-    
+    let rateLimitData = rateLimitStore.get(key) || {
+      attempts: [],
+      blocked: false,
+    };
+
     // Remove old attempts
-    rateLimitData.attempts = rateLimitData.attempts.filter(time => time > windowStart);
-    
+    rateLimitData.attempts = rateLimitData.attempts.filter(
+      (time) => time > windowStart,
+    );
+
     // Check if blocked
     if (rateLimitData.attempts.length >= max) {
       res.status(429).json({
-        error: 'Too many attempts',
-        retryAfter: Math.ceil((rateLimitData.attempts[0] + windowMs - now) / 1000)
+        error: "Too many attempts",
+        retryAfter: Math.ceil(
+          (rateLimitData.attempts[0] + windowMs - now) / 1000,
+        ),
       });
       return false;
     }
-    
+
     // Add current attempt
     rateLimitData.attempts.push(now);
     rateLimitStore.set(key, rateLimitData);
-    
+
     return true;
   };
 }
 
 // Clean up rate limit store periodically
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, data] of rateLimitStore.entries()) {
-    if (data.attempts.length === 0 || data.attempts[data.attempts.length - 1] < now - 60 * 60 * 1000) {
-      rateLimitStore.delete(key);
+setInterval(
+  () => {
+    const now = Date.now();
+    for (const [key, data] of rateLimitStore.entries()) {
+      if (
+        data.attempts.length === 0 ||
+        data.attempts[data.attempts.length - 1] < now - 60 * 60 * 1000
+      ) {
+        rateLimitStore.delete(key);
+      }
     }
-  }
-}, 5 * 60 * 1000); // Clean every 5 minutes
+  },
+  5 * 60 * 1000,
+); // Clean every 5 minutes
 
 // Export all utilities
 export default {
@@ -350,5 +367,5 @@ export default {
   cleanExpiredSessions,
   OAuthProvider,
   providers,
-  rateLimit
+  rateLimit,
 };

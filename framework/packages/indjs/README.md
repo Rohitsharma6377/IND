@@ -18,24 +18,25 @@
 
 ## 🎯 Why INDJS is Better Than Next.js
 
-| Feature | INDJS | Next.js |
-|---------|-------|---------|
-| **Zero Configuration** | ✅ Works out of the box | ⚠️ Requires setup |
-| **Built-in Authentication** | ✅ JWT, OAuth, Sessions | ❌ Requires external libs |
-| **Database Integration** | ✅ MongoDB, PostgreSQL, SQLite, Prisma | ❌ Manual setup |
-| **Testing Suite** | ✅ Vitest + Playwright included | ❌ Manual setup |
-| **Deployment Tools** | ✅ One-click to 10+ platforms | ⚠️ Limited options |
-| **CLI Code Generation** | ✅ Pages, Components, APIs, Tests | ⚠️ Basic |
-| **Real-time Support** | ✅ WebSocket built-in | ❌ Requires external libs |
-| **AI-Powered CLI** | ✅ Ollama integration | ❌ Not available |
-| **Bundle Size** | ✅ Lightweight (~2MB) | ⚠️ Heavy (~10MB+) |
-| **Learning Curve** | ✅ Easy | ⚠️ Moderate |
+| Feature                     | INDJS                                  | Next.js                   |
+| --------------------------- | -------------------------------------- | ------------------------- |
+| **Zero Configuration**      | ✅ Works out of the box                | ⚠️ Requires setup         |
+| **Built-in Authentication** | ✅ JWT, OAuth, Sessions                | ❌ Requires external libs |
+| **Database Integration**    | ✅ MongoDB, PostgreSQL, SQLite, Prisma | ❌ Manual setup           |
+| **Testing Suite**           | ✅ Vitest + Playwright included        | ❌ Manual setup           |
+| **Deployment Tools**        | ✅ One-click to 10+ platforms          | ⚠️ Limited options        |
+| **CLI Code Generation**     | ✅ Pages, Components, APIs, Tests      | ⚠️ Basic                  |
+| **Real-time Support**       | ✅ WebSocket built-in                  | ❌ Requires external libs |
+| **AI-Powered CLI**          | ✅ Ollama integration                  | ❌ Not available          |
+| **Bundle Size**             | ✅ Lightweight (~2MB)                  | ⚠️ Heavy (~10MB+)         |
+| **Learning Curve**          | ✅ Easy                                | ⚠️ Moderate               |
 
 ---
 
 ## ✨ Features That Make INDJS Exceptional
 
 ### 🚀 **Core Features**
+
 - **File-based Routing** - Automatic routing based on file structure (like Next.js, but better)
 - **Server-Side Rendering (SSR)** - Built-in SSR with React 18 and streaming support
 - **Static Site Generation (SSG)** - Pre-render pages at build time with ISR
@@ -44,12 +45,14 @@
 - **TypeScript First** - Full TypeScript support with auto-generated types
 
 ### 🎨 **Styling & UI**
+
 - **Tailwind CSS** - Pre-configured with JIT mode
 - **CSS Modules** - Scoped CSS support
 - **Sass/SCSS** - Built-in preprocessor support
 - **Image Optimization** - Automatic image resizing and optimization with Sharp
 
 ### 🔒 **Security & Auth**
+
 - **JWT Authentication** - Built-in token-based auth
 - **OAuth Providers** - Google, GitHub, Facebook, Twitter
 - **Session Management** - Secure session handling
@@ -57,6 +60,7 @@
 - **Security Headers** - Helmet integration for security best practices
 
 ### 🗄️ **Database & ORM**
+
 - **Multiple Databases** - MongoDB, PostgreSQL, MySQL, SQLite
 - **Prisma Integration** - Type-safe database client
 - **Migrations** - Built-in migration system
@@ -64,6 +68,7 @@
 - **Query Builder** - Intuitive query API
 
 ### 🧪 **Testing & Quality**
+
 - **Unit Testing** - Vitest with React Testing Library
 - **E2E Testing** - Playwright for end-to-end tests
 - **API Testing** - Built-in API testing utilities
@@ -71,6 +76,7 @@
 - **Coverage Reports** - Automatic test coverage
 
 ### 🚢 **Deployment & DevOps**
+
 - **Vercel** - One-click deployment
 - **Netlify** - Automatic deployment
 - **Docker** - Container support with auto-generated Dockerfile
@@ -81,6 +87,7 @@
 - **CI/CD** - GitHub Actions templates
 
 ### 🛠️ **Developer Experience**
+
 - **Powerful CLI** - Generate pages, components, APIs, tests
 - **AI-Powered** - Ollama integration for code generation
 - **Hot Reload** - Instant feedback during development
@@ -89,6 +96,7 @@
 - **Debugging** - VS Code debugging configuration
 
 ### ⚡ **Performance**
+
 - **Fast Builds** - esbuild for lightning-fast builds
 - **Code Splitting** - Automatic code splitting per route
 - **Lazy Loading** - Dynamic imports for components
@@ -97,6 +105,7 @@
 - **CDN Ready** - Optimized for CDN delivery
 
 ### 🌐 **Advanced Features**
+
 - **WebSocket Support** - Real-time communication built-in
 - **GraphQL** - Optional GraphQL server
 - **Middleware** - Express-style middleware
@@ -115,6 +124,7 @@
 Choose your preferred method:
 
 #### 1️⃣ NPX (Recommended - No Installation Required)
+
 ```bash
 npx indjs@latest create my-app
 cd my-app
@@ -123,6 +133,7 @@ npm run dev
 ```
 
 #### 2️⃣ Global Installation
+
 ```bash
 npm install -g indjs
 indjs create my-app
@@ -132,6 +143,7 @@ npm run dev
 ```
 
 #### 3️⃣ From Source (Development)
+
 ```bash
 git clone https://github.com/Rohitsharma6377/IND.git
 cd IND/framework
@@ -185,6 +197,7 @@ my-app/
 ## 🛠️ CLI Commands
 
 ### Project Creation
+
 ```bash
 # Create new project with template selection
 indjs create my-app
@@ -199,6 +212,7 @@ indjs create my-app
 ```
 
 ### Development
+
 ```bash
 indjs dev                    # Start dev server (default: port 3000)
 indjs dev --port 4000       # Custom port
@@ -206,6 +220,7 @@ indjs dev --host 0.0.0.0    # Expose to network
 ```
 
 ### Production
+
 ```bash
 indjs build                  # Build for production
 indjs start                  # Start production server
@@ -213,6 +228,7 @@ indjs start --port 8080     # Custom port
 ```
 
 ### Code Generation
+
 ```bash
 # Generate page
 indjs generate page about
@@ -240,6 +256,7 @@ indjs g test Button
 ```
 
 ### AI-Powered Generation (Experimental)
+
 ```bash
 # AI scaffold (requires Ollama)
 indjs ai scaffold component LoginForm
@@ -253,6 +270,7 @@ indjs ai refactor
 ```
 
 ### Testing
+
 ```bash
 indjs test                   # Run unit tests
 indjs test --watch          # Watch mode
@@ -263,6 +281,7 @@ npm run e2e                 # Run Playwright tests
 ```
 
 ### Deployment
+
 ```bash
 indjs deploy vercel          # Deploy to Vercel
 indjs deploy netlify         # Deploy to Netlify
@@ -272,6 +291,7 @@ indjs deploy static          # Export static site
 ```
 
 ### Desktop & Mobile
+
 ```bash
 indjs desktop dev            # Run as Electron app
 indjs mobile build           # Build for Capacitor
@@ -333,7 +353,7 @@ export async function post({ req, res, body }) {
 export async function put({ params, body }) {
   const user = await db.users.update({
     where: { id: params.id },
-    data: body
+    data: body,
   });
   return { user };
 }
@@ -348,9 +368,9 @@ export default function Page({ data }) {
 
 export async function getServerSideProps({ req, res, params, query }) {
   const data = await fetchData();
-  
+
   return {
-    props: { data }
+    props: { data },
   };
 }
 ```
@@ -364,19 +384,19 @@ export default function BlogPost({ post }) {
 
 export async function getStaticPaths() {
   const posts = await fetchAllPosts();
-  
+
   return {
-    paths: posts.map(post => ({ params: { slug: post.slug } })),
-    fallback: false
+    paths: posts.map((post) => ({ params: { slug: post.slug } })),
+    fallback: false,
   };
 }
 
 export async function getStaticProps({ params }) {
   const post = await fetchPost(params.slug);
-  
+
   return {
     props: { post },
-    revalidate: 60 // ISR: Regenerate every 60 seconds
+    revalidate: 60, // ISR: Regenerate every 60 seconds
   };
 }
 ```
@@ -384,18 +404,18 @@ export async function getStaticProps({ params }) {
 ### Authentication
 
 ```javascript
-import { Auth } from 'indjs';
+import { Auth } from "indjs";
 
 // Hash password
-const hashedPassword = await Auth.hashPassword('password123');
+const hashedPassword = await Auth.hashPassword("password123");
 
 // Verify password
-const isValid = await Auth.verifyPassword('password123', hashedPassword);
+const isValid = await Auth.verifyPassword("password123", hashedPassword);
 
 // Generate JWT token
-const token = Auth.generateToken({ 
-  userId: 1, 
-  email: 'user@example.com' 
+const token = Auth.generateToken({
+  userId: 1,
+  email: "user@example.com",
 });
 
 // Verify token
@@ -403,38 +423,40 @@ const decoded = Auth.verifyToken(token);
 
 // Protect routes with middleware
 export const middleware = Auth.requireAuth({
-  roles: ['admin'],
-  redirect: '/login'
+  roles: ["admin"],
+  redirect: "/login",
 });
 ```
 
 ### Database Integration
 
 ```javascript
-import { Database } from 'indjs';
+import { Database } from "indjs";
 
 // Configure database
 Database.configure({
-  type: 'postgresql',
-  url: process.env.DATABASE_URL
+  type: "postgresql",
+  url: process.env.DATABASE_URL,
 });
 
 // Connect
 await Database.connect();
 
 // Query
-const users = await Database.query('SELECT * FROM users WHERE active = ?', [true]);
+const users = await Database.query("SELECT * FROM users WHERE active = ?", [
+  true,
+]);
 
 // Using models
 class User extends Database.Model {
   constructor() {
-    super('users');
+    super("users");
   }
 }
 
-const user = await User.create({ 
-  name: 'John Doe', 
-  email: 'john@example.com' 
+const user = await User.create({
+  name: "John Doe",
+  email: "john@example.com",
 });
 
 const allUsers = await User.findAll();
@@ -481,14 +503,14 @@ export default function Button() {
 ### Unit Tests (Vitest)
 
 ```javascript
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
-import Button from './Button';
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
+import Button from "./Button";
 
-describe('Button', () => {
-  it('renders correctly', () => {
+describe("Button", () => {
+  it("renders correctly", () => {
     render(<Button>Click me</Button>);
-    expect(screen.getByText('Click me')).toBeInTheDocument();
+    expect(screen.getByText("Click me")).toBeInTheDocument();
   });
 });
 ```
@@ -496,11 +518,11 @@ describe('Button', () => {
 ### E2E Tests (Playwright)
 
 ```javascript
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test('homepage loads correctly', async ({ page }) => {
-  await page.goto('http://localhost:3000');
-  await expect(page.locator('h1')).toContainText('Welcome to INDJS');
+test("homepage loads correctly", async ({ page }) => {
+  await page.goto("http://localhost:3000");
+  await expect(page.locator("h1")).toContainText("Welcome to INDJS");
 });
 ```
 
@@ -514,58 +536,58 @@ test('homepage loads correctly', async ({ page }) => {
 export default {
   // Experimental features
   experimental: {
-    devBundler: 'vite',      // Use Vite for dev (faster HMR)
-    streaming: true,          // Enable streaming SSR
+    devBundler: "vite", // Use Vite for dev (faster HMR)
+    streaming: true, // Enable streaming SSR
   },
-  
+
   // Authentication
   auth: {
     secret: process.env.JWT_SECRET,
-    providers: ['google', 'github'],
+    providers: ["google", "github"],
     session: {
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-    }
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    },
   },
-  
+
   // Database
   database: {
-    type: 'postgresql',
+    type: "postgresql",
     url: process.env.DATABASE_URL,
-    migrations: './migrations',
-    seeds: './seeds'
+    migrations: "./migrations",
+    seeds: "./seeds",
   },
-  
+
   // Caching
   caching: {
-    type: 'redis',           // 'lru' or 'redis'
+    type: "redis", // 'lru' or 'redis'
     url: process.env.REDIS_URL,
     ttl: 3600,
-    secret: process.env.REVALIDATE_SECRET
+    secret: process.env.REVALIDATE_SECRET,
   },
-  
+
   // Deployment
   deployment: {
-    platform: 'vercel',
+    platform: "vercel",
     env: {
-      NODE_ENV: 'production'
-    }
+      NODE_ENV: "production",
+    },
   },
-  
+
   // Plugins
   plugins: [
     async (hook) => ({
       onRequest: async ({ req }) => {
-        console.log('Request:', req.url);
-      }
-    })
+        console.log("Request:", req.url);
+      },
+    }),
   ],
-  
+
   // Observability
   observability: {
     enabled: true,
     metrics: true,
-    tracing: false
-  }
+    tracing: false,
+  },
 };
 ```
 

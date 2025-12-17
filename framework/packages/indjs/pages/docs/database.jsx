@@ -1,101 +1,102 @@
-import React from 'react';
+import React from "react";
 
 export default function Database() {
   const ui = {
     page: {
-      fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-      minHeight: '100vh',
+      fontFamily:
+        "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
+      minHeight: "100vh",
       margin: 0,
-      background: 'linear-gradient(180deg, #0ea5e9 0%, #111827 60%)',
-      color: '#0f172a'
+      background: "linear-gradient(180deg, #0ea5e9 0%, #111827 60%)",
+      color: "#0f172a",
     },
     wrap: {
       maxWidth: 980,
-      margin: '0 auto',
-      padding: '48px 20px'
+      margin: "0 auto",
+      padding: "48px 20px",
     },
     hero: {
-      background: 'white',
+      background: "white",
       borderRadius: 16,
       padding: 28,
-      boxShadow: '0 10px 30px rgba(0,0,0,0.12)'
+      boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
     },
     h1: {
       fontSize: 32,
       lineHeight: 1.1,
       margin: 0,
-      color: '#0b1220'
+      color: "#0b1220",
     },
     nav: {
-      marginBottom: 20
+      marginBottom: 20,
     },
     backLink: {
-      color: '#0ea5e9',
-      textDecoration: 'none',
-      fontSize: 14
+      color: "#0ea5e9",
+      textDecoration: "none",
+      fontSize: 14,
     },
     section: {
-      marginBottom: 32
+      marginBottom: 32,
     },
     h2: {
       fontSize: 24,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 16,
-      borderBottom: '2px solid #e2e8f0',
-      paddingBottom: 8
+      borderBottom: "2px solid #e2e8f0",
+      paddingBottom: 8,
     },
     h3: {
       fontSize: 20,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 12,
-      marginTop: 24
+      marginTop: 24,
     },
     p: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
-      marginBottom: 16
+      marginBottom: 16,
     },
     ul: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
       marginBottom: 16,
-      paddingLeft: 20
+      paddingLeft: 20,
     },
     li: {
-      marginBottom: 8
+      marginBottom: 8,
     },
     code: {
-      background: '#f1f5f9',
-      padding: '2px 6px',
+      background: "#f1f5f9",
+      padding: "2px 6px",
       borderRadius: 4,
       fontSize: 14,
-      fontFamily: 'monospace'
+      fontFamily: "monospace",
     },
     codeBlock: {
-      background: '#1e293b',
-      color: '#e2e8f0',
+      background: "#1e293b",
+      color: "#e2e8f0",
       padding: 20,
       borderRadius: 8,
       fontSize: 14,
-      fontFamily: 'monospace',
-      overflow: 'auto',
+      fontFamily: "monospace",
+      overflow: "auto",
       marginBottom: 20,
-      lineHeight: 1.5
+      lineHeight: 1.5,
     },
     info: {
-      background: '#dbeafe',
-      border: '1px solid #3b82f6',
+      background: "#dbeafe",
+      border: "1px solid #3b82f6",
       borderRadius: 8,
       padding: 16,
-      marginBottom: 20
+      marginBottom: 20,
     },
     infoTitle: {
       fontWeight: 600,
-      color: '#1e40af',
-      marginBottom: 8
-    }
+      color: "#1e40af",
+      marginBottom: 8,
+    },
   };
 
   return (
@@ -103,25 +104,29 @@ export default function Database() {
       <div style={ui.wrap}>
         <section style={ui.hero}>
           <nav style={ui.nav}>
-            <a href="/docs" style={ui.backLink}>← Back to Documentation</a>
+            <a href="/docs" style={ui.backLink}>
+              ← Back to Documentation
+            </a>
           </nav>
-          
+
           <h1 style={ui.h1}>Database Integration</h1>
-          
+
           <div style={ui.section}>
             <h2 style={ui.h2}>Overview</h2>
             <p style={ui.p}>
-              INDJS supports multiple database solutions including MongoDB, PostgreSQL, SQLite, and Prisma ORM. 
-              Choose the database that best fits your application's needs.
+              INDJS supports multiple database solutions including MongoDB,
+              PostgreSQL, SQLite, and Prisma ORM. Choose the database that best
+              fits your application's needs.
             </p>
           </div>
 
           <div style={ui.section}>
             <h2 style={ui.h2}>MongoDB Integration</h2>
             <p style={ui.p}>
-              MongoDB is a popular NoSQL database that works great with JavaScript applications.
+              MongoDB is a popular NoSQL database that works great with
+              JavaScript applications.
             </p>
-            
+
             <h3 style={ui.h3}>Setup MongoDB</h3>
             <div style={ui.codeBlock}>
               {`# Install MongoDB driver
@@ -261,9 +266,10 @@ export default async function handler({ req, res }) {
           <div style={ui.section}>
             <h2 style={ui.h2}>PostgreSQL Integration</h2>
             <p style={ui.p}>
-              PostgreSQL is a powerful relational database with excellent performance and features.
+              PostgreSQL is a powerful relational database with excellent
+              performance and features.
             </p>
-            
+
             <h3 style={ui.h3}>Setup PostgreSQL</h3>
             <div style={ui.codeBlock}>
               {`# Install PostgreSQL driver
@@ -426,9 +432,10 @@ export class User {
           <div style={ui.section}>
             <h2 style={ui.h2}>Prisma ORM</h2>
             <p style={ui.p}>
-              Prisma is a modern ORM that provides type-safe database access and excellent developer experience.
+              Prisma is a modern ORM that provides type-safe database access and
+              excellent developer experience.
             </p>
-            
+
             <h3 style={ui.h3}>Setup Prisma</h3>
             <div style={ui.codeBlock}>
               {`# Install Prisma
@@ -611,9 +618,10 @@ export default async function handler({ req, res, params }) {
           <div style={ui.section}>
             <h2 style={ui.h2}>SQLite (Development)</h2>
             <p style={ui.p}>
-              SQLite is perfect for development and small applications that don't require a separate database server.
+              SQLite is perfect for development and small applications that
+              don't require a separate database server.
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`# Install SQLite driver
 npm install sqlite3
@@ -688,7 +696,7 @@ db.init().catch(console.error);`}
 
           <div style={ui.section}>
             <h2 style={ui.h2}>Database Best Practices</h2>
-            
+
             <h3 style={ui.h3}>Connection Pooling</h3>
             <div style={ui.codeBlock}>
               {`// Always use connection pooling in production
@@ -793,12 +801,14 @@ main()
 
           <div style={ui.info}>
             <div style={ui.infoTitle}>💡 Database Tips</div>
-            <ul style={{ margin: 0, fontSize: 14, color: '#1e40af' }}>
+            <ul style={{ margin: 0, fontSize: 14, color: "#1e40af" }}>
               <li>Use environment variables for database credentials</li>
               <li>Implement proper error handling and validation</li>
               <li>Use connection pooling for better performance</li>
               <li>Always sanitize user inputs to prevent SQL injection</li>
-              <li>Use transactions for operations that modify multiple records</li>
+              <li>
+                Use transactions for operations that modify multiple records
+              </li>
               <li>Index frequently queried columns</li>
               <li>Use database migrations for schema changes</li>
               <li>Implement proper backup and recovery strategies</li>

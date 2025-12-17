@@ -1,113 +1,114 @@
-import React from 'react';
+import React from "react";
 
 export default function Deployment() {
   const ui = {
     page: {
-      fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-      minHeight: '100vh',
+      fontFamily:
+        "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
+      minHeight: "100vh",
       margin: 0,
-      background: 'linear-gradient(180deg, #0ea5e9 0%, #111827 60%)',
-      color: '#0f172a'
+      background: "linear-gradient(180deg, #0ea5e9 0%, #111827 60%)",
+      color: "#0f172a",
     },
     wrap: {
       maxWidth: 980,
-      margin: '0 auto',
-      padding: '48px 20px'
+      margin: "0 auto",
+      padding: "48px 20px",
     },
     hero: {
-      background: 'white',
+      background: "white",
       borderRadius: 16,
       padding: 28,
-      boxShadow: '0 10px 30px rgba(0,0,0,0.12)'
+      boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
     },
     h1: {
       fontSize: 32,
       lineHeight: 1.1,
       margin: 0,
-      color: '#0b1220'
+      color: "#0b1220",
     },
     nav: {
-      marginBottom: 20
+      marginBottom: 20,
     },
     backLink: {
-      color: '#0ea5e9',
-      textDecoration: 'none',
-      fontSize: 14
+      color: "#0ea5e9",
+      textDecoration: "none",
+      fontSize: 14,
     },
     section: {
-      marginBottom: 32
+      marginBottom: 32,
     },
     h2: {
       fontSize: 24,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 16,
-      borderBottom: '2px solid #e2e8f0',
-      paddingBottom: 8
+      borderBottom: "2px solid #e2e8f0",
+      paddingBottom: 8,
     },
     h3: {
       fontSize: 20,
-      color: '#0b1220',
+      color: "#0b1220",
       marginBottom: 12,
-      marginTop: 24
+      marginTop: 24,
     },
     p: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
-      marginBottom: 16
+      marginBottom: 16,
     },
     ul: {
       fontSize: 16,
-      color: '#334155',
+      color: "#334155",
       lineHeight: 1.6,
       marginBottom: 16,
-      paddingLeft: 20
+      paddingLeft: 20,
     },
     li: {
-      marginBottom: 8
+      marginBottom: 8,
     },
     code: {
-      background: '#f1f5f9',
-      padding: '2px 6px',
+      background: "#f1f5f9",
+      padding: "2px 6px",
       borderRadius: 4,
       fontSize: 14,
-      fontFamily: 'monospace'
+      fontFamily: "monospace",
     },
     codeBlock: {
-      background: '#1e293b',
-      color: '#e2e8f0',
+      background: "#1e293b",
+      color: "#e2e8f0",
       padding: 20,
       borderRadius: 8,
       fontSize: 14,
-      fontFamily: 'monospace',
-      overflow: 'auto',
+      fontFamily: "monospace",
+      overflow: "auto",
       marginBottom: 20,
-      lineHeight: 1.5
+      lineHeight: 1.5,
     },
     success: {
-      background: '#dcfce7',
-      border: '1px solid #16a34a',
+      background: "#dcfce7",
+      border: "1px solid #16a34a",
       borderRadius: 8,
       padding: 16,
-      marginBottom: 20
+      marginBottom: 20,
     },
     successTitle: {
       fontWeight: 600,
-      color: '#15803d',
-      marginBottom: 8
+      color: "#15803d",
+      marginBottom: 8,
     },
     info: {
-      background: '#dbeafe',
-      border: '1px solid #3b82f6',
+      background: "#dbeafe",
+      border: "1px solid #3b82f6",
       borderRadius: 8,
       padding: 16,
-      marginBottom: 20
+      marginBottom: 20,
     },
     infoTitle: {
       fontWeight: 600,
-      color: '#1e40af',
-      marginBottom: 8
-    }
+      color: "#1e40af",
+      marginBottom: 8,
+    },
   };
 
   return (
@@ -115,25 +116,30 @@ export default function Deployment() {
       <div style={ui.wrap}>
         <section style={ui.hero}>
           <nav style={ui.nav}>
-            <a href="/docs" style={ui.backLink}>← Back to Documentation</a>
+            <a href="/docs" style={ui.backLink}>
+              ← Back to Documentation
+            </a>
           </nav>
-          
+
           <h1 style={ui.h1}>Deployment</h1>
-          
+
           <div style={ui.section}>
             <h2 style={ui.h2}>Overview</h2>
             <p style={ui.p}>
-              INDJS applications can be deployed to various platforms including Vercel, Netlify, AWS, Google Cloud, 
-              and traditional servers. The framework includes built-in deployment helpers to make the process seamless.
+              INDJS applications can be deployed to various platforms including
+              Vercel, Netlify, AWS, Google Cloud, and traditional servers. The
+              framework includes built-in deployment helpers to make the process
+              seamless.
             </p>
           </div>
 
           <div style={ui.section}>
             <h2 style={ui.h2}>Vercel Deployment</h2>
             <p style={ui.p}>
-              Vercel provides the easiest deployment experience for INDJS applications with zero configuration.
+              Vercel provides the easiest deployment experience for INDJS
+              applications with zero configuration.
             </p>
-            
+
             <h3 style={ui.h3}>Quick Deploy</h3>
             <div style={ui.codeBlock}>
               {`# Install Vercel CLI
@@ -199,7 +205,7 @@ GOOGLE_CLIENT_ID=your-client-id`}
             <p style={ui.p}>
               Deploy to Netlify with built-in CI/CD and edge functions support.
             </p>
-            
+
             <h3 style={ui.h3}>Netlify Configuration</h3>
             <div style={ui.codeBlock}>
               {`# netlify.toml
@@ -242,9 +248,10 @@ indjs deploy netlify`}
           <div style={ui.section}>
             <h2 style={ui.h2}>AWS Deployment</h2>
             <p style={ui.p}>
-              Deploy to AWS using Lambda functions, S3, and CloudFront for a scalable solution.
+              Deploy to AWS using Lambda functions, S3, and CloudFront for a
+              scalable solution.
             </p>
-            
+
             <h3 style={ui.h3}>AWS Lambda + API Gateway</h3>
             <div style={ui.codeBlock}>
               {`# Install AWS CLI and configure
@@ -309,9 +316,10 @@ frontend:
           <div style={ui.section}>
             <h2 style={ui.h2}>Google Cloud Platform</h2>
             <p style={ui.p}>
-              Deploy to Google Cloud using Cloud Run, App Engine, or Cloud Functions.
+              Deploy to Google Cloud using Cloud Run, App Engine, or Cloud
+              Functions.
             </p>
-            
+
             <h3 style={ui.h3}>Cloud Run Deployment</h3>
             <div style={ui.codeBlock}>
               {`# Dockerfile
@@ -357,7 +365,7 @@ gcloud app deploy`}
             <p style={ui.p}>
               Containerize your INDJS application for deployment anywhere.
             </p>
-            
+
             <h3 style={ui.h3}>Production Dockerfile</h3>
             <div style={ui.codeBlock}>
               {`# Multi-stage build for smaller image
@@ -442,9 +450,10 @@ volumes:
           <div style={ui.section}>
             <h2 style={ui.h2}>Traditional Server Deployment</h2>
             <p style={ui.p}>
-              Deploy to traditional servers using PM2 or systemd for process management.
+              Deploy to traditional servers using PM2 or systemd for process
+              management.
             </p>
-            
+
             <h3 style={ui.h3}>PM2 Deployment</h3>
             <div style={ui.codeBlock}>
               {`# Install PM2
@@ -546,9 +555,10 @@ server {
           <div style={ui.section}>
             <h2 style={ui.h2}>Environment Configuration</h2>
             <p style={ui.p}>
-              Manage environment variables and configuration across different deployment environments.
+              Manage environment variables and configuration across different
+              deployment environments.
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`# .env.local (development)
 NODE_ENV=development
@@ -592,7 +602,7 @@ export const config = {
             <p style={ui.p}>
               Set up continuous integration and deployment with GitHub Actions.
             </p>
-            
+
             <div style={ui.codeBlock}>
               {`# .github/workflows/deploy.yml
 name: Deploy to Production
@@ -660,7 +670,7 @@ jobs:
 
           <div style={ui.success}>
             <div style={ui.successTitle}>✅ Deployment Checklist</div>
-            <ul style={{ margin: 0, fontSize: 14, color: '#15803d' }}>
+            <ul style={{ margin: 0, fontSize: 14, color: "#15803d" }}>
               <li>Build and test your application locally</li>
               <li>Set up environment variables for production</li>
               <li>Configure database connections and migrations</li>
@@ -674,9 +684,14 @@ jobs:
 
           <div style={ui.info}>
             <div style={ui.infoTitle}>💡 Pro Tips</div>
-            <ul style={{ margin: 0, fontSize: 14, color: '#1e40af' }}>
-              <li>Use the INDJS CLI for quick deployments: <code style={ui.code}>indjs deploy</code></li>
-              <li>Always test your deployment in a staging environment first</li>
+            <ul style={{ margin: 0, fontSize: 14, color: "#1e40af" }}>
+              <li>
+                Use the INDJS CLI for quick deployments:{" "}
+                <code style={ui.code}>indjs deploy</code>
+              </li>
+              <li>
+                Always test your deployment in a staging environment first
+              </li>
               <li>Use environment variables for sensitive configuration</li>
               <li>Set up health checks and monitoring</li>
               <li>Keep your dependencies up to date</li>

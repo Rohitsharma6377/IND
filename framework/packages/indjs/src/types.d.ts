@@ -1,13 +1,13 @@
-import { Request, Response } from 'express';
-import { ReactNode, ComponentType } from 'react';
-import * as React from 'react';
+import { Request, Response } from "express";
+import { ReactNode, ComponentType } from "react";
+import * as React from "react";
 
 // Core INDJS Types
 export interface INDJSConfig {
   root?: string;
   port?: number;
   baseUrl?: string;
-  env?: 'development' | 'production';
+  env?: "development" | "production";
   database?: DatabaseConfig;
   auth?: AuthConfig;
   middleware?: MiddlewareConfig[];
@@ -33,7 +33,7 @@ export interface PageProps {
 }
 
 // Server-side Props
-export interface GetServerSidePropsContext extends INDJSContext { }
+export interface GetServerSidePropsContext extends INDJSContext {}
 
 export interface GetServerSidePropsResult<P = any> {
   props: P;
@@ -45,7 +45,7 @@ export interface GetServerSidePropsResult<P = any> {
 }
 
 export type GetServerSideProps<P = any> = (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => Promise<GetServerSidePropsResult<P>>;
 
 // Static Generation
@@ -64,14 +64,14 @@ export interface GetStaticPropsResult<P = any> {
 }
 
 export type GetStaticProps<P = any> = (
-  context: GetStaticPropsContext
+  context: GetStaticPropsContext,
 ) => Promise<GetStaticPropsResult<P>>;
 
 export interface GetStaticPathsResult {
   paths: Array<{
     params: Record<string, string>;
   }>;
-  fallback: boolean | 'blocking';
+  fallback: boolean | "blocking";
 }
 
 export type GetStaticPaths = () => Promise<GetStaticPathsResult>;
@@ -132,7 +132,7 @@ export interface MiddlewareConfig {
 
 // Database Configuration
 export interface DatabaseConfig {
-  type: 'mongodb' | 'postgresql' | 'sqlite' | 'prisma';
+  type: "mongodb" | "postgresql" | "sqlite" | "prisma";
   url: string;
   options?: Record<string, any>;
 }
@@ -150,13 +150,13 @@ export interface AuthConfig {
 
 export interface AuthProvider {
   name: string;
-  type: 'oauth' | 'credentials';
+  type: "oauth" | "credentials";
   config: Record<string, any>;
 }
 
 // Route Information
 export interface RouteInfo {
-  type: 'page' | 'api';
+  type: "page" | "api";
   route: string;
   file: string;
   pattern: RegExp;
@@ -193,7 +193,7 @@ export interface Template {
 export interface TemplateFile {
   path: string;
   content: string;
-  type: 'file' | 'directory';
+  type: "file" | "directory";
 }
 
 // Plugin System
@@ -223,7 +223,7 @@ export declare function discoverRoutes(root: string): Promise<{
 
 export declare function matchDynamic(
   pathname: string,
-  routes: RouteInfo[]
+  routes: RouteInfo[],
 ): { route: RouteInfo; params: Record<string, string> } | null;
 
 // Database utilities
@@ -236,7 +236,10 @@ export declare namespace Database {
 // Auth utilities
 export declare namespace Auth {
   export function hashPassword(password: string): Promise<string>;
-  export function verifyPassword(password: string, hash: string): Promise<boolean>;
+  export function verifyPassword(
+    password: string,
+    hash: string,
+  ): Promise<boolean>;
   export function generateToken(payload: any): string;
   export function verifyToken(token: string): any;
   export function requireAuth(context: INDJSContext): Promise<boolean>;
@@ -244,7 +247,9 @@ export declare namespace Auth {
 
 // Testing utilities
 export declare namespace Testing {
-  export function createMockContext(overrides?: Partial<INDJSContext>): INDJSContext;
+  export function createMockContext(
+    overrides?: Partial<INDJSContext>,
+  ): INDJSContext;
   export function mockRequest(options?: any): Request;
   export function mockResponse(options?: any): Response;
 }
@@ -268,17 +273,25 @@ export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 export declare const Image: React.ComponentType<ImageProps>;
 
 // Link component
-export interface LinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'onClick' | 'href'> {
+export interface LinkProps extends Omit<
+  React.AnchorHTMLAttributes<HTMLAnchorElement>,
+  "onClick" | "href"
+> {
   href: string;
   prefetch?: boolean;
   replace?: boolean;
   scroll?: boolean;
   onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
-export declare const Link: React.ComponentType<React.PropsWithChildren<LinkProps>>;
+export declare const Link: React.ComponentType<
+  React.PropsWithChildren<LinkProps>
+>;
 
 // Script component
-export type ScriptStrategy = 'beforeInteractive' | 'afterInteractive' | 'lazyOnload';
+export type ScriptStrategy =
+  | "beforeInteractive"
+  | "afterInteractive"
+  | "lazyOnload";
 export interface ScriptProps extends React.ScriptHTMLAttributes<HTMLScriptElement> {
   strategy?: ScriptStrategy;
   children?: string;
@@ -298,7 +311,12 @@ export interface DynamicOptions {
   loading?: React.ComponentType<any>;
   ssr?: boolean;
 }
-export default function dynamic<T = any>(loader: () => Promise<{ default: React.ComponentType<T> } | React.ComponentType<T>>, options?: DynamicOptions): React.ComponentType<T>;
+export default function dynamic<T = any>(
+  loader: () => Promise<
+    { default: React.ComponentType<T> } | React.ComponentType<T>
+  >,
+  options?: DynamicOptions,
+): React.ComponentType<T>;
 
 // Router utilities
 export interface RouterLike {
@@ -337,7 +355,10 @@ export interface ScrollViewProps extends ViewProps {
 export declare const ScrollView: React.ComponentType<ScrollViewProps>;
 
 // TextInput Component
-export interface TextInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+export interface TextInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange"
+> {
   value?: string | number;
   defaultValue?: string | number;
   onChangeText?: (text: string) => void;
@@ -360,7 +381,7 @@ export declare const Button: React.ComponentType<ButtonProps>;
 
 // ActivityIndicator
 export interface ActivityIndicatorProps extends ViewProps {
-  size?: 'small' | 'large';
+  size?: "small" | "large";
   color?: string;
 }
 export declare const ActivityIndicator: React.ComponentType<ActivityIndicatorProps>;
@@ -385,7 +406,9 @@ export interface FlatListProps<T> extends ScrollViewProps {
   ListEmptyComponent?: React.ComponentType<any> | React.ReactElement;
   numColumns?: number;
 }
-export declare function FlatList<T>(props: FlatListProps<T>): React.ReactElement;
+export declare function FlatList<T>(
+  props: FlatListProps<T>,
+): React.ReactElement;
 
 // TouchableOpacity
 export interface TouchableOpacityProps extends ViewProps {
@@ -399,13 +422,17 @@ export declare const TouchableOpacity: React.ComponentType<TouchableOpacityProps
 export interface PressableStateCallbackType {
   pressed: boolean;
 }
-export interface PressableProps extends Omit<ViewProps, 'style' | 'children'> {
+export interface PressableProps extends Omit<ViewProps, "style" | "children"> {
   onPress?: (e: any) => void;
   onPressIn?: (e: any) => void;
   onPressOut?: (e: any) => void;
   disabled?: boolean;
-  style?: React.CSSProperties | ((state: PressableStateCallbackType) => React.CSSProperties);
-  children?: React.ReactNode | ((state: PressableStateCallbackType) => React.ReactNode);
+  style?:
+    | React.CSSProperties
+    | ((state: PressableStateCallbackType) => React.CSSProperties);
+  children?:
+    | React.ReactNode
+    | ((state: PressableStateCallbackType) => React.ReactNode);
 }
 export declare const Pressable: React.ComponentType<PressableProps>;
 
@@ -420,18 +447,18 @@ export declare const ImageBackground: React.ComponentType<ImageBackgroundProps>;
 export interface ModalProps extends ViewProps {
   visible?: boolean;
   transparent?: boolean;
-  animationType?: 'none' | 'slide' | 'fade';
+  animationType?: "none" | "slide" | "fade";
   onRequestClose?: () => void;
 }
 export declare const Modal: React.ComponentType<ModalProps>;
 
 // SafeAreaView
-export interface SafeAreaViewProps extends ViewProps { }
+export interface SafeAreaViewProps extends ViewProps {}
 export declare const SafeAreaView: React.ComponentType<SafeAreaViewProps>;
 
 // StatusBar
 export interface StatusBarProps {
-  barStyle?: 'default' | 'light-content' | 'dark-content';
+  barStyle?: "default" | "light-content" | "dark-content";
   backgroundColor?: string;
   hidden?: boolean;
 }
@@ -439,17 +466,23 @@ export declare const StatusBar: React.ComponentType<StatusBarProps>;
 
 // SectionList
 export interface SectionListProps<T> extends ScrollViewProps {
-  sections: Array<{ data: T[]; key?: string;[key: string]: any }>;
-  renderItem: (info: { item: T; index: number; section: any }) => React.ReactNode;
+  sections: Array<{ data: T[]; key?: string; [key: string]: any }>;
+  renderItem: (info: {
+    item: T;
+    index: number;
+    section: any;
+  }) => React.ReactNode;
   renderSectionHeader?: (info: { section: any }) => React.ReactNode;
   keyExtractor?: (item: T, index: number) => string;
   stickySectionHeadersEnabled?: boolean;
 }
-export declare function SectionList<T>(props: SectionListProps<T>): React.ReactElement;
+export declare function SectionList<T>(
+  props: SectionListProps<T>,
+): React.ReactElement;
 
 // KeyboardAvoidingView
 export interface KeyboardAvoidingViewProps extends ViewProps {
-  behavior?: 'height' | 'position' | 'padding';
+  behavior?: "height" | "position" | "padding";
   contentContainerStyle?: React.CSSProperties;
   enabled?: boolean;
   keyboardVerticalOffset?: number;
@@ -497,14 +530,41 @@ export declare const StyleSheet: {
 };
 
 export declare const Alert: {
-  alert: (title: string, message?: string, buttons?: { text?: string; onPress?: () => void; style?: 'default' | 'cancel' | 'destructive' }[], options?: { cancelable?: boolean; onDismiss?: () => void }) => void;
-  prompt: (title: string, message?: string, callbackOrButtons?: ((text: string) => void) | Object[], type?: string, defaultValue?: string, keyboardType?: string) => void;
+  alert: (
+    title: string,
+    message?: string,
+    buttons?: {
+      text?: string;
+      onPress?: () => void;
+      style?: "default" | "cancel" | "destructive";
+    }[],
+    options?: { cancelable?: boolean; onDismiss?: () => void },
+  ) => void;
+  prompt: (
+    title: string,
+    message?: string,
+    callbackOrButtons?: ((text: string) => void) | Object[],
+    type?: string,
+    defaultValue?: string,
+    keyboardType?: string,
+  ) => void;
 };
 
 export declare const Dimensions: {
-  get: (dim: 'window' | 'screen') => { width: number; height: number; scale: number; fontScale: number };
-  addEventListener: (type: 'change', handler: (dims: { window: any; screen: any }) => void) => { remove: () => void };
-  removeEventListener: (type: 'change', handler: (dims: { window: any; screen: any }) => void) => void;
+  get: (dim: "window" | "screen") => {
+    width: number;
+    height: number;
+    scale: number;
+    fontScale: number;
+  };
+  addEventListener: (
+    type: "change",
+    handler: (dims: { window: any; screen: any }) => void,
+  ) => { remove: () => void };
+  removeEventListener: (
+    type: "change",
+    handler: (dims: { window: any; screen: any }) => void,
+  ) => void;
 };
 
 export declare const PixelRatio: {
