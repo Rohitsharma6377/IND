@@ -1,4 +1,10 @@
 import React from 'react';
+import { View } from 'indjs';
+
 export default function Layout({ children }) {
-  return <div className="min-h-screen bg-white">{children}</div>;
+  return (
+    <View className="min-h-screen bg-white">
+      {children}
+    </View>
+  );
 }

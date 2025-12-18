@@ -70,6 +70,16 @@ export { default as KeyboardAvoidingView } from "./components/keyboard-avoiding-
 export { default as RefreshControl } from "./components/refresh-control.jsx";
 export { default as TouchableHighlight } from "./components/touchable-highlight.jsx";
 export { default as TouchableWithoutFeedback } from "./components/touchable-without-feedback.jsx";
+
+// UI Components
+export { default as Screen } from "./components/screen.jsx";
+export { default as Container } from "./components/container.jsx";
+export { default as Card } from "./components/card.jsx";
+export { default as Grid } from "./components/grid.jsx";
+export { default as Stack } from "./components/stack.jsx";
+export { default as Icon } from "./components/icon.jsx";
+
+// APIs
 export { default as StyleSheet } from "./apis/style-sheet.mjs";
 export { default as Alert } from "./apis/alert.mjs";
 export { default as Dimensions } from "./apis/dimensions.mjs";

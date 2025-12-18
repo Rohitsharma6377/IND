@@ -334,21 +334,32 @@ export default function Layout({ children }) {
 
   // Home Page
   const homeContent = `import React from 'react';
-import { View, Text, Button } from 'indjs';
+import { View, Text, Button, Stack, Container } from 'indjs';
+import PlatformInfo from '../components/PlatformInfo';
 
 export default function Home() {
   return (
-    <View className="space-y-4 p-4">
-      <View className="bg-indigo-600 rounded-xl p-6 shadow-lg">
-        <Text className="text-2xl font-bold text-white">Welcome</Text>
-        <Text className="text-white opacity-90 mt-2">This is your new Universal App.</Text>
-      </View>
-      <View className="bg-white p-6 rounded-xl border border-gray-200">
-         <Text className="text-gray-800 text-lg font-semibold">Get Started</Text>
-         <Text className="text-gray-600 mt-2">Edit pages/index.js to change this screen.</Text>
-         <Button className="mt-4" onClick={() => alert('Hello!')}>Click Me</Button>
-      </View>
-    </View>
+    <Container maxWidth="md">
+      <Stack spacing={6} className="py-10">
+        <View className="bg-indigo-600 rounded-2xl p-8 shadow-xl">
+          <Text className="text-3xl font-bold text-white mb-2">Welcome to INDJS</Text>
+          <Text className="text-indigo-100 text-lg">Universal App Framework</Text>
+        </View>
+
+        <PlatformInfo />
+
+        <View className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <View className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+             <Text className="text-lg font-semibold text-gray-900">Get Started</Text>
+             <Text className="text-gray-600 mt-2">Edit pages/index.js to change this screen.</Text>
+          </View>
+          <View className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+             <Text className="text-lg font-semibold text-gray-900">Documentation</Text>
+             <Text className="text-gray-600 mt-2">Check out the docs to learn more.</Text>
+          </View>
+        </View>
+      </Stack>
+    </Container>
   );
 }`;
 
@@ -361,66 +372,117 @@ export default function Home() {
 
 async function createComponents(appPath, config) {
   const ext = config.language === "ts" ? "tsx" : "jsx";
+
+  // Button Component
   const btn = `import React from 'react';
-export default function Button({ children, ...props }) {
-  return <button className="px-4 py-2 bg-indigo-600 text-white rounded" {...props}>{children}</button>;
+import { Button } from 'indjs';
+
+export default function CustomButton({ children, ...props }) {
+  return <Button {...props}>{children}</Button>;
 }`;
   await fs.writeFile(path.join(appPath, "components", `Button.${ext}`), btn);
+
+  // PlatformInfo Component
+  const platformInfo = `import React from 'react';
+import { Card, Text, Stack, View } from 'indjs';
+
+export default function PlatformInfo() {
+  const [platform, setPlatform] = React.useState('Loading...');
+  const [info, setInfo] = React.useState({});
+
+  React.useEffect(() => {
+    detectPlatform();
+  }, []);
+
+  const detectPlatform = async () => {
+    if (typeof window !== 'undefined' && window.process && window.process.type) {
+      setPlatform('Desktop (Electron)');
+      setInfo({ type: 'Electron', version: window.process.versions.electron });
+      return;
+    }
+    if (typeof window !== 'undefined' && window.Capacitor) {
+      try {
+        const { Capacitor } = await import('@capacitor/core');
+        setPlatform(Capacitor.getPlatform() === 'web' ? 'Web' : 'Mobile (' + Capacitor.getPlatform() + ')');
+        setInfo({ type: 'Capacitor', native: Capacitor.isNativePlatform() });
+      } catch (e) {
+        setPlatform('Web');
+      }
+    } else {
+      setPlatform('Web Browser');
+      setInfo({ type: 'Web', agent: navigator.userAgent });
+    }
+  };
+
+  return (
+    <Card variant="gradient" className="p-4 rounded-xl">
+      <Stack spacing={4}>
+        <Text className="text-xl font-bold text-white">🎯 Platform: {platform}</Text>
+        <View className="bg-white/10 p-3 rounded-lg">
+          <Text className="text-sm font-mono text-white opacity-80">
+            {JSON.stringify(info, null, 2)}
+          </Text>
+        </View>
+      </Stack>
+    </Card>
+  );
+}`;
+  await fs.writeFile(path.join(appPath, "components", `PlatformInfo.${ext}`), platformInfo);
 }
 
 async function createElectronSetup(appPath) {
   const mainCjs = `const { app, BrowserWindow, screen } = require('electron');
-const serve = require('electron-serve');
-const path = require('path');
+  const serve = require('electron-serve');
+  const path = require('path');
 
-const isDev = !app.isPackaged;
-const loadURL = serve({ directory: '.indjs/static' });
+  const isDev = !app.isPackaged;
+  const loadURL = serve({ directory: '.indjs/static' });
 
-let mainWindow;
+  let mainWindow;
 
-function createWindow() {
-  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-  mainWindow = new BrowserWindow({
-    width: Math.min(1280, width),
-    height: Math.min(800, height),
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      preload: path.join(__dirname, 'preload.cjs')
+  function createWindow() {
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+    mainWindow = new BrowserWindow({
+      width: Math.min(1280, width),
+      height: Math.min(800, height),
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+        preload: path.join(__dirname, 'preload.cjs')
+      }
+    });
+
+    if (isDev) {
+      mainWindow.loadURL('http://localhost:3000');
+      mainWindow.webContents.openDevTools();
+    } else {
+      loadURL(mainWindow);
     }
-  });
 
-  if (isDev) {
-    mainWindow.loadURL('http://localhost:3000');
-    mainWindow.webContents.openDevTools();
-  } else {
-    loadURL(mainWindow);
+    mainWindow.on('closed', () => {
+      mainWindow = null;
+    });
   }
-  
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+
+  app.whenReady().then(createWindow);
+
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') app.quit();
   });
-}
 
-app.whenReady().then(createWindow);
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
-});
-
-app.on('activate', () => {
-  if (mainWindow === null) createWindow();
-});
-`;
+  app.on('activate', () => {
+    if (mainWindow === null) createWindow();
+  });
+  `;
   await fs.writeFile(path.join(appPath, "electron", "main.cjs"), mainCjs);
   await fs.writeFile(
     path.join(appPath, "electron", "preload.cjs"),
-    `const { contextBridge, ipcRenderer } = require('electron');\ncontextBridge.exposeInMainWorld('electron', {});`,
+    `const { contextBridge, ipcRenderer } = require('electron'); \ncontextBridge.exposeInMainWorld('electron', {}); `,
   );
 }
 
 async function createCapacitorSetup(appPath, config) {
-  const appId = `com.indjs.${config.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
+  const appId = `com.indjs.${config.name.toLowerCase().replace(/[^a-z0-9]/g, "")} `;
   const capConfig = {
     appId,
     appName: config.name,
@@ -434,34 +496,34 @@ async function createCapacitorSetup(appPath, config) {
 
   // Android setup script
   const setupAndroid = `const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+  const path = require('path');
+  const { execSync } = require('child_process');
 
-console.log('🤖 Setting up Android environment...');
+  console.log('🤖 Setting up Android environment...');
 
-try {
-  if (!fs.existsSync(path.join(__dirname, '../android'))) {
-    console.log('📦 Adding Android platform...');
-    execSync('npx cap add android', { stdio: 'inherit', cwd: path.join(__dirname, '..') });
-  }
-
-  // Java 17 Patch logic
-  const buildGradlePath = path.join(__dirname, '../android/app/build.gradle');
-  if (fs.existsSync(buildGradlePath)) {
-    let content = fs.readFileSync(buildGradlePath, 'utf8');
-    if (!content.includes('JavaVersion.VERSION_17')) {
-       content = content.replace(/JavaVersion.VERSION_1_8/g, 'JavaVersion.VERSION_17');
-       fs.writeFileSync(buildGradlePath, content);
-       console.log('✅ Patched build.gradle for Java 17');
+  try {
+    if (!fs.existsSync(path.join(__dirname, '../android'))) {
+      console.log('📦 Adding Android platform...');
+      execSync('npx cap add android', { stdio: 'inherit', cwd: path.join(__dirname, '..') });
     }
-  }
 
-  console.log('✅ Android setup complete! Run "npm run android:dev" to start.');
-} catch (e) {
-  console.error('❌ Setup failed:', e.message);
-  process.exit(1);
-}
-`;
+    // Java 17 Patch logic
+    const buildGradlePath = path.join(__dirname, '../android/app/build.gradle');
+    if (fs.existsSync(buildGradlePath)) {
+      let content = fs.readFileSync(buildGradlePath, 'utf8');
+      if (!content.includes('JavaVersion.VERSION_17')) {
+        content = content.replace(/JavaVersion.VERSION_1_8/g, 'JavaVersion.VERSION_17');
+        fs.writeFileSync(buildGradlePath, content);
+        console.log('✅ Patched build.gradle for Java 17');
+      }
+    }
+
+    console.log('✅ Android setup complete! Run "npm run android:dev" to start.');
+  } catch (e) {
+    console.error('❌ Setup failed:', e.message);
+    process.exit(1);
+  }
+  `;
   await fs.writeFile(
     path.join(appPath, "scripts", "setup-android.cjs"),
     setupAndroid,
@@ -472,15 +534,15 @@ async function createStyles(appPath) {
   await fs.writeFile(
     path.join(appPath, "styles", "globals.css"),
     `@tailwind base;
-@tailwind components;
-@tailwind utilities;
+  @tailwind components;
+  @tailwind utilities;
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  -webkit-font-smoothing: antialiased;
-}`,
+    font - family: -apple - system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans - serif;
+    margin: 0;
+    padding: 0;
+    -webkit - font - smoothing: antialiased;
+  } `,
   );
 }
 
@@ -501,19 +563,19 @@ async function createPublicAssets(appPath) {
         path.join(assetsDir, "indjs2.png"),
         path.join(appPath, "public", "favicon.png"),
       )
-      .catch(() => {});
-  } catch {}
+      .catch(() => { });
+  } catch { }
 }
 
 async function createGitignore(appPath) {
   await fs.writeFile(
     path.join(appPath, ".gitignore"),
     `node_modules
-.indjs
-dist
-.env
-android
-ios
-`,
+    .indjs
+  dist
+    .env
+  android
+  ios
+    `,
   );
 }
