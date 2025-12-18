@@ -25,17 +25,9 @@ const TextInput = forwardRef(
 
     const commonStyle = {
       appearance: "none",
-      backgroundColor: "transparent",
-      borderColor: "black",
-      borderWidth: 0,
-      borderRadius: 0,
-      padding: 0,
-      borderStyle: "solid",
-      boxSizing: "border-box",
-      fontFamily: "inherit",
-      fontSize: 14,
       outline: "none",
-      ...style,
+      boxSizing: "border-box",
+      ...StyleSheet.flatten(style),
     };
 
     if (multiline) {

@@ -41,31 +41,38 @@ export async function loadModule(file) {
       },
     };
 
-    await esbuild.build({
-      entryPoints: [file],
-      bundle: true,
-      format: "esm",
-      platform: "node",
-      jsx: "automatic",
-      sourcemap: "inline",
-      outfile: outFile,
-      loader: {
-        ".js": "jsx",
-        ".jsx": "jsx",
-        ".ts": "ts",
-        ".tsx": "tsx",
-        ".mjs": "jsx",
-      },
-      external: [
-        "react",
-        "react-dom",
-        "react/jsx-runtime",
-        "react-redux",
-        "@reduxjs/toolkit",
-        "sharp",
-      ],
-      plugins: [aliasPlugin],
-    });
+    try {
+      await esbuild.build({
+        entryPoints: [file],
+        bundle: true,
+        format: "esm",
+        platform: "node",
+        jsx: "automatic",
+        sourcemap: "inline",
+        outfile: outFile,
+        loader: {
+          ".js": "jsx",
+          ".jsx": "jsx",
+          ".ts": "ts",
+          ".tsx": "tsx",
+          ".mjs": "jsx",
+        },
+        external: [
+          "react",
+          "react-dom",
+          "react/jsx-runtime",
+          "react-redux",
+          "@reduxjs/toolkit",
+          "sharp",
+        ],
+        plugins: [aliasPlugin],
+      });
+    } catch (e) {
+      // Enhance error message and rethrow safely to avoid process exit
+      const msg = e.message || String(e);
+      console.error(`[indjs] Failed to load module ${rel}: ${msg}`);
+      throw new Error(`Failed to compile ${rel}: ${msg}`);
+    }
     return import(pathToFileURL(outFile));
   }
   return import(pathToFileURL(file));
@@ -89,7 +96,7 @@ function rewriteDirectoryImports(src, basedir) {
             return spec.replace(/\/$/, "") + (spec.endsWith("/") ? c : "/" + c);
         }
       }
-    } catch {}
+    } catch { }
     return spec;
   };
 
@@ -139,7 +146,7 @@ function findAppRoot(dir) {
   while (d && d !== path.dirname(d)) {
     try {
       if (fsSync.existsSync(path.join(d, "pages"))) return d;
-    } catch {}
+    } catch { }
     d = path.dirname(d);
   }
   return dir;

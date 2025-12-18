@@ -21,7 +21,7 @@ const Image = forwardRef(({ style, source, src, ...rest }, ref) => {
     delete props.src;
   }
 
-  const flatStyle = StyleSheet.flatten([{ width: 100, height: 100 }, style]); // Default size for image
+  const flatStyle = StyleSheet.flatten([style]);
 
   return <Component style={flatStyle} {...props} />;
 });

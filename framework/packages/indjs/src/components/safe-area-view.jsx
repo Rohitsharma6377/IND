@@ -6,15 +6,7 @@ const SafeAreaView = forwardRef(({ children, style, ...rest }, ref) => {
   const Component = resolveElement("safeareaview");
 
   if (Component === "div" || Component === "view") {
-    const flatStyle = StyleSheet.flatten([
-      {
-        paddingTop: "env(safe-area-inset-top)",
-        paddingBottom: "env(safe-area-inset-bottom)",
-        paddingLeft: "env(safe-area-inset-left)",
-        paddingRight: "env(safe-area-inset-right)",
-      },
-      style,
-    ]);
+    const flatStyle = StyleSheet.flatten([style]);
     return (
       <div ref={ref} style={flatStyle} {...rest}>
         {children}

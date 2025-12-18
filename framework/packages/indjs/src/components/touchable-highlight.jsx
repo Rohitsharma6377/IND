@@ -17,13 +17,7 @@ const TouchableHighlight = forwardRef(
     const Component = resolveElement("touchablehighlight");
 
     if (Component === "button" || Component === "div") {
-      const defaultStyle = {
-        border: "none",
-        background: "transparent",
-        padding: 0,
-        cursor: "pointer",
-      };
-      const flatStyle = StyleSheet.flatten([defaultStyle, style]);
+      const flatStyle = StyleSheet.flatten([{ cursor: "pointer" }, style]);
 
       // Simple web implementation: just opacity, mimicking overlay is harder without state
       return (

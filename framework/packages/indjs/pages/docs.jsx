@@ -1,71 +1,6 @@
 import React from "react";
 
 export default function Docs() {
-  const ui = {
-    page: {
-      fontFamily:
-        "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
-      minHeight: "100vh",
-      margin: 0,
-      background: "linear-gradient(180deg, #0ea5e9 0%, #111827 60%)",
-      color: "#0f172a",
-    },
-    wrap: {
-      maxWidth: 980,
-      margin: "0 auto",
-      padding: "48px 20px",
-    },
-    hero: {
-      background: "white",
-      borderRadius: 16,
-      padding: 28,
-      boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
-    },
-    h1: {
-      fontSize: 32,
-      lineHeight: 1.1,
-      margin: 0,
-      color: "#0b1220",
-    },
-    nav: {
-      marginBottom: 20,
-    },
-    backLink: {
-      color: "#0ea5e9",
-      textDecoration: "none",
-      fontSize: 14,
-    },
-    grid: {
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-      gap: 16,
-      marginTop: 24,
-    },
-    card: {
-      background: "#f8fafc",
-      borderRadius: 12,
-      padding: 20,
-      border: "1px solid #e2e8f0",
-    },
-    cardTitle: {
-      fontSize: 18,
-      fontWeight: 600,
-      color: "#0b1220",
-      marginBottom: 8,
-    },
-    cardDesc: {
-      fontSize: 14,
-      color: "#475569",
-      marginBottom: 12,
-    },
-    cardLink: {
-      color: "#0ea5e9",
-      textDecoration: "none",
-      fontSize: 14,
-      fontWeight: 500,
-    },
-  };
-
   const docs = [
     {
       title: "Installation",
@@ -143,38 +78,31 @@ export default function Docs() {
     DevOps: docs.filter((doc) => doc.category === "DevOps"),
   };
 
-  const getDifficultyColor = (difficulty) => {
+  const getDifficultyStyles = (difficulty) => {
     switch (difficulty) {
       case "Beginner":
-        return "#10b981";
+        return "text-emerald-500 bg-emerald-50";
       case "Intermediate":
-        return "#f59e0b";
+        return "text-amber-500 bg-amber-50";
       case "Advanced":
-        return "#ef4444";
+        return "text-red-500 bg-red-50";
       default:
-        return "#6b7280";
+        return "text-slate-500 bg-slate-50";
     }
   };
 
   return (
-    <main style={ui.page}>
-      <div style={ui.wrap}>
-        <section style={ui.hero}>
-          <nav style={ui.nav}>
-            <a href="/" style={ui.backLink}>
+    <main className="min-h-screen bg-slate-900 bg-gradient-to-b from-sky-500 via-sky-500 to-gray-900 text-slate-900 font-sans">
+      <div className="max-w-[980px] mx-auto px-5 py-12">
+        <section className="bg-white rounded-2xl p-7 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
+          <nav className="mb-5">
+            <a href="/" className="text-sky-500 hover:text-sky-600 no-underline text-sm font-medium transition-colors">
               ← Back to Home
             </a>
           </nav>
 
-          <h1 style={ui.h1}>INDJS Documentation</h1>
-          <p
-            style={{
-              fontSize: 18,
-              color: "#64748b",
-              marginBottom: 32,
-              lineHeight: 1.6,
-            }}
-          >
+          <h1 className="text-3xl font-extrabold leading-tight m-0 text-[#0b1220]">INDJS Documentation</h1>
+          <p className="text-lg text-slate-500 mb-8 mt-3 font-medium max-w-2xl leading-relaxed">
             Complete guide to building modern full-stack React applications with
             INDJS. From basic concepts to advanced patterns and production
             deployment.
@@ -183,49 +111,24 @@ export default function Docs() {
           {Object.entries(categories).map(
             ([categoryName, categoryDocs]) =>
               categoryDocs.length > 0 && (
-                <div key={categoryName} style={{ marginBottom: 40 }}>
-                  <h2
-                    style={{
-                      fontSize: 20,
-                      fontWeight: 600,
-                      color: "#0b1220",
-                      marginBottom: 16,
-                      borderLeft: "4px solid #0ea5e9",
-                      paddingLeft: 12,
-                    }}
-                  >
+                <div key={categoryName} className="mb-10">
+                  <h2 className="text-xl font-bold text-[#0b1220] mb-4 border-l-4 border-sky-500 pl-3">
                     {categoryName}
                   </h2>
-                  <div style={ui.grid}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
                     {categoryDocs.map((doc, i) => (
-                      <div key={i} style={ui.card}>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "flex-start",
-                            marginBottom: 8,
-                          }}
-                        >
-                          <h3 style={ui.cardTitle}>{doc.title}</h3>
-                          <span
-                            style={{
-                              fontSize: 11,
-                              fontWeight: 600,
-                              color: getDifficultyColor(doc.difficulty),
-                              background: `${getDifficultyColor(doc.difficulty)}15`,
-                              padding: "2px 6px",
-                              borderRadius: 4,
-                              textTransform: "uppercase",
-                              letterSpacing: 0.5,
-                            }}
-                          >
+                      <div key={i} className="bg-slate-50 border border-slate-100 rounded-xl p-5 hover:border-sky-100 hover:bg-sky-50/30 transition-all flex flex-col">
+                        <div className="flex justify-between items-start mb-2 gap-2">
+                          <h3 className="text-lg font-bold text-[#0b1220]">{doc.title}</h3>
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider whitespace-nowrap ${getDifficultyStyles(doc.difficulty)}`}>
                             {doc.difficulty}
                           </span>
                         </div>
-                        <p style={ui.cardDesc}>{doc.desc}</p>
-                        <a href={doc.link} style={ui.cardLink}>
-                          Read more →
+                        <p className="text-sm text-slate-500 mb-4 leading-relaxed flex-grow">
+                          {doc.desc}
+                        </p>
+                        <a href={doc.link} className="text-sky-500 hover:text-sky-600 no-underline text-sm font-semibold transition-colors mt-auto flex items-center gap-1 group">
+                          Read more <span className="group-hover:translate-x-1 transition-transform">→</span>
                         </a>
                       </div>
                     ))}
@@ -234,51 +137,21 @@ export default function Docs() {
               ),
           )}
 
-          <div
-            style={{
-              background: "#f8fafc",
-              borderRadius: 12,
-              padding: 24,
-              marginTop: 32,
-              border: "1px solid #e2e8f0",
-            }}
-          >
-            <h2
-              style={{
-                fontSize: 18,
-                fontWeight: 600,
-                color: "#0b1220",
-                marginBottom: 12,
-              }}
-            >
+          <div className="bg-slate-50 border border-slate-100 rounded-xl p-6 mt-8">
+            <h2 className="text-lg font-bold text-[#0b1220] mb-4">
               Quick Links
             </h2>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: 16,
-              }}
-            >
-              <a href="/learn" style={{ ...ui.cardLink, display: "block" }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <a href="/learn" className="text-sky-500 hover:text-sky-600 no-underline text-sm font-semibold transition-colors flex items-center gap-2">
                 🚀 Getting Started Guide
               </a>
-              <a
-                href="/docs/installation"
-                style={{ ...ui.cardLink, display: "block" }}
-              >
+              <a href="/docs/installation" className="text-sky-500 hover:text-sky-600 no-underline text-sm font-semibold transition-colors flex items-center gap-2">
                 📦 Installation
               </a>
-              <a
-                href="/docs/api-routes"
-                style={{ ...ui.cardLink, display: "block" }}
-              >
+              <a href="/docs/api-routes" className="text-sky-500 hover:text-sky-600 no-underline text-sm font-semibold transition-colors flex items-center gap-2">
                 🔌 API Development
               </a>
-              <a
-                href="/docs/deployment"
-                style={{ ...ui.cardLink, display: "block" }}
-              >
+              <a href="/docs/deployment" className="text-sky-500 hover:text-sky-600 no-underline text-sm font-semibold transition-colors flex items-center gap-2">
                 🌐 Deploy Your App
               </a>
             </div>

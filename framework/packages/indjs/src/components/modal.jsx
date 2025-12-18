@@ -22,15 +22,6 @@ const Modal = forwardRef(
       if (!visible) return null;
 
       const modalStyle = {
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: transparent ? "transparent" : "white",
-        zIndex: 9999,
-        display: "flex",
-        flexDirection: "column",
         ...StyleSheet.flatten(style),
       };
 

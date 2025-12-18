@@ -21,7 +21,6 @@ const ScrollView = forwardRef(
     if (Component === "div" || Component === "view") {
       // Web fallback
       const containerStyle = {
-        flex: 1,
         overflowX: horizontal ? "auto" : "hidden",
         overflowY: horizontal ? "hidden" : "auto",
         WebkitOverflowScrolling: "touch",
@@ -41,11 +40,7 @@ const ScrollView = forwardRef(
           : "auto",
         ...StyleSheet.flatten(style),
       };
-      const contentStyle = {
-        display: "flex",
-        flexDirection: horizontal ? "row" : "column",
-        ...StyleSheet.flatten(contentContainerStyle),
-      };
+      const contentStyle = StyleSheet.flatten([contentContainerStyle]);
       return (
         <div ref={ref} style={containerStyle} className={className} {...rest}>
           <div style={contentStyle}>{children}</div>

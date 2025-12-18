@@ -7,13 +7,7 @@ const Pressable = forwardRef(({ children, style, onPress, ...rest }, ref) => {
 
   if (Component === "button" || Component === "div") {
     const flatStyle = StyleSheet.flatten([
-      {
-        border: "none",
-        background: "transparent",
-        padding: 0,
-        cursor: "pointer",
-        textAlign: "inherit",
-      },
+      { cursor: "pointer" },
       typeof style === "function" ? style({ pressed: false }) : style,
     ]);
 

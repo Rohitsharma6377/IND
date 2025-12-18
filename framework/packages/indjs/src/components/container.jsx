@@ -8,33 +8,16 @@ import View from "./view.jsx";
  */
 const Container = forwardRef(({
     children,
-    maxWidth = 'lg',
-    className = '',
-    fluid = false,
-    padding = true,
+    className = "",
     style,
     ...props
 }, ref) => {
-    const maxWidthClasses = {
-        sm: 'max-w-screen-sm',
-        md: 'max-w-screen-md',
-        lg: 'max-w-screen-lg',
-        xl: 'max-w-screen-xl',
-        '2xl': 'max-w-screen-2xl',
-        full: 'max-w-full'
-    };
-
-    const containerClass = fluid
-        ? 'w-full'
-        : `${maxWidthClasses[maxWidth] || maxWidthClasses.lg} mx-auto`;
-
-    const paddingClass = padding ? 'px-4 py-12' : '';
-    const finalClass = `${containerClass} ${paddingClass} ${className}`.trim();
+    const finalClass = className.trim();
 
     return (
         <View ref={ref} className={finalClass} style={style} {...props}>
             {children}
-        </View>
+        </View >
     );
 });
 

@@ -12,7 +12,7 @@ export default class ErrorBoundary extends React.Component {
   componentDidCatch(error, info) {
     try {
       console.error("[INDJS] ErrorBoundary caught:", error);
-    } catch {}
+    } catch { }
     try {
       const payload = {
         message: String((error && error.message) || error),
@@ -25,25 +25,17 @@ export default class ErrorBoundary extends React.Component {
         });
         navigator.sendBeacon("/__indjs/client-error", blob);
       }
-    } catch {}
+    } catch { }
   }
   render() {
     if (this.state.error) {
       return React.createElement(
         "div",
-        {
-          style: {
-            padding: "12px",
-            border: "1px solid #fecaca",
-            background: "#fef2f2",
-            color: "#991b1b",
-            borderRadius: "8px",
-          },
-        },
+        null,
         React.createElement("strong", null, "An error occurred"),
         React.createElement(
           "div",
-          { style: { opacity: 0.9, marginTop: "6px" } },
+          null,
           String(
             (this.state.error && this.state.error.message) || "Unknown error",
           ),

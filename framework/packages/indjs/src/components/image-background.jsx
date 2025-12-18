@@ -15,8 +15,6 @@ const ImageBackground = forwardRef(
       const flatStyle = StyleSheet.flatten([
         {
           position: "relative",
-          display: "flex",
-          flexDirection: "column",
           backgroundImage: `url(${imageSource})`,
           backgroundSize: resizeMode === "stretch" ? "100% 100%" : resizeMode,
           backgroundPosition: "center",

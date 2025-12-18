@@ -8,24 +8,16 @@ import Text from "./text.jsx";
  */
 const Icon = forwardRef(({
     name,
-    size = 'medium',
-    className = '',
+    className = "",
     style,
     ...props
 }, ref) => {
-    const sizeClasses = {
-        small: 'text-2xl',
-        medium: 'text-4xl',
-        large: 'text-6xl',
-        xlarge: 'text-8xl',
-    };
-
-    const finalClass = `${sizeClasses[size] || sizeClasses.medium} ${className}`.trim();
+    const finalClass = className.trim();
 
     return (
         <Text ref={ref} className={finalClass} style={style} {...props}>
             {name}
-        </Text>
+        </Text >
     );
 });
 

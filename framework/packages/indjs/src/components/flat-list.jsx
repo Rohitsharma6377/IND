@@ -69,17 +69,7 @@ const FlatList = forwardRef(
         });
       };
 
-      const gridStyle =
-        numColumns > 1 && !horizontal
-          ? {
-              display: "grid",
-              gridTemplateColumns: `repeat(${numColumns}, 1fr)`,
-            }
-          : {};
-      const flatContentStyle = StyleSheet.flatten([
-        contentContainerStyle,
-        gridStyle,
-      ]);
+      const flatContentStyle = StyleSheet.flatten([contentContainerStyle]);
 
       return (
         <ScrollView

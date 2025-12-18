@@ -7,17 +7,10 @@ const TouchableOpacity = forwardRef(
     const Component = resolveElement("touchableopacity");
 
     if (Component === "button" || Component === "div") {
-      const defaultStyle = {
-        border: "none",
-        background: "transparent",
-        padding: 0,
-        cursor: "pointer",
-        transition: "opacity 0.2s",
-      };
       return (
         <button
           ref={ref}
-          style={StyleSheet.flatten([defaultStyle, style])}
+          style={StyleSheet.flatten([{ cursor: "pointer" }, style])}
           onClick={onPress}
           onMouseDown={(e) => (e.currentTarget.style.opacity = activeOpacity)}
           onMouseUp={(e) => (e.currentTarget.style.opacity = 1)}

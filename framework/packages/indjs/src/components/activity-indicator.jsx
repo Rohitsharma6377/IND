@@ -7,14 +7,9 @@ const ActivityIndicator = forwardRef(
     const Component = resolveElement("activityindicator");
 
     if (Component === "div" || Component === "view") {
-      const sizePx = size === "large" ? 36 : 20;
       const spinnerStyle = {
-        width: sizePx,
-        height: sizePx,
-        border: `2px solid ${color}`,
-        borderTopColor: "transparent",
-        borderRadius: "50%",
         animation: "indjs-spin 1s linear infinite",
+        display: "inline-block",
         ...StyleSheet.flatten(style),
       };
 

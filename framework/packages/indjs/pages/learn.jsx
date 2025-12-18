@@ -1,106 +1,30 @@
 import React from "react";
 
 export default function Learn() {
-  const ui = {
-    page: {
-      fontFamily:
-        "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
-      minHeight: "100vh",
-      margin: 0,
-      background: "linear-gradient(180deg, #0ea5e9 0%, #111827 60%)",
-      color: "#0f172a",
-    },
-    wrap: {
-      maxWidth: 980,
-      margin: "0 auto",
-      padding: "48px 20px",
-    },
-    hero: {
-      background: "white",
-      borderRadius: 16,
-      padding: 28,
-      boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
-    },
-    h1: {
-      fontSize: 32,
-      lineHeight: 1.1,
-      margin: 0,
-      color: "#0b1220",
-    },
-    nav: {
-      marginBottom: 20,
-    },
-    backLink: {
-      color: "#0ea5e9",
-      textDecoration: "none",
-      fontSize: 14,
-    },
-    section: {
-      marginBottom: 24,
-    },
-    h2: {
-      fontSize: 24,
-      color: "#0b1220",
-      marginBottom: 12,
-    },
-    p: {
-      fontSize: 16,
-      color: "#334155",
-      lineHeight: 1.6,
-      marginBottom: 12,
-    },
-    code: {
-      background: "#f1f5f9",
-      padding: "2px 6px",
-      borderRadius: 4,
-      fontSize: 14,
-      fontFamily: "monospace",
-    },
-    codeBlock: {
-      background: "#1e293b",
-      color: "#e2e8f0",
-      padding: 20,
-      borderRadius: 8,
-      fontSize: 14,
-      fontFamily: "monospace",
-      overflow: "auto",
-      marginBottom: 20,
-      lineHeight: 1.5,
-      whiteSpace: "pre-wrap",
-    },
-  };
-
   return (
-    <main style={ui.page}>
-      <div style={ui.wrap}>
-        <section style={ui.hero}>
-          <nav style={ui.nav}>
-            <a href="/" style={ui.backLink}>
+    <main className="min-h-screen bg-slate-900 bg-gradient-to-b from-sky-500 via-sky-500 to-gray-900 text-slate-900 font-sans">
+      <div className="max-w-[980px] mx-auto px-5 py-12">
+        <section className="bg-white rounded-2xl p-7 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
+          <nav className="mb-5">
+            <a href="/" className="text-sky-500 hover:text-sky-600 no-underline text-sm font-medium transition-colors">
               ← Back to Home
             </a>
           </nav>
 
-          <h1 style={ui.h1}>Getting Started with INDJS</h1>
-          <p
-            style={{
-              fontSize: 18,
-              color: "#64748b",
-              marginBottom: 32,
-              lineHeight: 1.6,
-            }}
-          >
+          <h1 className="text-3xl font-extrabold leading-tight m-0 text-[#0b1220]">Getting Started with INDJS</h1>
+          <p className="text-lg text-slate-500 mb-8 mt-3 font-medium max-w-2xl leading-relaxed">
             Build modern full-stack React applications with zero configuration.
             INDJS provides everything you need to create fast, scalable web
             applications with built-in SSR, API routes, and deployment tools.
           </p>
 
-          <div style={ui.section}>
-            <h2 style={ui.h2}>🚀 Quick Start</h2>
-            <p style={ui.p}>
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-[#0b1220] mb-3 flex items-center gap-2">🚀 Quick Start</h2>
+            <p className="text-base text-slate-600 leading-relaxed mb-4">
               Create a new INDJS application with a single command and start
               building immediately:
             </p>
-            <div style={ui.codeBlock}>
+            <div className="bg-slate-900 text-slate-200 p-5 rounded-xl font-mono text-sm overflow-auto mb-5 leading-relaxed whitespace-pre-wrap">
               {`# Create a new INDJS app
 npx create-indjs my-app
 
@@ -112,38 +36,28 @@ npm run dev
 
 # Your app is now running at http://localhost:3000`}
             </div>
-            <div
-              style={{
-                background: "#dbeafe",
-                border: "1px solid #3b82f6",
-                borderRadius: 8,
-                padding: 16,
-                marginTop: 16,
-              }}
-            >
-              <div
-                style={{ fontWeight: 600, color: "#1e40af", marginBottom: 8 }}
-              >
-                💡 Pro Tip
+            <div className="bg-sky-50 border border-sky-200 rounded-xl p-5 mt-4">
+              <div className="font-bold text-sky-800 mb-2 flex items-center gap-1.5">
+                <span className="text-sky-600">💡</span> Pro Tip
               </div>
-              <p style={{ margin: 0, fontSize: 14, color: "#1e40af" }}>
+              <p className="m-0 text-sm text-sky-800 leading-relaxed">
                 Use templates to get started faster:{" "}
-                <code style={ui.code}>
+                <code className="bg-white/50 px-1.5 py-0.5 rounded font-mono text-xs">
                   npx create-indjs my-blog --template blog
                 </code>
                 <br />
-                Available templates: basic, blog, admin, ecommerce, ai-app
+                <span className="mt-1 block text-sky-600">Available templates: basic, blog, admin, ecommerce, ai-app</span>
               </p>
             </div>
           </div>
 
-          <div style={ui.section}>
-            <h2 style={ui.h2}>📁 Project Structure</h2>
-            <p style={ui.p}>
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-[#0b1220] mb-3 flex items-center gap-2">📁 Project Structure</h2>
+            <p className="text-base text-slate-600 leading-relaxed mb-4">
               INDJS follows a simple, intuitive project structure that scales
               with your application:
             </p>
-            <div style={ui.codeBlock}>
+            <div className="bg-slate-900 text-slate-200 p-5 rounded-xl font-mono text-sm overflow-auto mb-5 leading-relaxed whitespace-pre-wrap">
               {`my-app/
 ├── pages/                 # File-based routing
 │   ├── index.jsx         # Home page (/)
@@ -164,13 +78,13 @@ npm run dev
             </div>
           </div>
 
-          <div style={ui.section}>
-            <h2 style={ui.h2}>🛣️ File-based Routing</h2>
-            <p style={ui.p}>
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-[#0b1220] mb-3 flex items-center gap-2">🛣️ File-based Routing</h2>
+            <p className="text-base text-slate-600 leading-relaxed mb-4">
               Pages are automatically routed based on their file structure. No
               configuration needed!
             </p>
-            <div style={ui.codeBlock}>
+            <div className="bg-slate-900 text-slate-200 p-5 rounded-xl font-mono text-sm overflow-auto mb-5 leading-relaxed whitespace-pre-wrap">
               {`// File structure → Routes
 pages/index.jsx           → /
 pages/about.jsx           → /about
@@ -182,8 +96,8 @@ pages/api/users.js        → /api/users
 pages/api/auth/login.js   → /api/auth/login`}
             </div>
 
-            <h3 style={ui.h3}>Creating Your First Page</h3>
-            <div style={ui.codeBlock}>
+            <h3 className="text-lg font-bold text-[#0b1220] mb-3">Creating Your First Page</h3>
+            <div className="bg-slate-900 text-slate-200 p-5 rounded-xl font-mono text-sm overflow-auto mb-5 leading-relaxed whitespace-pre-wrap">
               {`// pages/about.jsx
 import React from 'react';
 
@@ -198,13 +112,13 @@ export default function About() {
             </div>
           </div>
 
-          <div style={ui.section}>
-            <h2 style={ui.h2}>🔌 API Routes</h2>
-            <p style={ui.p}>
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-[#0b1220] mb-3 flex items-center gap-2">🔌 API Routes</h2>
+            <p className="text-base text-slate-600 leading-relaxed mb-4">
               Build full-stack applications with serverless API endpoints. Just
-              create files in <code style={ui.code}>pages/api/</code>:
+              create files in <code className="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-xs">pages/api/</code>:
             </p>
-            <div style={ui.codeBlock}>
+            <div className="bg-slate-900 text-slate-200 p-5 rounded-xl font-mono text-sm overflow-auto mb-5 leading-relaxed whitespace-pre-wrap">
               {`// pages/api/hello.js
 export default function handler({ req, res }) {
   res.json({ 
@@ -228,13 +142,13 @@ export default async function handler({ req, res, params }) {
             </div>
           </div>
 
-          <div style={ui.section}>
-            <h2 style={ui.h2}>⚡ Server-Side Rendering</h2>
-            <p style={ui.p}>
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-[#0b1220] mb-3 flex items-center gap-2">⚡ Server-Side Rendering</h2>
+            <p className="text-base text-slate-600 leading-relaxed mb-4">
               Get better SEO and performance with built-in SSR. Fetch data on
               the server before rendering:
             </p>
-            <div style={ui.codeBlock}>
+            <div className="bg-slate-900 text-slate-200 p-5 rounded-xl font-mono text-sm overflow-auto mb-5 leading-relaxed whitespace-pre-wrap">
               {`// pages/blog/[slug].jsx
 import React from 'react';
 
@@ -272,13 +186,13 @@ export async function getStaticProps({ params }) {
             </div>
           </div>
 
-          <div style={ui.section}>
-            <h2 style={ui.h2}>🎨 Built-in Styling</h2>
-            <p style={ui.p}>
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-[#0b1220] mb-3 flex items-center gap-2">🎨 Built-in Styling</h2>
+            <p className="text-base text-slate-600 leading-relaxed mb-4">
               INDJS comes with Tailwind CSS pre-configured. Start styling
               immediately:
             </p>
-            <div style={ui.codeBlock}>
+            <div className="bg-slate-900 text-slate-200 p-5 rounded-xl font-mono text-sm overflow-auto mb-5 leading-relaxed whitespace-pre-wrap">
               {`// pages/dashboard.jsx
 export default function Dashboard() {
   return (
@@ -308,210 +222,72 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div style={ui.section}>
-            <h2 style={ui.h2}>🚀 Next Steps</h2>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                gap: 16,
-              }}
-            >
-              <div
-                style={{
-                  background: "#f8fafc",
-                  borderRadius: 12,
-                  padding: 20,
-                  border: "1px solid #e2e8f0",
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 600,
-                    color: "#0b1220",
-                    marginBottom: 8,
-                  }}
-                >
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-[#0b1220] mb-6 flex items-center gap-2">🚀 Next Steps</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+              <div className="bg-slate-50 border border-slate-100 rounded-xl p-6 hover:border-sky-100 hover:bg-sky-50/30 transition-all">
+                <h3 className="text-lg font-bold text-[#0b1220] mb-2 flex items-center gap-2">
                   📖 Learn the Basics
                 </h3>
-                <p style={{ fontSize: 14, color: "#475569", marginBottom: 12 }}>
-                  Master routing, API routes, and SSR/SSG
+                <p className="text-sm text-slate-500 mb-4 leading-relaxed">
+                  Master routing, API routes, and SSR/SSG patterns.
                 </p>
-                <a
-                  href="/docs/routing"
-                  style={{
-                    color: "#0ea5e9",
-                    textDecoration: "none",
-                    fontSize: 14,
-                    fontWeight: 500,
-                  }}
-                >
-                  Start Learning →
+                <a href="/docs/routing" className="text-sky-500 hover:text-sky-600 no-underline text-sm font-semibold transition-colors flex items-center gap-1 group">
+                  Start Learning <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </a>
               </div>
 
-              <div
-                style={{
-                  background: "#f8fafc",
-                  borderRadius: 12,
-                  padding: 20,
-                  border: "1px solid #e2e8f0",
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 600,
-                    color: "#0b1220",
-                    marginBottom: 8,
-                  }}
-                >
+              <div className="bg-slate-50 border border-slate-100 rounded-xl p-6 hover:border-sky-100 hover:bg-sky-50/30 transition-all">
+                <h3 className="text-lg font-bold text-[#0b1220] mb-2 flex items-center gap-2">
                   🔐 Add Authentication
                 </h3>
-                <p style={{ fontSize: 14, color: "#475569", marginBottom: 12 }}>
-                  Secure your app with JWT, OAuth, and sessions
+                <p className="text-sm text-slate-500 mb-4 leading-relaxed">
+                  Secure your app with JWT, OAuth, and role-based access.
                 </p>
-                <a
-                  href="/docs/authentication"
-                  style={{
-                    color: "#0ea5e9",
-                    textDecoration: "none",
-                    fontSize: 14,
-                    fontWeight: 500,
-                  }}
-                >
-                  Add Auth →
+                <a href="/docs/authentication" className="text-sky-500 hover:text-sky-600 no-underline text-sm font-semibold transition-colors flex items-center gap-1 group">
+                  Add Auth <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </a>
               </div>
 
-              <div
-                style={{
-                  background: "#f8fafc",
-                  borderRadius: 12,
-                  padding: 20,
-                  border: "1px solid #e2e8f0",
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 600,
-                    color: "#0b1220",
-                    marginBottom: 8,
-                  }}
-                >
+              <div className="bg-slate-50 border border-slate-100 rounded-xl p-6 hover:border-sky-100 hover:bg-sky-50/30 transition-all">
+                <h3 className="text-lg font-bold text-[#0b1220] mb-2 flex items-center gap-2">
                   🗄️ Connect Database
                 </h3>
-                <p style={{ fontSize: 14, color: "#475569", marginBottom: 12 }}>
-                  Integrate MongoDB, PostgreSQL, or Prisma
+                <p className="text-sm text-slate-500 mb-4 leading-relaxed">
+                  Integrate MongoDB, PostgreSQL, or Prisma ORM.
                 </p>
-                <a
-                  href="/docs/database"
-                  style={{
-                    color: "#0ea5e9",
-                    textDecoration: "none",
-                    fontSize: 14,
-                    fontWeight: 500,
-                  }}
-                >
-                  Connect DB →
+                <a href="/docs/database" className="text-sky-500 hover:text-sky-600 no-underline text-sm font-semibold transition-colors flex items-center gap-1 group">
+                  Connect DB <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </a>
               </div>
 
-              <div
-                style={{
-                  background: "#f8fafc",
-                  borderRadius: 12,
-                  padding: 20,
-                  border: "1px solid #e2e8f0",
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 600,
-                    color: "#0b1220",
-                    marginBottom: 8,
-                  }}
-                >
+              <div className="bg-slate-50 border border-slate-100 rounded-xl p-6 hover:border-sky-100 hover:bg-sky-50/30 transition-all">
+                <h3 className="text-lg font-bold text-[#0b1220] mb-2 flex items-center gap-2">
                   🌐 Deploy Your App
                 </h3>
-                <p style={{ fontSize: 14, color: "#475569", marginBottom: 12 }}>
-                  Deploy to Vercel, Netlify, or AWS
+                <p className="text-sm text-slate-500 mb-4 leading-relaxed">
+                  Deploy to Vercel, Netlify, or AWS with one-click.
                 </p>
-                <a
-                  href="/docs/deployment"
-                  style={{
-                    color: "#0ea5e9",
-                    textDecoration: "none",
-                    fontSize: 14,
-                    fontWeight: 500,
-                  }}
-                >
-                  Deploy Now →
+                <a href="/docs/deployment" className="text-sky-500 hover:text-sky-600 no-underline text-sm font-semibold transition-colors flex items-center gap-1 group">
+                  Deploy Now <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </a>
               </div>
             </div>
           </div>
 
-          <div
-            style={{
-              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              borderRadius: 12,
-              padding: 24,
-              marginTop: 32,
-              color: "white",
-            }}
-          >
-            <h2
-              style={{
-                fontSize: 20,
-                fontWeight: 600,
-                marginBottom: 12,
-                color: "white",
-              }}
-            >
+          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-8 mt-10 text-white shadow-lg">
+            <h2 className="text-xl font-bold mb-4">
               Ready to Build Something Amazing?
             </h2>
-            <p
-              style={{
-                fontSize: 16,
-                marginBottom: 16,
-                color: "rgba(255,255,255,0.9)",
-              }}
-            >
+            <p className="text-base mb-6 text-indigo-100 max-w-2xl leading-relaxed">
               Join thousands of developers building modern web applications with
               INDJS.
             </p>
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <a
-                href="/docs"
-                style={{
-                  background: "rgba(255,255,255,0.2)",
-                  color: "white",
-                  padding: "10px 16px",
-                  borderRadius: 8,
-                  textDecoration: "none",
-                  fontWeight: 600,
-                  fontSize: 14,
-                }}
-              >
+            <div className="flex flex-wrap gap-4">
+              <a href="/docs" className="bg-white/20 hover:bg-white/30 text-white px-5 py-2.5 rounded-xl no-underline font-bold text-sm backdrop-blur-md transition-all">
                 View Documentation
               </a>
-              <a
-                href="https://github.com/indjs/indjs"
-                style={{
-                  background: "transparent",
-                  color: "white",
-                  padding: "10px 16px",
-                  borderRadius: 8,
-                  textDecoration: "none",
-                  fontWeight: 600,
-                  fontSize: 14,
-                  border: "1px solid rgba(255,255,255,0.3)",
-                }}
-              >
+              <a href="https://github.com/indjs/indjs" className="bg-transparent hover:bg-white/10 text-white px-5 py-2.5 rounded-xl no-underline font-bold text-sm border-2 border-white/30 transition-all">
                 GitHub Repository
               </a>
             </div>

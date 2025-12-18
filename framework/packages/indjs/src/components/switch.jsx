@@ -17,7 +17,7 @@ const Switch = forwardRef(
           checked={value}
           onChange={(e) => onValueChange && onValueChange(e.target.checked)}
           disabled={disabled}
-          style={StyleSheet.flatten([{ cursor: "pointer" }, style])}
+          style={StyleSheet.flatten([style])}
           {...rest}
         />
       );

@@ -94,7 +94,7 @@ export default function PlatformInfo() {
                 <View className="bg-black/20 rounded-xl p-4 border border-white/5">
                     <Text className="text-xs font-mono text-indigo-300 mb-2">debug_info</Text>
                     <View className="overflow-x-auto">
-                        <Text className="text-xs font-mono text-indigo-100/80 leading-relaxed whitespace-pre" style={{ fontFamily: 'monospace' }}>
+                        <Text className="text-xs font-mono text-indigo-100/80 leading-relaxed whitespace-pre">
                             {JSON.stringify(info, null, 2).replace(/"/g, '')}
                         </Text>
                     </View>

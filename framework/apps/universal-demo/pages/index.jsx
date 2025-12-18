@@ -20,7 +20,10 @@ export default function Home() {
                 Universal Demo
               </Text>
               <Text className="text-xl text-blue-100 text-center font-light max-w-2xl mx-auto leading-relaxed">
-                Built with <Text className="font-semibold text-white inline border-b-2 border-blue-300">INDJS Framework</Text>
+                Built with{' '}
+                <Text className="font-semibold text-white inline border-b-2 border-blue-300">
+                  INDJS Framework
+                </Text>
               </Text>
               <View className="flex flex-row gap-4 mt-2">
                 <View className="bg-white/10 backdrop-blur-md px-4 py-1 rounded-full border border-white/20"><Text className="text-sm text-white font-medium">One Codebase</Text></View>
