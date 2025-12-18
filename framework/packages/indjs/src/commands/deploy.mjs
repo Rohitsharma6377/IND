@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import chalk from "chalk";
 import ora from "ora";
-import { build } from "../build.mjs";
+import { build } from "../build/index.mjs";
 
 const platforms = {
   vercel: deployToVercel,

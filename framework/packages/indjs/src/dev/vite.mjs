@@ -1,6 +1,6 @@
 import path from "path";
 import { createRequire } from "module";
-import { getConfig } from "./config.mjs";
+import { getConfig } from "../config.mjs";
 
 // Start a Vite dev server and mount its middlewares onto our Express app
 // Returns the created Vite server instance
@@ -83,7 +83,7 @@ export async function startVite({ app, root, bus }) {
       bus?.emit?.("error", {
         message: String(e?.message || e || "Vite error"),
       });
-    } catch {}
+    } catch { }
   };
   vite.watcher.on("error", sendError);
   vite.middlewares.on("error", sendError);

@@ -1,9 +1,9 @@
 // Cloudflare Workers adapter stub
 // Export a fetch handler compatible with Workers runtime
 
-import { discoverRoutes, matchDynamic } from "../routes.mjs";
+import { discoverRoutes, matchDynamic } from "../../routing/routes.mjs";
 import { renderPageModule } from "../ssr.mjs";
-import { routeToClientPath } from "../build_client.mjs";
+import { routeToClientPath } from "../../build/client.mjs";
 
 export default {
   async fetch(request, env, ctx) {

@@ -1,9 +1,9 @@
 import express from "express";
 import path from "path";
 import { pathToFileURL } from "url";
-import { discoverRoutes, matchDynamic } from "./routes.mjs";
+import { discoverRoutes, matchDynamic } from "./routing/routes.mjs";
 import { renderPageModule } from "./ssr.mjs";
-import { routeToClientPath } from "./build_client.mjs";
+import { routeToClientPath } from "./build/client.mjs";
 import { loadModule } from "./load.mjs";
 import fs from "fs/promises";
 import sharp from "sharp";
@@ -97,7 +97,7 @@ export async function start({ root, port }) {
   try {
     const m = await fs.readFile(path.join(outDir, "manifest.json"), "utf8");
     manifest = JSON.parse(m);
-  } catch {}
+  } catch { }
 
   // Global middleware
   let middleware = null;
@@ -113,12 +113,12 @@ export async function start({ root, port }) {
       await fs.access(f);
       middleware = await loadModule(f);
       break;
-    } catch {}
+    } catch { }
   }
   app.use(async (req, res, next) => {
     try {
       await applyHook(plugins, "onRequest", { req, res, root });
-    } catch {}
+    } catch { }
     if (!middleware?.default) return next();
     try {
       const result = await middleware.default({ req, res, root });
@@ -275,7 +275,7 @@ export async function start({ root, port }) {
   if (cfg?.caching?.store === "redis" && cfg?.caching?.redisUrl) {
     try {
       redis = new IORedis(cfg.caching.redisUrl);
-    } catch {}
+    } catch { }
   }
 
   async function cacheGet(key) {
@@ -382,7 +382,7 @@ export async function start({ root, port }) {
         const ret = rendered(res);
         try {
           await applyHook(plugins, "onResponse", { req, res });
-        } catch {}
+        } catch { }
         return ret;
       }
       const html = rendered;
@@ -397,14 +397,14 @@ export async function start({ root, port }) {
             query: req.query,
           });
           if (Array.isArray(t)) tags = t;
-        } catch {}
+        } catch { }
       }
       await cacheSet(cacheKey, html, tags);
       tsCache.set(cacheKey, Date.now());
       res.end(html);
       try {
         await applyHook(plugins, "onResponse", { req, res });
-      } catch {}
+      } catch { }
     } catch (e) {
       next(e);
     }
