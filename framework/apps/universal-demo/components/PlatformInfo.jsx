@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Text, Stack, View } from 'indjs';
+import { Card, Text, Stack, View, Grid } from 'indjs';
 
 /**
  * Platform Info Component
@@ -69,34 +69,51 @@ export default function PlatformInfo() {
     };
 
     return (
-        <Card variant="gradient">
-            <Stack spacing={4}>
-                <Text className="text-2xl font-bold mb-2">🎯 Platform Information</Text>
+        <Card className="bg-gradient-to-br from-indigo-600 to-purple-700 text-white shadow-xl rounded-2xl overflow-hidden border border-white/10">
+            <Stack spacing={6} className="p-2">
+                <View className="flex flex-row items-center justify-between">
+                    <Stack spacing={1}>
+                        <Text className="text-3xl font-bold text-white tracking-tight">🎯 Platform Info</Text>
+                        <Text className="text-indigo-200">Running natively on your device</Text>
+                    </Stack>
+                    <View className="bg-white/20 p-3 rounded-full backdrop-blur-md">
+                        <Text className="text-2xl">📱</Text>
+                    </View>
+                </View>
 
-                <Card variant="default" className="bg-white/10 backdrop-blur-sm">
-                    <Text className="text-lg mb-2">
-                        Running on: <Text className="text-yellow-300 font-semibold inline">{platform}</Text>
+                {/* Status Card */}
+                <View className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/10">
+                    <Text className="text-indigo-200 text-sm font-semibold uppercase tracking-wider mb-1">Current Environment</Text>
+                    <Text className="text-2xl font-bold text-white flex items-center">
+                        <View className="w-3 h-3 rounded-full bg-green-400 mr-3 animate-pulse"></View>
+                        {platform}
                     </Text>
-                </Card>
+                </View>
 
-                <Card variant="default" className="bg-white/10 backdrop-blur-sm">
-                    <Stack spacing={2}>
-                        <Text className="text-lg font-semibold">Details:</Text>
-                        <View className="overflow-auto">
-                            <Text className="text-sm whitespace-pre font-mono">
-                                {JSON.stringify(info, null, 2)}
-                            </Text>
+                {/* Details Section */}
+                <View className="bg-black/20 rounded-xl p-4 border border-white/5">
+                    <Text className="text-xs font-mono text-indigo-300 mb-2">debug_info</Text>
+                    <View className="overflow-x-auto">
+                        <Text className="text-xs font-mono text-indigo-100/80 leading-relaxed whitespace-pre" style={{ fontFamily: 'monospace' }}>
+                            {JSON.stringify(info, null, 2).replace(/"/g, '')}
+                        </Text>
+                    </View>
+                </View>
+
+                {/* Capabilities */}
+                <View className="bg-white/5 rounded-xl p-4">
+                    <Text className="font-semibold text-white mb-3">✨ Universal Capabilities</Text>
+                    <Grid columns={{ default: 1, sm: 3 }} gap={2}>
+                        <View className="bg-white/10 p-2 rounded-lg text-center backdrop-blur-sm">
+                            <Text className="text-sm">🌍 Web</Text>
                         </View>
-                    </Stack>
-                </Card>
-
-                <View className="text-sm opacity-75">
-                    <Text className="mb-2">✅ This app can run on:</Text>
-                    <Stack spacing={1} className="list-disc list-inside">
-                        <Text className="text-sm">• Web browsers (Chrome, Firefox, Safari, etc.)</Text>
-                        <Text className="text-sm">• Desktop (Windows, macOS, Linux via Electron)</Text>
-                        <Text className="text-sm">• Mobile (iOS & Android via Capacitor)</Text>
-                    </Stack>
+                        <View className="bg-white/10 p-2 rounded-lg text-center backdrop-blur-sm">
+                            <Text className="text-sm">🖥️ Desktop</Text>
+                        </View>
+                        <View className="bg-white/10 p-2 rounded-lg text-center backdrop-blur-sm">
+                            <Text className="text-sm">📱 Mobile</Text>
+                        </View>
+                    </Grid>
                 </View>
             </Stack>
         </Card>
