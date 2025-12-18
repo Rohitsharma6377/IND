@@ -1,7 +1,8 @@
 // Core framework functions
-import { dev } from "./dev.mjs";
-import { start } from "./start.mjs";
-import { build } from "./build/index.mjs";
+// Removed CLI/Dev tools to prevent bundling in apps
+// import { dev } from "./dev.mjs";
+// import { start } from "./start.mjs";
+// import { build } from "./build/index.mjs";
 
 // Routing utilities
 import {
@@ -12,16 +13,16 @@ import {
 } from "./routing/routes.mjs";
 
 // SSR utilities
-import { renderPageModule } from "./ssr.mjs";
+// import { renderPageModule } from "./ssr.mjs";
 
 // Build utilities
-import { buildClientBundles, routeToClientPath } from "./build/client.mjs";
+// import { buildClientBundles, routeToClientPath } from "./build/client.mjs";
 
 // CSS utilities
-import { buildCss, watchCss, cssHref } from "./css.mjs";
+// import { buildCss, watchCss, cssHref } from "./css.mjs";
 
 // Module loading
-import { loadModule } from "./load.mjs";
+// import { loadModule } from "./load.mjs";
 
 // Platform detection
 import * as Platform from "./platform.mjs";
@@ -35,18 +36,17 @@ import {
 } from "./platform.mjs";
 
 // CLI runner
-import { run as runCLI } from "./cli.mjs";
+// import { run as runCLI } from "./cli.mjs";
 
 // Re-export specific named exports
-export { dev, start, build };
 export { discoverRoutes, matchDynamic, isDynamicRoute, fileToRoute };
-export { renderPageModule };
-export { buildClientBundles, routeToClientPath };
-export { buildCss, watchCss, cssHref };
-export { loadModule };
+// export { renderPageModule };
+// export { buildClientBundles, routeToClientPath };
+// export { buildCss, watchCss, cssHref };
+// export { loadModule };
 export { Platform };
 export { isWeb, isDesktop, isMobile, isAndroid, isIOS, platform };
-export { runCLI };
+// export { runCLI };
 
 // Components
 export { default as Image } from "./components/image.jsx";
@@ -87,18 +87,13 @@ export { default as PixelRatio } from "./apis/pixel-ratio.mjs";
 export { default as Linking } from "./apis/linking.mjs";
 
 // Re-export all modules for convenience
-export * as Auth from "./auth/index.mjs";
-export * as Database from "./database/index.mjs";
-export * as Testing from "./testing/index.mjs";
-export * as Deployment from "./deployment/index.mjs";
+// export * as Auth from "./auth/index.mjs";
+// export * as Database from "./database/index.mjs";
+// export * as Testing from "./testing/index.mjs";
+// export * as Deployment from "./deployment/index.mjs";
 
 // Default export with all utilities
 export default {
-  // Core functions
-  dev,
-  start,
-  build,
-
   // Routing
   discoverRoutes,
   matchDynamic,
@@ -106,19 +101,10 @@ export default {
   fileToRoute,
 
   // SSR
-  renderPageModule,
-
-  // Build
-  buildClientBundles,
-  routeToClientPath,
-
-  // CSS
-  buildCss,
-  watchCss,
-  cssHref,
+  // renderPageModule,
 
   // Module loading
-  loadModule,
+  // loadModule,
 
   // Platform
   isWeb,
@@ -127,7 +113,4 @@ export default {
   isAndroid,
   isIOS,
   platform,
-
-  // CLI
-  runCLI,
 };
