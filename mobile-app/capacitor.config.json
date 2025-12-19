@@ -1,0 +1,9 @@
+{
+  "appId": "com.indjs.taskflow",
+  "appName": "TaskFlow",
+  "webDir": ".indjs/static",
+  "server": {
+    "androidScheme": "https",
+    "hostname": "taskflow.app"
+  }
+}

@@ -1,0 +1,7 @@
+node_modules
+    .indjs
+  dist
+    .env
+  android
+  ios
+    
