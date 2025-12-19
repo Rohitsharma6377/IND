@@ -24530,7 +24530,7 @@ function ApiRoutes() {
             `{ message: \`Hello \${name}\` }`,
             ");"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-4 text-purple-400" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-4 text-purple-400", children: "}" }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-4 text-white", children: [
             "res.status(200).json(",
             `{ message: "Hello World" }`,

@@ -40,26 +40,26 @@ export default function Docs() {
         {/* Sidebar */}
         <div className="w-full md:w-64 flex-shrink-0">
           <div className="sticky top-24">
-            <h3 className="font-bold text-white mb-4 uppercase tracking-wider text-xs">Getting Started</h3>
+            <h3 className="font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wider text-xs">Getting Started</h3>
             <ul className="space-y-3 mb-8">
-              <li><a href="/docs/installation" className="text-indigo-400 font-medium">Installation</a></li>
-              <li><a href="/docs/structure" className="text-zinc-400 hover:text-white transition-colors">Project Structure</a></li>
-              <li><a href="/docs/cli" className="text-zinc-400 hover:text-white transition-colors">CLI Reference</a></li>
+              <li><a href="/docs/installation" className="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">Installation</a></li>
+              <li><a href="/docs/structure" className="text-slate-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-white transition-colors">Project Structure</a></li>
+              <li><a href="/docs/cli" className="text-slate-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-white transition-colors">CLI Reference</a></li>
             </ul>
 
-            <h3 className="font-bold text-white mb-4 uppercase tracking-wider text-xs">Core Concepts</h3>
+            <h3 className="font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wider text-xs">Core Concepts</h3>
             <ul className="space-y-3 mb-8">
-              <li><a href="/docs/routing" className="text-zinc-400 hover:text-white transition-colors">Routing</a></li>
-              <li><a href="/docs/ssr-ssg" className="text-zinc-400 hover:text-white transition-colors">SSR & SSG</a></li>
-              <li><a href="/docs/universal-ui" className="text-zinc-400 hover:text-white transition-colors">Universal UI</a></li>
+              <li><a href="/docs/routing" className="text-slate-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-white transition-colors">Routing</a></li>
+              <li><a href="/docs/ssr-ssg" className="text-slate-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-white transition-colors">SSR & SSG</a></li>
+              <li><a href="/docs/universal-ui" className="text-slate-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-white transition-colors">Universal UI</a></li>
             </ul>
           </div>
         </div>
 
         {/* Content */}
         <div className="flex-1">
-          <h1 className="text-4xl font-extrabold text-white mb-6">Documentation</h1>
-          <p className="text-xl text-zinc-400 mb-12 leading-relaxed max-w-3xl">
+          <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-6">Documentation</h1>
+          <p className="text-xl text-slate-600 dark:text-zinc-400 mb-12 leading-relaxed max-w-3xl">
             Welcome to the INDJS documentation. Here you'll find everything you need to build
             production-ready universal applications.
           </p>
@@ -69,11 +69,11 @@ export default function Docs() {
               <a
                 href={doc.link}
                 key={i}
-                className="block p-6 rounded-xl bg-white/5 border border-white/5 hover:border-indigo-500/50 hover:bg-white/10 transition-all group"
+                className="block p-6 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5 hover:border-indigo-500/50 hover:bg-slate-50 dark:hover:bg-white/10 transition-all group shadow-sm dark:shadow-none"
               >
-                <div className="text-xs font-bold text-indigo-400 mb-2 uppercase tracking-wide">{doc.category}</div>
-                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-indigo-300 transition-colors">{doc.title}</h3>
-                <p className="text-zinc-400 text-sm leading-relaxed">{doc.desc}</p>
+                <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400 mb-2 uppercase tracking-wide">{doc.category}</div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">{doc.title}</h3>
+                <p className="text-slate-600 dark:text-zinc-400 text-sm leading-relaxed">{doc.desc}</p>
               </a>
             ))}
           </div>
