@@ -24485,86 +24485,120 @@ var require_jsx_runtime = __commonJS({
   }
 });
 
-// .indjs/client/entry_docs_api-routes.js
+// .indjs/client/entry_docs_universal-ui.js
 var import_react2 = __toESM(require_react(), 1);
 var import_client = __toESM(require_client(), 1);
 
-// pages/docs/api-routes.jsx
+// pages/docs/universal-ui.jsx
 var import_react = __toESM(require_react(), 1);
 var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
-function ApiRoutes() {
+function UniversalUI() {
   return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "max-w-4xl mx-auto px-6 py-24 text-zinc-300", children: [
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mb-12", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-4xl font-bold text-white mb-4", children: "API Routes" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-xl text-zinc-400", children: "Serverless functions for your backend logic." })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-4xl font-bold text-white mb-4", children: "Universal UI" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-xl text-zinc-400", children: "Components that render natively on every platform." })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "prose prose-invert max-w-none", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { className: "mb-12", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "Creating an API" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "Philosophy" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "mb-4", children: 'To achieve true "Write Once, Run Everywhere", INDJS provides a set of primitives that abstract the underlying platform differences.' }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { className: "mb-4", children: [
-          "Any file inside ",
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { className: "text-indigo-400", children: "pages/api/*" }),
-          " is treated as an API endpoint, not a UI page. These functions run on the server-side only."
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-black/50 border border-white/10 rounded-xl p-4 font-mono text-sm overflow-x-auto relative", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute top-2 right-2 text-xs text-zinc-500", children: "pages/api/hello.js" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-blue-400", children: [
-            "export default ",
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-purple-400", children: "async function" }),
-            " ",
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-yellow-300", children: "handler" }),
-            "(req, res) ",
-            `{`
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-4 text-purple-400", children: [
-            "if (req.method === 'POST') ",
-            `{`
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-8 text-white", children: [
-            "const ",
-            `{ name }`,
-            " = req.body;"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-8 text-white", children: [
-            "return res.status(200).json(",
-            `{ message: \`Hello \${name}\` }`,
-            ");"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-4 text-purple-400" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-4 text-white", children: [
-            "res.status(200).json(",
-            `{ message: "Hello World" }`,
-            ");"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-white" })
+          "On the Web, ",
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { className: "text-indigo-400", children: "<View />" }),
+          " renders as a ",
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { className: "text-zinc-500", children: "<div>" }),
+          ".",
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+          "On Native (if using RN rendering), it renders as a native ",
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { className: "text-zinc-500", children: "<View>" }),
+          "."
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { className: "mb-12", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "Features" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", { className: "grid grid-cols-1 md:grid-cols-2 gap-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Zero Config" }),
-            "Automatic parsing of JSON bodies and query parameters."
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "Core Components" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "p-4 bg-white/5 rounded-xl border border-white/10", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-lg font-bold text-white mb-2", children: "<Screen>" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-sm", children: "Full-height container that handles safe areas on mobile devices automatically." })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Typescript Support" }),
-            "Full type safety for Request and Response objects."
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "p-4 bg-white/5 rounded-xl border border-white/10", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-lg font-bold text-white mb-2", children: "<Text>" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-sm", children: "Universal text component with consistent typography handling." })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Middlewares" }),
-            "Easily wrap handlers for Auth, CORS, or Logging."
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "p-4 bg-white/5 rounded-xl border border-white/10", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-lg font-bold text-white mb-2", children: "<Stack>" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-sm", children: "Flexbox container for vertical or horizontal layouts with easy gap control." })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Database Ready" }),
-            "Connect to Prisma, Mongoose, or generic SQL drivers directly."
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "p-4 bg-white/5 rounded-xl border border-white/10", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-lg font-bold text-white mb-2", children: "<Image>" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-sm", children: "Optimized image component that handles local assets and remote URLs." })
           ] })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { className: "mb-12", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "Usage" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-black/50 border border-white/10 rounded-xl p-4 font-mono text-sm overflow-x-auto", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-purple-400", children: [
+            "import ",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-white", children: `{ Screen, Stack, Text, Button }` }),
+            " from ",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-green-400", children: "'indjs'" }),
+            ";"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-blue-400", children: [
+            "export default ",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-purple-400", children: "function" }),
+            " ",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-yellow-300", children: "App" }),
+            "() ",
+            `{`
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-4 text-purple-400", children: "return (" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-8 text-white", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: "<Screen>" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-12 text-white", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: "<Stack" }),
+            " ",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-purple-300", children: "spacing" }),
+            "=",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-green-400", children: 4 }),
+            " ",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-purple-300", children: "align" }),
+            "=",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-green-400", children: '"center"' }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: ">" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-16 text-white", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: "<Text" }),
+            " ",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-purple-300", children: "className" }),
+            "=",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-green-400", children: '"text-xl"' }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: ">" }),
+            "Welcome",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: "</Text>" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-16 text-white", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: "<Button" }),
+            " ",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-purple-300", children: "onPress" }),
+            "=",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-white", children: `{handlePress}` }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: ">" }),
+            "First Component",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: "</Button>" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-12 text-white", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: "</Stack>" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-8 text-white", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: "</Screen>" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-4 text-purple-400", children: ");" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-white", children: "}" })
         ] })
       ] })
     ] })
   ] });
 }
 
-// .indjs/client/entry_docs_api-routes.js
+// .indjs/client/entry_docs_universal-ui.js
 var ErrorBoundary = class extends import_react2.default.Component {
   constructor(o) {
     super(o);
@@ -24590,7 +24624,7 @@ var ErrorBoundary = class extends import_react2.default.Component {
 function __ind_boot() {
   const el = document.getElementById("__ind");
   const props = window.__IND_PROPS__ || {};
-  let node = import_react2.default.createElement(ApiRoutes, props);
+  let node = import_react2.default.createElement(UniversalUI, props);
   node = import_react2.default.createElement(ErrorBoundary, null, node);
   if (el) {
     try {
@@ -24665,4 +24699,4 @@ react/cjs/react-jsx-runtime.development.js:
    * LICENSE file in the root directory of this source tree.
    *)
 */
-//# sourceMappingURL=docs_api-routes.js.map
+//# sourceMappingURL=docs_universal-ui.js.map

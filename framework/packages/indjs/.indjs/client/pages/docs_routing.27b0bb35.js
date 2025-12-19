@@ -24485,86 +24485,104 @@ var require_jsx_runtime = __commonJS({
   }
 });
 
-// .indjs/client/entry_docs_api-routes.js
+// .indjs/client/entry_docs_routing.js
 var import_react2 = __toESM(require_react(), 1);
 var import_client = __toESM(require_client(), 1);
 
-// pages/docs/api-routes.jsx
+// pages/docs/routing.jsx
 var import_react = __toESM(require_react(), 1);
 var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
-function ApiRoutes() {
+function Routing() {
   return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "max-w-4xl mx-auto px-6 py-24 text-zinc-300", children: [
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mb-12", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-4xl font-bold text-white mb-4", children: "API Routes" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-xl text-zinc-400", children: "Serverless functions for your backend logic." })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-4xl font-bold text-white mb-4", children: "Routing" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-xl text-zinc-400", children: "File-system based routing for universal apps." })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "prose prose-invert max-w-none", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { className: "mb-12", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "Creating an API" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "How it works" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { className: "mb-4", children: [
-          "Any file inside ",
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { className: "text-indigo-400", children: "pages/api/*" }),
-          " is treated as an API endpoint, not a UI page. These functions run on the server-side only."
+          "INDJS uses the ",
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { className: "text-indigo-400", children: "pages/" }),
+          " directory to define routes. The file structure maps directly to URL paths."
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-black/50 border border-white/10 rounded-xl p-4 font-mono text-sm overflow-x-auto relative", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute top-2 right-2 text-xs text-zinc-500", children: "pages/api/hello.js" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-blue-400", children: [
-            "export default ",
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-purple-400", children: "async function" }),
-            " ",
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-yellow-300", children: "handler" }),
-            "(req, res) ",
-            `{`
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-4 text-purple-400", children: [
-            "if (req.method === 'POST') ",
-            `{`
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-8 text-white", children: [
-            "const ",
-            `{ name }`,
-            " = req.body;"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-8 text-white", children: [
-            "return res.status(200).json(",
-            `{ message: \`Hello \${name}\` }`,
-            ");"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-4 text-purple-400" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-4 text-white", children: [
-            "res.status(200).json(",
-            `{ message: "Hello World" }`,
-            ");"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-white" })
-        ] })
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "bg-white/5 border border-white/10 rounded-xl overflow-hidden mb-8", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", { className: "w-full text-left text-sm", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { className: "bg-white/5 text-white font-bold", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { className: "p-4", children: "File Path" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { className: "p-4", children: "URL Path" })
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tbody", { className: "divide-y divide-white/5", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "p-4 font-mono text-indigo-300", children: "pages/index.jsx" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "p-4 text-white", children: "/" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "p-4 font-mono text-indigo-300", children: "pages/about.jsx" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "p-4 text-white", children: "/about" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "p-4 font-mono text-indigo-300", children: "pages/blog/first.jsx" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "p-4 text-white", children: "/blog/first" })
+            ] })
+          ] })
+        ] }) })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { className: "mb-12", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "Features" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", { className: "grid grid-cols-1 md:grid-cols-2 gap-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Zero Config" }),
-            "Automatic parsing of JSON bodies and query parameters."
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Typescript Support" }),
-            "Full type safety for Request and Response objects."
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Middlewares" }),
-            "Easily wrap handlers for Auth, CORS, or Logging."
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Database Ready" }),
-            "Connect to Prisma, Mongoose, or generic SQL drivers directly."
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "Dynamic Routes" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "mb-4", children: "Use square brackets to create dynamic route segments." }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "bg-white/5 border border-white/10 rounded-xl overflow-hidden mb-6", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", { className: "w-full text-left text-sm", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { className: "bg-white/5 text-white font-bold", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { className: "p-4", children: "File Path" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { className: "p-4", children: "URL Path" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { className: "p-4", children: "Params" })
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tbody", { className: "divide-y divide-white/5", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "p-4 font-mono text-indigo-300", children: "pages/blog/[slug].jsx" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "p-4 text-white", children: "/blog/hello-world" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "p-4 font-mono", children: `{ slug: "hello-world" }` })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "p-4 font-mono text-indigo-300", children: "pages/shop/[cat]/[id].jsx" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "p-4 text-white", children: "/shop/shoes/123" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "p-4 font-mono", children: `{ cat: "shoes", id: "123" }` })
+            ] })
           ] })
+        ] }) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { className: "mb-12", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "Layouts" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { className: "mb-4", children: [
+          "Create a ",
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { className: "text-indigo-400", children: "_layout.jsx" }),
+          " file to wrap all pages in that directory. This is perfect for persistent navigation, headers, and footers."
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-black/50 border border-white/10 rounded-xl p-4 font-mono text-sm overflow-x-auto", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-purple-400", children: [
+            "export default ",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: "function" }),
+            " ",
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-yellow-300", children: "Layout" }),
+            "(",
+            `{ children }`,
+            ") ",
+            `{`
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-4 text-purple-400", children: "return (" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-8 text-white", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: "<div>" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-12 text-white", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: "<Navbar />" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-12 text-white", children: `{children}` }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-12 text-white", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: "<Footer />" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-8 text-white", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-blue-400", children: "</div>" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-4 text-purple-400", children: ");" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-white", children: "}" })
         ] })
       ] })
     ] })
   ] });
 }
 
-// .indjs/client/entry_docs_api-routes.js
+// .indjs/client/entry_docs_routing.js
 var ErrorBoundary = class extends import_react2.default.Component {
   constructor(o) {
     super(o);
@@ -24590,7 +24608,7 @@ var ErrorBoundary = class extends import_react2.default.Component {
 function __ind_boot() {
   const el = document.getElementById("__ind");
   const props = window.__IND_PROPS__ || {};
-  let node = import_react2.default.createElement(ApiRoutes, props);
+  let node = import_react2.default.createElement(Routing, props);
   node = import_react2.default.createElement(ErrorBoundary, null, node);
   if (el) {
     try {
@@ -24665,4 +24683,4 @@ react/cjs/react-jsx-runtime.development.js:
    * LICENSE file in the root directory of this source tree.
    *)
 */
-//# sourceMappingURL=docs_api-routes.js.map
+//# sourceMappingURL=docs_routing.js.map

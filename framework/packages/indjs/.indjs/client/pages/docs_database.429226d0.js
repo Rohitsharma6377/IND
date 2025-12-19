@@ -24485,184 +24485,72 @@ var require_jsx_runtime = __commonJS({
   }
 });
 
-// .indjs/client/entry_docs_api-routes.js
+// .indjs/client/entry_docs_database.js
 var import_react2 = __toESM(require_react(), 1);
 var import_client = __toESM(require_client(), 1);
 
-// pages/docs/api-routes.jsx
+// pages/docs/database.jsx
 var import_react = __toESM(require_react(), 1);
 var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
-function ApiRoutes() {
-  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "max-w-4xl mx-auto px-6 py-24 text-zinc-300", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mb-12", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-4xl font-bold text-white mb-4", children: "API Routes" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-xl text-zinc-400", children: "Serverless functions for your backend logic." })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "prose prose-invert max-w-none", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { className: "mb-12", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "Creating an API" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { className: "mb-4", children: [
-          "Any file inside ",
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { className: "text-indigo-400", children: "pages/api/*" }),
-          " is treated as an API endpoint, not a UI page. These functions run on the server-side only."
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-black/50 border border-white/10 rounded-xl p-4 font-mono text-sm overflow-x-auto relative", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute top-2 right-2 text-xs text-zinc-500", children: "pages/api/hello.js" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-blue-400", children: [
-            "export default ",
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-purple-400", children: "async function" }),
-            " ",
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-yellow-300", children: "handler" }),
-            "(req, res) ",
-            `{`
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-4 text-purple-400", children: [
-            "if (req.method === 'POST') ",
-            `{`
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-8 text-white", children: [
-            "const ",
-            `{ name }`,
-            " = req.body;"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-8 text-white", children: [
-            "return res.status(200).json(",
-            `{ message: \`Hello \${name}\` }`,
-            ");"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-4 text-purple-400" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-4 text-white", children: [
-            "res.status(200).json(",
-            `{ message: "Hello World" }`,
-            ");"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-white" })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { className: "mb-12", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "Features" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", { className: "grid grid-cols-1 md:grid-cols-2 gap-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Zero Config" }),
-            "Automatic parsing of JSON bodies and query parameters."
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Typescript Support" }),
-            "Full type safety for Request and Response objects."
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Middlewares" }),
-            "Easily wrap handlers for Auth, CORS, or Logging."
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Database Ready" }),
-            "Connect to Prisma, Mongoose, or generic SQL drivers directly."
-          ] })
-        ] })
-      ] })
-    ] })
-  ] });
-}
-
-// .indjs/client/entry_docs_api-routes.js
-var ErrorBoundary = class extends import_react2.default.Component {
-  constructor(o) {
-    super(o);
-    this.state = { error: null };
-  }
-  static getDerivedStateFromError(e) {
-    return { error: e };
-  }
-  componentDidCatch(e, info) {
-    try {
-      console.error("[INDJS] Hydration error:", e);
-      window.__IND_LAST_ERROR__ = e;
-    } catch {
-    }
-  }
-  render() {
-    if (this.state.error) {
-      return import_react2.default.createElement("div", { style: { padding: "12px", border: "1px solid #fecaca", background: "#fef2f2", color: "#991b1b", borderRadius: "8px", fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial", margin: "10px" } }, import_react2.default.createElement("strong", null, "Hydration failed"), import_react2.default.createElement("div", { style: { opacity: 0.9, marginTop: "6px" } }, String(this.state.error && this.state.error.message || "Unknown error")));
-    }
-    return this.props.children;
-  }
-};
-function __ind_boot() {
-  const el = document.getElementById("__ind");
-  const props = window.__IND_PROPS__ || {};
-  let node = import_react2.default.createElement(ApiRoutes, props);
-  node = import_react2.default.createElement(ErrorBoundary, null, node);
-  if (el) {
-    try {
-      (0, import_client.hydrateRoot)(el, node);
-    } catch (e) {
-      const r = (0, import_client.createRoot)(el);
-      r.render(node);
-    }
-  }
-}
-try {
-  window.__IND_BOOT__ = __ind_boot;
-} catch {
-}
-__ind_boot();
-/*! Bundled license information:
-
-react/cjs/react.development.js:
-  (**
-   * @license React
-   * react.development.js
-   *
-   * Copyright (c) Facebook, Inc. and its affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
-
-scheduler/cjs/scheduler.development.js:
-  (**
-   * @license React
-   * scheduler.development.js
-   *
-   * Copyright (c) Facebook, Inc. and its affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
-
-react-dom/cjs/react-dom.development.js:
-  (**
-   * @license React
-   * react-dom.development.js
-   *
-   * Copyright (c) Facebook, Inc. and its affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
-  (**
-   * Checks if an event is supported in the current execution environment.
-   *
-   * NOTE: This will not work correctly for non-generic events such as `change`,
-   * `reset`, `load`, `error`, and `select`.
-   *
-   * Borrows from Modernizr.
-   *
-   * @param {string} eventNameSuffix Event name, e.g. "click".
-   * @return {boolean} True if the event is supported.
-   * @internal
-   * @license Modernizr 3.0.0pre (Custom Build) | MIT
-   *)
-
-react/cjs/react-jsx-runtime.development.js:
-  (**
-   * @license React
-   * react-jsx-runtime.development.js
-   *
-   * Copyright (c) Facebook, Inc. and its affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
-*/
-//# sourceMappingURL=docs_api-routes.js.map
+function Database() {
+  const ui = {
+    page: {
+      fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
+      minHeight: "100vh",
+      margin: 0,
+      background: "linear-gradient(180deg, #0ea5e9 0%, #111827 60%)",
+      color: "#0f172a"
+    },
+    wrap: {
+      maxWidth: 980,
+      margin: "0 auto",
+      padding: "48px 20px"
+    },
+    hero: {
+      background: "white",
+      borderRadius: 16,
+      padding: 28,
+      boxShadow: "0 10px 30px rgba(0,0,0,0.12)"
+    },
+    h1: {
+      fontSize: 32,
+      lineHeight: 1.1,
+      margin: 0,
+      color: "#0b1220"
+    },
+    nav: {
+      marginBottom: 20
+    },
+    backLink: {
+      color: "#0ea5e9",
+      textDecoration: "none",
+      fontSize: 14
+    },
+    section: {
+      marginBottom: 32
+    },
+    h2: {
+      fontSize: 24,
+      color: "#0b1220",
+      marginBottom: 16,
+      borderBottom: "2px solid #e2e8f0",
+      paddingBottom: 8
+    },
+    h3: {
+      fontSize: 20,
+      color: "#0b1220",
+      marginBottom: 12,
+      marginTop: 24
+    },
+    p: {
+      fontSize: 16,
+      color: "#334155",
+      lineHeight: 1.6,
+      marginBottom: 16
+    },
+    ul: {
+      fontSize: 16,
+      color: "#334155",
+      lineHeight: 1.6,
+      marginBottom: 16,
+      paddingLeft:

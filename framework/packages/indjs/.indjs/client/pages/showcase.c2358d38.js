@@ -24485,86 +24485,101 @@ var require_jsx_runtime = __commonJS({
   }
 });
 
-// .indjs/client/entry_docs_api-routes.js
+// .indjs/client/entry_showcase.js
 var import_react2 = __toESM(require_react(), 1);
 var import_client = __toESM(require_client(), 1);
 
-// pages/docs/api-routes.jsx
+// pages/showcase.jsx
 var import_react = __toESM(require_react(), 1);
 var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
-function ApiRoutes() {
-  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "max-w-4xl mx-auto px-6 py-24 text-zinc-300", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mb-12", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-4xl font-bold text-white mb-4", children: "API Routes" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-xl text-zinc-400", children: "Serverless functions for your backend logic." })
+function Showcase() {
+  const projects = [
+    {
+      title: "INDJS Documentation",
+      desc: "The very application you are looking at now. Built with INDJS v3.0.",
+      image: "\u{1F4DA}",
+      type: "Documentation",
+      link: "https://indjs.dev"
+    },
+    {
+      title: "E-Commerce Starter",
+      desc: "A full-stack e-commerce template with cart, checkout, and admin panel.",
+      image: "\u{1F6CD}\uFE0F",
+      type: "Web & Mobile",
+      link: "#"
+    },
+    {
+      title: "Crypto Dashboard",
+      desc: "Real-time cryptocurrency tracking app with desktop widgets.",
+      image: "\u{1F4C8}",
+      type: "Desk & Web",
+      link: "#"
+    },
+    {
+      title: "Task Master",
+      desc: "A productivity app synched across your phone and laptop.",
+      image: "\u2705",
+      type: "Universal",
+      link: "#"
+    },
+    {
+      title: "Social Connect",
+      desc: "Social media platform with real-time chat and feed.",
+      image: "\u{1F4AC}",
+      type: "Social",
+      link: "#"
+    },
+    {
+      title: "Travel Guide",
+      desc: "Interactive maps and guides for travelers.",
+      image: "\u{1F30D}",
+      type: "Mobile First",
+      link: "#"
+    }
+  ];
+  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-h-screen py-24 container mx-auto px-6", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-center mb-16 animate-fade-in-up", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white", children: "Built with INDJS" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-xl text-slate-600 dark:text-zinc-400 max-w-2xl mx-auto", children: "Explore the next generation of universal applications." })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "prose prose-invert max-w-none", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { className: "mb-12", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "Creating an API" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { className: "mb-4", children: [
-          "Any file inside ",
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("code", { className: "text-indigo-400", children: "pages/api/*" }),
-          " is treated as an API endpoint, not a UI page. These functions run on the server-side only."
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-black/50 border border-white/10 rounded-xl p-4 font-mono text-sm overflow-x-auto relative", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute top-2 right-2 text-xs text-zinc-500", children: "pages/api/hello.js" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-blue-400", children: [
-            "export default ",
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-purple-400", children: "async function" }),
-            " ",
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-yellow-300", children: "handler" }),
-            "(req, res) ",
-            `{`
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-4 text-purple-400", children: [
-            "if (req.method === 'POST') ",
-            `{`
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-8 text-white", children: [
-            "const ",
-            `{ name }`,
-            " = req.body;"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-8 text-white", children: [
-            "return res.status(200).json(",
-            `{ message: \`Hello \${name}\` }`,
-            ");"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pl-4 text-purple-400" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-4 text-white", children: [
-            "res.status(200).json(",
-            `{ message: "Hello World" }`,
-            ");"
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-white" })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { className: "mb-12", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-2xl font-bold text-white mb-4", children: "Features" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", { className: "grid grid-cols-1 md:grid-cols-2 gap-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Zero Config" }),
-            "Automatic parsing of JSON bodies and query parameters."
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Typescript Support" }),
-            "Full type safety for Request and Response objects."
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Middlewares" }),
-            "Easily wrap handlers for Auth, CORS, or Logging."
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { className: "bg-white/5 p-4 rounded-xl", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { className: "text-white block mb-1", children: "Database Ready" }),
-            "Connect to Prisma, Mongoose, or generic SQL drivers directly."
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8", children: projects.map((project, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+      "div",
+      {
+        className: "bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-indigo-500/50 transition-all duration-300 group flex flex-col animate-fade-in-up",
+        style: { animationDelay: `${i * 100}ms` },
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-48 bg-slate-100 dark:bg-white/5 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500", children: project.image }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "p-6 flex-1 flex flex-col", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex justify-between items-start mb-4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-xl font-bold text-slate-900 dark:text-white", children: project.title }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300", children: project.type })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-slate-600 dark:text-zinc-400 mb-6 text-sm flex-1 leading-relaxed", children: project.desc }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+              "a",
+              {
+                href: project.link,
+                className: "inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-semibold text-sm group-hover:gap-3 transition-all",
+                children: [
+                  "View Project ",
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "\u2192" })
+                ]
+              }
+            )
           ] })
-        ] })
-      ] })
+        ]
+      },
+      i
+    )) }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mt-24 p-8 rounded-3xl bg-indigo-600 dark:bg-indigo-900/20 border border-indigo-500/20 text-center animate-fade-in-up animation-delay-500", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-3xl font-bold text-white mb-4", children: "Have something to share?" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-white/80 mb-8 max-w-xl mx-auto", children: "Built something amazing with INDJS? Submit your project to be featured in our showcase." }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "bg-white text-indigo-600 px-8 py-3 rounded-full font-bold hover:bg-slate-50 transition-colors shadow-lg", children: "Submit Project" })
     ] })
   ] });
 }
 
-// .indjs/client/entry_docs_api-routes.js
+// .indjs/client/entry_showcase.js
 var ErrorBoundary = class extends import_react2.default.Component {
   constructor(o) {
     super(o);
@@ -24590,7 +24605,7 @@ var ErrorBoundary = class extends import_react2.default.Component {
 function __ind_boot() {
   const el = document.getElementById("__ind");
   const props = window.__IND_PROPS__ || {};
-  let node = import_react2.default.createElement(ApiRoutes, props);
+  let node = import_react2.default.createElement(Showcase, props);
   node = import_react2.default.createElement(ErrorBoundary, null, node);
   if (el) {
     try {
@@ -24665,4 +24680,4 @@ react/cjs/react-jsx-runtime.development.js:
    * LICENSE file in the root directory of this source tree.
    *)
 */
-//# sourceMappingURL=docs_api-routes.js.map
+//# sourceMappingURL=showcase.js.map

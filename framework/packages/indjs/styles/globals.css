@@ -79,8 +79,7 @@
 }
 
 body {
-    background-color: #030712;
-    color: white;
+    @apply bg-white text-slate-900 dark:bg-[#030712] dark:text-white transition-colors duration-300;
     overflow-x: hidden;
 }
 
@@ -90,14 +89,13 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: #030712;
+    @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #374151;
-    border-radius: 4px;
+    @apply bg-slate-300 dark:bg-slate-700 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #4b5563;
+    @apply bg-slate-400 dark:bg-slate-600;
 }
