@@ -80,8 +80,8 @@ export async function renderPageModule({ mod, ctx, assets }) {
   const body = enableStreaming ? null : renderToString(content);
   const head = headComponents.length
     ? headComponents
-        .map((H) => renderToString(React.createElement(H, props)))
-        .join("\n")
+      .map((H) => renderToString(React.createElement(H, props)))
+      .join("\n")
     : "";
 
   // Page metadata
@@ -89,7 +89,7 @@ export async function renderPageModule({ mod, ctx, assets }) {
   if (typeof mod.getMetadata === "function") {
     try {
       meta = (await mod.getMetadata(ctx)) || meta;
-    } catch {}
+    } catch { }
   }
   const title = meta.title || props?.title || "INDJS App";
   const description = meta.description || "";
@@ -112,7 +112,7 @@ export async function renderPageModule({ mod, ctx, assets }) {
       description,
       props,
       clientSrc: usingViteDev ? "" : assets?.clientSrc,
-      cssHref: usingViteDev ? "" : cssHref,
+      cssHref: cssHref,
       dev: !!ctx.dev,
       manifest: assets?.manifest,
       devViteScripts,
@@ -127,7 +127,7 @@ export async function renderPageModule({ mod, ctx, assets }) {
       description,
       props,
       clientSrc: usingViteDev ? "" : assets?.clientSrc,
-      cssHref: usingViteDev ? "" : cssHref,
+      cssHref: cssHref,
       dev: !!ctx.dev,
       manifest: assets?.manifest,
       devViteScripts,

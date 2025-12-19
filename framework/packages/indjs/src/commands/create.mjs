@@ -181,7 +181,7 @@ async function createPackageJson(appPath, config) {
 
   // Base Dependencies
   pkg.dependencies = {
-    indjs: "^3.0.1",
+    indjs: "^3.0.0",
     react: "^18.3.1",
     "react-dom": "^18.3.1",
   };
@@ -360,6 +360,7 @@ async function createUI(appPath, config) {
   // Universal Layout
   const layoutContent = `import React from 'react';
 import { SafeAreaView, View, Text } from 'indjs';
+import '../styles/globals.css';
 
 export default function Layout({ children }) {
   return (
@@ -388,36 +389,88 @@ export default function Layout({ children }) {
     layoutContent,
   );
 
-  // Home Page
-  const homeContent = `import React from 'react';
-import { View, Text, Button, Stack, Container } from 'indjs';
+  // Home Page - Different for each template
+  let homeContent;
+
+  if (config.template === "website") {
+    homeContent = `import React from 'react';
+import FeatureCard from '../components/FeatureCard';
+
+export default function Home() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+            Welcome to <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">INDJS</span>
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            The modern React framework for building blazing-fast web applications
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <FeatureCard
+            icon="⚡"
+            title="Lightning Fast"
+            description="Built on esbuild and Vite for instant hot module replacement"
+          />
+          <FeatureCard
+            icon="🎨"
+            title="Beautiful UI"
+            description="Pre-styled with Tailwind CSS for stunning designs"
+          />
+          <FeatureCard
+            icon="🚀"
+            title="Easy Deploy"
+            description="Deploy anywhere with zero configuration"
+          />
+        </div>
+
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">
+            Edit <code className="bg-gray-100 px-2 py-1 rounded">pages/index.jsx</code> to get started
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}`;
+  } else {
+    // Mobile/Desktop template
+    homeContent = `import React from 'react';
 import PlatformInfo from '../components/PlatformInfo';
 
 export default function Home() {
   return (
-    <Container maxWidth="md">
-      <Stack spacing={6} className="py-10">
-        <View className="bg-indigo-600 rounded-2xl p-8 shadow-xl">
-          <Text className="text-3xl font-bold text-white mb-2">Welcome to INDJS</Text>
-          <Text className="text-indigo-100 text-lg">Universal App Framework</Text>
-        </View>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-2xl p-8 shadow-xl mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Welcome to INDJS
+          </h1>
+          <p className="text-xl text-gray-600">
+            ${config.template === "mobile" ? "Mobile" : "Desktop"} App Framework
+          </p>
+        </div>
 
         <PlatformInfo />
 
-        <View className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <View className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-             <Text className="text-lg font-semibold text-gray-900">Get Started</Text>
-             <Text className="text-gray-600 mt-2">Edit pages/index.js to change this screen.</Text>
-          </View>
-          <View className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-             <Text className="text-lg font-semibold text-gray-900">Documentation</Text>
-             <Text className="text-gray-600 mt-2">Check out the docs to learn more.</Text>
-          </View>
-        </View>
-      </Stack>
-    </Container>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Get Started</h3>
+            <p className="text-gray-600">Edit pages/index.jsx to change this screen.</p>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Documentation</h3>
+            <p className="text-gray-600">Check out the docs to learn more.</p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }`;
+  }
 
   await fs.writeFile(path.join(appPath, "pages", `index.${ext}`), homeContent);
   await fs.writeFile(
@@ -429,18 +482,39 @@ export default function Home() {
 async function createComponents(appPath, config) {
   const ext = config.language === "ts" ? "tsx" : "jsx";
 
-  // Button Component
+  // Button Component (for all templates)
   const btn = `import React from 'react';
-import { Button } from 'indjs';
 
-export default function CustomButton({ children, ...props }) {
-  return <Button {...props}>{children}</Button>;
+export default function CustomButton({ children, className = '', ...props }) {
+  return (
+    <button
+      className={\`px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors \${className}\`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
 }`;
   await fs.writeFile(path.join(appPath, "components", `Button.${ext}`), btn);
 
-  // PlatformInfo Component
-  const platformInfo = `import React from 'react';
-import { Card, Text, Stack, View } from 'indjs';
+  // Create different components based on template
+  if (config.template === "website") {
+    // Simple FeatureCard for website
+    const featureCard = `import React from 'react';
+
+export default function FeatureCard({ icon, title, description }) {
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow">
+      <div className="text-4xl mb-4">{icon}</div>
+      <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
+      <p className="text-gray-600">{description}</p>
+    </div>
+  );
+}`;
+    await fs.writeFile(path.join(appPath, "components", `FeatureCard.${ext}`), featureCard);
+  } else {
+    // PlatformInfo Component for mobile/desktop
+    const platformInfo = `import React from 'react';
 
 export default function PlatformInfo() {
   const [platform, setPlatform] = React.useState('Loading...');
@@ -471,19 +545,20 @@ export default function PlatformInfo() {
   };
 
   return (
-    <Card variant="gradient" className="p-4 rounded-xl">
-      <Stack spacing={4}>
-        <Text className="text-xl font-bold text-white">🎯 Platform: {platform}</Text>
-        <View className="bg-white/10 p-3 rounded-lg">
-          <Text className="text-sm font-mono text-white opacity-80">
+    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 rounded-xl shadow-xl">
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold text-white">🎯 Platform: {platform}</h3>
+        <div className="bg-white/10 p-3 rounded-lg">
+          <pre className="text-sm font-mono text-white opacity-80 overflow-auto">
             {JSON.stringify(info, null, 2)}
-          </Text>
-        </View>
-      </Stack>
-    </Card>
+          </pre>
+        </div>
+      </div>
+    </div>
   );
 }`;
-  await fs.writeFile(path.join(appPath, "components", `PlatformInfo.${ext}`), platformInfo);
+    await fs.writeFile(path.join(appPath, "components", `PlatformInfo.${ext}`), platformInfo);
+  }
 }
 
 async function createElectronSetup(appPath) {
@@ -590,15 +665,15 @@ async function createStyles(appPath) {
   await fs.writeFile(
     path.join(appPath, "styles", "globals.css"),
     `@tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@tailwind components;
+@tailwind utilities;
 
 body {
-    font - family: -apple - system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans - serif;
-    margin: 0;
-    padding: 0;
-    -webkit - font - smoothing: antialiased;
-  } `,
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}`,
   );
 }
 
