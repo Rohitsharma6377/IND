@@ -48,10 +48,11 @@
     "templates/**/*",
     "assets/**/*",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "index.d.ts"
   ],
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@babel/core": "^7.28.5",
@@ -103,7 +104,7 @@
   },
   "scripts": {
     "build": "echo 'No build step required'",
-    "dev": "echo 'Run indjs create to start a new project, or use npm test for development'",
+    "dev": "node bin/indjs.js dev",
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",

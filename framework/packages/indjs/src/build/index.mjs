@@ -56,7 +56,14 @@ export async function build({ root, baseUrl, webDir }) {
           );
           const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
           clientSrc = manifest[p.route] || null;
-        } catch {}
+        } catch { }
+
+        // Fetch props if getStaticProps is defined
+        let props = {};
+        if (hasGSP) {
+          const result = await mod.getStaticProps({ params });
+          props = result.props || {};
+        }
 
         const html = await renderPageModule({
           mod,

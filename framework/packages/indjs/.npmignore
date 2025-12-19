@@ -1,0 +1,18 @@
+# NPM Ignored Files
+.indjs/
+node_modules/
+tests/
+test-results/
+.git/
+.github/
+.vscode/
+.env*
+*.log
+coverage/
+playwright.config.mjs
+vitest.config.mjs
+src/**/*.test.js
+src/**/*.spec.js
+examples/
+apps/
+docs/

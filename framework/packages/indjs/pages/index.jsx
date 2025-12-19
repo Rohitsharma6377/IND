@@ -1,129 +1,173 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   return (
-    <main className="min-h-screen bg-slate-900 bg-gradient-to-b from-sky-500 via-sky-500 to-gray-900 text-slate-900 font-sans">
-      <div className="max-w-[980px] mx-auto px-5 py-12">
-        <section className="bg-white rounded-2xl p-7 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
-          <div className="inline-block text-[10px] tracking-widest uppercase text-sky-700 bg-sky-100 px-2.5 py-1.5 rounded-full mb-2.5 font-bold">
-            Full-stack React • SSR • SSG • API • TypeScript
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Background Gradients */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-[-20%] left-[-10%] w-[1000px] h-[1000px] bg-indigo-600/20 blur-[120px] rounded-full mix-blend-screen animate-pulse-slow" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-purple-600/10 blur-[100px] rounded-full mix-blend-screen" />
+      </div>
+
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 container mx-auto px-6 text-center z-10">
+        <div className={`transition-all duration-1000 transform ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium mb-8 hover:bg-indigo-500/20 transition-colors cursor-default">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+            </span>
+            v3.0 Production Ready
           </div>
-          <h1 className="text-4xl xs:text-5xl font-extrabold leading-tight m-0 text-[#0b1220]">
-            Welcome to INDJS
+
+          <h1 className="text-5xl md:text-8xl font-extrabold tracking-tight text-white mb-8 leading-[1.1]">
+            One Framework. <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 animate-gradient-x">
+              Every Platform.
+            </span>
           </h1>
-          <p className="mt-3 text-lg text-slate-600 max-w-2xl">
-            The modern full-stack React framework that combines the best of
-            Next.js simplicity with powerful built-in features. Build, deploy,
-            and scale web applications with zero configuration.
+
+          <p className="text-xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+            Build universal React applications for Web, Desktop (Electron), and Mobile (Native)
+            with a single codebase.
           </p>
-          <nav className="flex flex-wrap gap-3 mt-6">
-            <a href="/learn" className="bg-sky-500 hover:bg-sky-600 text-white px-5 py-2.5 rounded-xl no-underline font-semibold transition-colors">
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <a
+              href="/docs"
+              className="h-14 px-8 rounded-full bg-white text-black font-bold text-lg hover:bg-zinc-200 hover:scale-105 transition-all flex items-center justify-center min-w-[180px] shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+            >
               Get Started
             </a>
-            <a href="/docs" className="bg-slate-100 hover:bg-slate-200 text-[#0b1220] px-5 py-2.5 rounded-xl no-underline font-semibold transition-colors border border-slate-200">
-              Documentation
-            </a>
-            <a href="https://github.com/indjs/indjs" className="bg-slate-100 hover:bg-slate-200 text-[#0b1220] px-5 py-2.5 rounded-xl no-underline font-semibold transition-colors border border-slate-200">
-              GitHub
-            </a>
-          </nav>
-
-          <div className="flex flex-wrap gap-6 mt-8 text-sm text-slate-500 font-medium justify-center border-t border-slate-50 pt-8">
-            <div className="flex items-center gap-1.5">
-              <span className="text-emerald-500 font-bold">✓</span> Zero Configuration
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-emerald-500 font-bold">✓</span> Built-in Authentication
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-emerald-500 font-bold">✓</span> Database Integration
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-emerald-500 font-bold">✓</span> One-Click Deploy
+            <div className="h-14 px-8 rounded-full border border-white/10 bg-white/5 text-zinc-300 font-mono text-sm flex items-center gap-4 hover:bg-white/10 hover:border-white/20 transition-colors cursor-pointer group min-w-[240px] backdrop-blur-sm">
+              <span className="text-indigo-400">$</span>
+              <span>npx indjs create my-app</span>
+              <svg className="w-5 h-5 ml-auto text-zinc-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
-            <article className="bg-slate-50 border border-slate-100 rounded-xl p-5 hover:border-sky-100 hover:bg-sky-50/30 transition-all">
-              <div className="text-[10px] text-sky-600 font-bold tracking-wider uppercase mb-2">
-                🚀 PERFORMANCE
-              </div>
-              <h3 className="text-lg font-bold text-[#0b1220] mb-2">React 18 SSR + SSG</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                Lightning-fast server-side rendering with static generation,
-                streaming, and incremental regeneration.
-              </p>
-            </article>
-            <article className="bg-slate-50 border border-slate-100 rounded-xl p-5 hover:border-sky-100 hover:bg-sky-50/30 transition-all">
-              <div className="text-[10px] text-sky-600 font-bold tracking-wider uppercase mb-2">
-                🛣️ ROUTING
-              </div>
-              <h3 className="text-lg font-bold text-[#0b1220] mb-2">File‑based Routes</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                Intuitive file-based routing with dynamic routes, layouts,
-                middleware, and advanced patterns.
-              </p>
-            </article>
-            <article className="bg-slate-50 border border-slate-100 rounded-xl p-5 hover:border-sky-100 hover:bg-sky-50/30 transition-all">
-              <div className="text-[10px] text-sky-600 font-bold tracking-wider uppercase mb-2">
-                🔌 FULL-STACK
-              </div>
-              <h3 className="text-lg font-bold text-[#0b1220] mb-2">API Routes + Database</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                Built-in serverless API routes with database integration,
-                authentication, and real-time features.
-              </p>
-            </article>
-            <article className="bg-slate-50 border border-slate-100 rounded-xl p-5 hover:border-sky-100 hover:bg-sky-50/30 transition-all">
-              <div className="text-[10px] text-sky-600 font-bold tracking-wider uppercase mb-2">
-                🎨 STYLING
-              </div>
-              <h3 className="text-lg font-bold text-[#0b1220] mb-2">Tailwind CSS Built-in</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                Pre-configured Tailwind CSS with support for CSS Modules, Sass,
-                and custom theming.
-              </p>
-            </article>
+      {/* Code Demo - Scroll Animation */}
+      <section className="py-24 container mx-auto px-6 relative z-10">
+        <div className="glass-panel rounded-2xl p-2 md:p-4 animate-fade-in-up animation-delay-300 shadow-2xl bg-black/40">
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-white/5 rounded-t-xl">
+            <div className="w-3 h-3 rounded-full bg-[#FF5F56]" />
+            <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
+            <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
+            <div className="ml-auto text-xs text-zinc-500 font-mono">pages/index.jsx</div>
           </div>
+          <div className="p-4 md:p-8 font-mono text-sm md:text-base overflow-x-auto bg-[#0d1117] rounded-b-xl">
+            <div className="text-purple-400">import <span className="text-white">React</span> from <span className="text-green-400">'react'</span>;</div>
+            <div className="text-purple-400">import <span className="text-white">{`{ Screen, Text }`}</span> from <span className="text-green-400">'indjs'</span>;</div>
+            <br />
+            <div className="text-blue-400">export default <span className="text-purple-400">function</span> <span className="text-yellow-300">UniversalApp</span>() {`{`}</div>
+            <div className="pl-4 text-zinc-400">// This code runs on Web, Electron, and Android/iOS</div>
+            <div className="pl-4 text-purple-400">return (</div>
+            <div className="pl-8 text-white"><span className="text-blue-400">&lt;Screen&gt;</span></div>
+            <div className="pl-12 text-white"><span className="text-blue-400">&lt;Text</span> <span className="text-purple-300">className</span>=<span className="text-green-400">"text-2xl font-bold"</span><span className="text-blue-400">&gt;</span></div>
+            <div className="pl-16 text-white type-writer-effect">Hello World 🌍</div>
+            <div className="pl-12 text-white"><span className="text-blue-400">&lt;/Text&gt;</span></div>
+            <div className="pl-8 text-white"><span className="text-blue-400">&lt;/Screen&gt;</span></div>
+            <div className="pl-4 text-purple-400">);</div>
+            <div className="text-white"></div>
+          </div>
+        </div>
+      </section>
 
-          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-8 mt-10 text-white text-center shadow-lg">
-            <h2 className="text-3xl font-bold mb-4">
-              Ready to Build the Future?
-            </h2>
-            <p className="text-lg mb-8 text-indigo-100 max-w-2xl mx-auto">
-              Join thousands of developers who are building modern, scalable web
-              applications with INDJS. From startups to enterprise, INDJS powers
-              the next generation of web experiences.
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <a href="/learn" className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-xl no-underline font-bold text-lg backdrop-blur-md transition-all">
-                Start Building Now
-              </a>
-              <a href="/docs" className="bg-transparent hover:bg-white/10 text-white px-6 py-3 rounded-xl no-underline font-bold text-lg border-2 border-white/30 transition-all">
-                View Documentation
-              </a>
+      {/* Grid Features */}
+      <section className="py-24 bg-gradient-to-b from-transparent to-black/50 z-10 relative">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6">Why INDJS?</h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto">Everything you need to ship cross-platform apps at the speed of light.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <FeatureCard
+              delay="0"
+              icon="⚡"
+              title="Universal Engine"
+              desc="A single React runtime that adapts to DOM (Web), Electron Renderer (Desktop), and Capacitor WebView (Mobile)."
+            />
+            <FeatureCard
+              delay="100"
+              icon="📂"
+              title="File-System Routing"
+              desc="Create files in `pages/` and let the framework handle routing, deep linking, and navigation stack."
+            />
+            <FeatureCard
+              delay="200"
+              icon="🎨"
+              title="Tailwind Native"
+              desc="Write utility classes that compile to optimized CSS for all platforms."
+            />
+            <FeatureCard
+              delay="300"
+              icon="🔄"
+              title="Live Reload Everywhere"
+              desc="See changes instantly on your browser, desktop window, and connected Android device."
+            />
+            <FeatureCard
+              delay="400"
+              icon="📦"
+              title="Zero Config"
+              desc="No webpack config. No babelrc. Just install and run."
+            />
+            <FeatureCard
+              delay="500"
+              icon="🔒"
+              title="Enterprise Ready"
+              desc="TypeScript, ESLint, and Testing (Vitest/Playwright) pre-configured."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Terminal */}
+      <section className="py-24 container mx-auto px-6 z-10 relative">
+        <div className="glass-panel p-8 rounded-2xl text-center">
+          <h2 className="text-3xl font-bold mb-8">Deploy Anywhere</h2>
+          <div className="flex flex-wrap justify-center gap-4 font-mono text-sm">
+            <div className="bg-black/50 px-6 py-4 rounded-xl border border-white/10 flex items-center gap-3">
+              <div className="bg-green-500/20 text-green-400 p-2 rounded">npm run build</div>
+              <span className="text-zinc-500">→</span>
+              <span className="text-white">.indjs/static</span>
+            </div>
+            <div className="bg-black/50 px-6 py-4 rounded-xl border border-white/10 flex items-center gap-3">
+              <div className="bg-blue-500/20 text-blue-400 p-2 rounded">npm run desktop:build</div>
+              <span className="text-zinc-500">→</span>
+              <span className="text-white">MyApp.exe</span>
+            </div>
+            <div className="bg-black/50 px-6 py-4 rounded-xl border border-white/10 flex items-center gap-3">
+              <div className="bg-purple-500/20 text-purple-400 p-2 rounded">npm run android:dev</div>
+              <span className="text-zinc-500">→</span>
+              <span className="text-white">APK</span>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <footer className="mt-12 pt-8 border-t border-white/10 flex flex-wrap justify-between items-center gap-6 text-slate-400">
-          <p className="m-0 text-sm">
-            Powered by <strong className="text-white">INDJS</strong> v1.0.0 • Edit{" "}
-            <code className="bg-slate-800 text-sky-400 px-1.5 py-0.5 rounded text-xs font-mono">pages/index.jsx</code>
-          </p>
-          <div className="flex gap-6 text-sm">
-            <a href="/docs" className="hover:text-white transition-colors no-underline">
-              Documentation
-            </a>
-            <a href="https://github.com/indjs/indjs" className="hover:text-white transition-colors no-underline">
-              GitHub
-            </a>
-            <a href="https://twitter.com/indjs" className="hover:text-white transition-colors no-underline">
-              Twitter
-            </a>
-          </div>
-        </footer>
-      </div>
-    </main>
+      {/* Footer CTA */}
+      <section className="py-32 text-center z-10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/20 to-transparent pointer-events-none" />
+        <h2 className="text-4xl md:text-5xl font-bold mb-8 relative z-10">Start your journey</h2>
+        <a href="/docs" className="inline-block px-10 py-4 bg-white text-black font-bold rounded-full hover:scale-105 hover:bg-zinc-200 transition-all shadow-[0_0_40px_rgba(255,255,255,0.2)] relative z-10">
+          Read the Docs
+        </a>
+      </section>
+    </div>
+  );
+}
+
+function FeatureCard({ icon, title, desc, delay }) {
+  return (
+    <div className={`p-8 rounded-2xl glass-panel hover:bg-white/10 transition-all duration-300 group hover:-translate-y-2 animate-fade-in-up cursor-default`} style={{ animationDelay: `${delay}ms` }}>
+      <div className="text-4xl mb-6 bg-white/5 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">{icon}</div>
+      <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
+      <p className="text-zinc-400 leading-relaxed text-sm">{desc}</p>
+    </div>
   );
 }
