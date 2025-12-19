@@ -6,9 +6,17 @@ import inquirer from "inquirer";
 import { fileURLToPath } from "url";
 
 const templates = {
-  universal: {
-    name: "Universal App (Recommended)",
-    description: "Unified Fullstack App for Web, Mobile, and Desktop",
+  website: {
+    name: "Website",
+    description: "Modern web application with beautiful UI",
+  },
+  mobile: {
+    name: "Mobile App",
+    description: "Mobile application with Capacitor",
+  },
+  desktop: {
+    name: "Desktop App",
+    description: "Cross-platform desktop application with Electron",
   },
 };
 
@@ -34,27 +42,44 @@ export async function create({
   const answers = await inquirer.prompt([
     {
       type: "list",
-      name: "type",
-      message: "What template do you want to use?",
+      name: "template",
+      message: "Select a template:",
       choices: [
-        {
-          name: "🌍 Universal App (Web + Desktop + Mobile)",
-          value: "universal",
-        },
+        { name: "🌐 Website - Modern web application", value: "website" },
+        { name: "📱 Mobile App - Mobile application with Capacitor", value: "mobile" },
+        { name: "💻 Desktop App - Electron desktop application", value: "desktop" },
       ],
-      when: false, // Always default to universal if not specified
-      default: "universal",
+      default: "website",
+      when: !template,
     },
     {
       type: "list",
       name: "language",
-      message: "Which language do you want to use?",
+      message: "Language:",
       choices: [
         { name: "JavaScript", value: "js" },
         { name: "TypeScript", value: "ts" },
       ],
       default: "js",
       when: !language,
+    },
+    {
+      type: "confirm",
+      name: "useRedux",
+      message: "State management:",
+      choices: [
+        { name: "Redux Toolkit", value: true },
+        { name: "None", value: false },
+      ],
+      default: true,
+      when: !state,
+    },
+    {
+      type: "confirm",
+      name: "useTailwind",
+      message: "Include Tailwind CSS?",
+      default: true,
+      when: useTailwind === undefined,
     },
     {
       type: "input",
@@ -69,14 +94,16 @@ export async function create({
   // Merge CLI args with answers
   const config = {
     name: name || answers.name,
-    type: answers.type || "universal", // Force universal type
+    template: template || answers.template || "website",
     language: language || answers.language || "js",
+    useRedux: state !== undefined ? state : (answers.useRedux !== undefined ? answers.useRedux : true),
+    useTailwind: useTailwind !== undefined ? useTailwind : (answers.useTailwind !== undefined ? answers.useTailwind : true),
     root: root || process.cwd(),
   };
 
   const appPath = path.resolve(config.root, config.name);
   const spinner = ora(
-    `Creating ${config.type} application: ${config.name}...`,
+    `Creating ${templates[config.template]?.name || config.template} application: ${config.name}...`,
   ).start();
 
   try {
@@ -87,7 +114,7 @@ export async function create({
     await fs.mkdir(appPath, { recursive: true });
 
     // 2. Generate Structure
-    await createDirectoryStructure(appPath, config.type);
+    await createDirectoryStructure(appPath, config.template);
 
     // 3. Generate package.json
     await createPackageJson(appPath, config);
@@ -100,10 +127,10 @@ export async function create({
     await createComponents(appPath, config);
 
     // 6. Platform Specifics
-    if (["desktop", "universal", "todo-app"].includes(config.type)) {
+    if (config.template === "desktop") {
       await createElectronSetup(appPath);
     }
-    if (["mobile", "universal", "todo-app"].includes(config.type)) {
+    if (config.template === "mobile") {
       await createCapacitorSetup(appPath, config);
     }
 
@@ -116,26 +143,21 @@ export async function create({
 
     spinner.succeed(chalk.green(`✅ Project created successfully`));
 
-    console.log(chalk.bold("\nProject Details:"));
-    console.log(
-      `✅ Type: ${config.type.charAt(0).toUpperCase() + config.type.slice(1)}`,
-    );
-    console.log(
-      `✅ Language: ${config.language === "ts" ? "TypeScript" : "JavaScript"}`,
-    );
-    console.log(`✅ Location: ${appPath}`);
+    console.log(chalk.bold("\n✅ Successfully created " + config.name));
+    console.log("");
+    console.log(chalk.bold("Project Details:"));
+    console.log(`  Template: ${templates[config.template]?.name || config.template}`);
+    console.log(`  Language: ${config.language === "ts" ? "TypeScript" : "JavaScript"}`);
+    console.log(`  Redux: ${config.useRedux ? "Yes" : "No"}`);
+    console.log(`  Tailwind CSS: ${config.useTailwind ? "Yes" : "No"}`);
+    console.log(`  Location: ${appPath}`);
 
-    console.log("\nNext steps:");
+    console.log("\n" + chalk.bold("Next steps:"));
     console.log(chalk.cyan(`  cd ${config.name}`));
     console.log(chalk.cyan("  npm install"));
-    if (config.type === "universal") {
-      console.log(chalk.cyan("  npm run dev:mobile  (for App)"));
-      console.log(chalk.cyan("  npm run dev:desktop (for Desktop)"));
-      console.log(chalk.cyan("  npm run dev:web     (for Web)"));
-      console.log(chalk.cyan("  npm run dev         (Default: Web)"));
-    } else {
-      console.log(chalk.cyan("  npm run dev"));
-    }
+    console.log(chalk.cyan("  npm run dev"));
+    console.log("");
+    console.log(chalk.green("Happy coding! 🚀"));
     console.log("");
   } catch (error) {
     spinner.fail(chalk.red("Failed to create application"));
@@ -157,60 +179,90 @@ async function createPackageJson(appPath, config) {
     devDependencies: {},
   };
 
-  // Base Dependencies (Universal)
+  // Base Dependencies
   pkg.dependencies = {
     indjs: "^3.0.1",
-    react: "^18.2.0",
-    "react-dom": "^18.2.0",
-    "electron-serve": "^1.3.0",
-    "@capacitor/core": "^6.0.0",
-    "@capacitor/app": "^6.0.0",
-    "@capacitor/preferences": "^6.0.0",
-    "@capacitor/android": "^6.0.0",
-    "@capacitor/ios": "^6.0.0",
+    react: "^18.3.1",
+    "react-dom": "^18.3.1",
   };
+
+  // Add Redux if selected
+  if (config.useRedux) {
+    pkg.dependencies["@reduxjs/toolkit"] = "^2.3.0";
+    pkg.dependencies["react-redux"] = "^9.1.2";
+  }
+
+  // Desktop-specific dependencies
+  if (config.template === "desktop") {
+    pkg.dependencies["electron-serve"] = "^1.3.0";
+    pkg.main = "electron/main.cjs";
+  }
+
+  // Mobile-specific dependencies
+  if (config.template === "mobile") {
+    pkg.dependencies["@capacitor/core"] = "^6.0.0";
+    pkg.dependencies["@capacitor/app"] = "^6.0.0";
+    pkg.dependencies["@capacitor/android"] = "^6.0.0";
+    pkg.dependencies["@capacitor/ios"] = "^6.0.0";
+  }
 
   pkg.devDependencies = {
     vite: "^5.4.0",
     "@vitejs/plugin-react": "^4.3.0",
-    tailwindcss: "^3.4.1",
-    autoprefixer: "^10.4.17",
-    postcss: "^8.4.35",
-    electron: "^28.0.0",
-    "electron-builder": "^24.9.1",
-    concurrently: "^8.2.2",
-    "wait-on": "^7.2.0",
-    "@capacitor/cli": "^6.0.0",
   };
 
-  pkg.main = "electron/main.cjs";
+  // Add Tailwind if selected
+  if (config.useTailwind) {
+    pkg.devDependencies.tailwindcss = "^3.4.18";
+    pkg.devDependencies.autoprefixer = "^10.4.21";
+    pkg.devDependencies.postcss = "^8.4.47";
+  }
+
+  // Desktop-specific dev dependencies
+  if (config.template === "desktop") {
+    pkg.devDependencies.electron = "^28.0.0";
+    pkg.devDependencies["electron-builder"] = "^24.9.1";
+    pkg.devDependencies.concurrently = "^8.2.2";
+    pkg.devDependencies["wait-on"] = "^7.2.0";
+  }
+
+  // Mobile-specific dev dependencies
+  if (config.template === "mobile") {
+    pkg.devDependencies["@capacitor/cli"] = "^6.0.0";
+  }
 
   if (isTS) {
     Object.assign(pkg.devDependencies, {
-      "@types/react": "^18.2.0",
-      "@types/react-dom": "^18.2.0",
-      typescript: "^5.0.0",
+      "@types/react": "^18.3.1",
+      "@types/react-dom": "^18.3.1",
+      typescript: "^5.3.3",
     });
   }
 
   // Scripts Generation
   pkg.scripts = {
     dev: "indjs dev",
-    "dev:web": "indjs dev",
-    "dev:desktop":
-      'concurrently -k "indjs dev" "wait-on http://localhost:3000 && electron ."',
-    "dev:mobile": "indjs mobile dev",
-    "open:android": "npx cap open android",
-    "open:ios": "npx cap open ios",
-    "setup:mobile": "node scripts/setup-android.cjs",
     build: "indjs build",
-    "build:desktop": "indjs build && electron-builder",
-    "build:mobile": "indjs build && npx cap sync",
-    "build:all":
-      "npm run build && npm run build:desktop && npm run build:mobile",
     start: "indjs start",
     test: "indjs test",
   };
+
+  // Desktop-specific scripts
+  if (config.template === "desktop") {
+    pkg.scripts["dev:desktop"] =
+      'concurrently -k "indjs dev" "wait-on http://localhost:3000 && electron ."';
+    pkg.scripts["build:desktop"] = "indjs build && electron-builder";
+  }
+
+  // Mobile-specific scripts
+  if (config.template === "mobile") {
+    pkg.scripts["android:setup"] = "npx cap add android";
+    pkg.scripts["android:sync"] = "npx cap sync android";
+    pkg.scripts["android:open"] = "npx cap open android";
+    pkg.scripts["ios:setup"] = "npx cap add ios";
+    pkg.scripts["ios:sync"] = "npx cap sync ios";
+    pkg.scripts["ios:open"] = "npx cap open ios";
+  }
 
   await fs.writeFile(
     path.join(appPath, "package.json"),
@@ -218,7 +270,7 @@ async function createPackageJson(appPath, config) {
   );
 }
 
-async function createDirectoryStructure(appPath, type) {
+async function createDirectoryStructure(appPath, template) {
   const dirs = [
     "pages",
     "pages/api",
@@ -229,8 +281,12 @@ async function createDirectoryStructure(appPath, type) {
   ];
 
   // Platform specific
-  dirs.push("electron");
-  dirs.push("scripts");
+  if (template === "desktop") {
+    dirs.push("electron");
+  }
+  if (template === "mobile") {
+    dirs.push("scripts");
+  }
 
   for (const dir of dirs) {
     await fs.mkdir(path.join(appPath, dir), { recursive: true });
