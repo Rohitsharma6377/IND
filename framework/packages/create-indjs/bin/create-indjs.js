@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runCLI } from "indjs";
+import { run as runCLI } from "indjs/cli";
 
 try {
   // Transform argv to call underlying CLI with `create`

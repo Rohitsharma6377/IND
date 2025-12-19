@@ -8,7 +8,7 @@
   "homepage": "https://github.com/Rohitsharma6377/IND#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Rohitsharma6377/IND.git"
+    "url": "git+https://github.com/Rohitsharma6377/IND.git"
   },
   "bugs": {
     "url": "https://github.com/Rohitsharma6377/IND/issues"
@@ -40,7 +40,8 @@
     "./auth": "./src/auth/index.mjs",
     "./database": "./src/database/index.mjs",
     "./testing": "./src/testing/index.mjs",
-    "./deployment": "./src/deployment/index.mjs"
+    "./deployment": "./src/deployment/index.mjs",
+    "./cli": "./src/cli.mjs"
   },
   "files": [
     "src/**/*",
