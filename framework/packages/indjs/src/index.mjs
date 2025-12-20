@@ -12,6 +12,9 @@ import {
   fileToRoute,
 } from "./routing/routes.mjs";
 
+// Router hooks
+import { useRouter, Router } from "./routing/router.mjs";
+
 // SSR utilities
 // import { renderPageModule } from "./ssr.mjs";
 
@@ -40,6 +43,7 @@ import {
 
 // Re-export specific named exports
 export { discoverRoutes, matchDynamic, isDynamicRoute, fileToRoute };
+export { useRouter, Router };
 // export { renderPageModule };
 // export { buildClientBundles, routeToClientPath };
 // export { buildCss, watchCss, cssHref };

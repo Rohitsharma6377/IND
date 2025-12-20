@@ -1,23 +1,26 @@
 import React from 'react';
-import { View, Pressable, Text } from 'indjs';
+import { View, Pressable, Text, useRouter } from 'indjs';
 
-export default function BottomNav({ currentPage = 'tasks', onNavigate }) {
+export default function BottomNav() {
+    const router = useRouter();
+    const currentPath = router.pathname;
+
     const navItems = [
-        { id: 'tasks', label: 'Tasks', icon: '📝', activeIcon: '✅' },
-        { id: 'categories', label: 'Categories', icon: '📁', activeIcon: '📂' },
-        { id: 'statistics', label: 'Stats', icon: '📊', activeIcon: '📈' },
-        { id: 'profile', label: 'Profile', icon: '👤', activeIcon: '👨' }
+        { id: 'tasks', path: '/', label: 'Tasks', icon: '📝', activeIcon: '✅' },
+        { id: 'categories', path: '/categories', label: 'Categories', icon: '📁', activeIcon: '📂' },
+        { id: 'statistics', path: '/statistics', label: 'Stats', icon: '📊', activeIcon: '📈' },
+        { id: 'profile', path: '/profile', label: 'Profile', icon: '👤', activeIcon: '👨' }
     ];
 
     return (
         <View className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
             <View className="flex flex-row items-center justify-around px-2 py-3 pb-safe">
                 {navItems.map((item, index) => {
-                    const isActive = currentPage === item.id;
+                    const isActive = currentPath === item.path;
                     return (
                         <Pressable
                             key={index}
-                            onPress={() => onNavigate(item.id)}
+                            onPress={() => router.push(item.path)}
                             className="flex-1 flex items-center justify-center py-2"
                         >
                             <View className={`flex items-center justify-center transition-all duration-300 ${isActive ? 'transform scale-110' : ''}`}>

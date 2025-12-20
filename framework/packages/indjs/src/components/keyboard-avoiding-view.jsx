@@ -11,16 +11,22 @@ const KeyboardAvoidingView = forwardRef(
       contentContainerStyle,
       keyboardVerticalOffset,
       enabled,
+      className,
       ...rest
     },
     ref,
   ) => {
     const Component = resolveElement("keyboardavoidingview");
 
-    // On web, keyboard avoiding is usually handled by the browser default behavior or is irrelevant
+    // On web, keyboard avoiding is usually handled by the browser default behavior
     if (Component === "div" || Component === "view") {
       return (
-        <div ref={ref} style={StyleSheet.flatten(style)} {...rest}>
+        <div
+          ref={ref}
+          style={StyleSheet.flatten([{ flex: 1 }, style])}
+          className={className || ""}
+          {...rest}
+        >
           {children}
         </div>
       );
@@ -34,6 +40,7 @@ const KeyboardAvoidingView = forwardRef(
         contentContainerStyle={contentContainerStyle}
         keyboardVerticalOffset={keyboardVerticalOffset}
         enabled={enabled}
+        className={className || ""}
         {...rest}
       >
         {children}

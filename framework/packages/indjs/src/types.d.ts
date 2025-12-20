@@ -33,7 +33,7 @@ export interface PageProps {
 }
 
 // Server-side Props
-export interface GetServerSidePropsContext extends INDJSContext {}
+export interface GetServerSidePropsContext extends INDJSContext { }
 
 export interface GetServerSidePropsResult<P = any> {
   props: P;
@@ -336,12 +336,16 @@ export const Router: { useRouter: typeof useRouter };
 // View Component
 export interface ViewProps extends React.HTMLAttributes<HTMLDivElement> {
   as?: React.ElementType;
+  className?: string;
+  style?: React.CSSProperties;
 }
 export declare const View: React.ComponentType<ViewProps>;
 
 // Text Component
 export interface TextProps extends React.HTMLAttributes<HTMLSpanElement> {
   as?: React.ElementType;
+  className?: string;
+  style?: React.CSSProperties;
 }
 export declare const Text: React.ComponentType<TextProps>;
 
@@ -351,6 +355,7 @@ export interface ScrollViewProps extends ViewProps {
   horizontal?: boolean;
   showsHorizontalScrollIndicator?: boolean;
   showsVerticalScrollIndicator?: boolean;
+  className?: string;
 }
 export declare const ScrollView: React.ComponentType<ScrollViewProps>;
 
@@ -366,6 +371,7 @@ export interface TextInputProps extends Omit<
   multiline?: boolean;
   numberOfLines?: number;
   editable?: boolean;
+  className?: string;
 }
 export declare const TextInput: React.ComponentType<TextInputProps>;
 
@@ -428,11 +434,11 @@ export interface PressableProps extends Omit<ViewProps, "style" | "children"> {
   onPressOut?: (e: any) => void;
   disabled?: boolean;
   style?:
-    | React.CSSProperties
-    | ((state: PressableStateCallbackType) => React.CSSProperties);
+  | React.CSSProperties
+  | ((state: PressableStateCallbackType) => React.CSSProperties);
   children?:
-    | React.ReactNode
-    | ((state: PressableStateCallbackType) => React.ReactNode);
+  | React.ReactNode
+  | ((state: PressableStateCallbackType) => React.ReactNode);
 }
 export declare const Pressable: React.ComponentType<PressableProps>;
 
@@ -453,7 +459,7 @@ export interface ModalProps extends ViewProps {
 export declare const Modal: React.ComponentType<ModalProps>;
 
 // SafeAreaView
-export interface SafeAreaViewProps extends ViewProps {}
+export interface SafeAreaViewProps extends ViewProps { }
 export declare const SafeAreaView: React.ComponentType<SafeAreaViewProps>;
 
 // StatusBar
@@ -466,7 +472,7 @@ export declare const StatusBar: React.ComponentType<StatusBarProps>;
 
 // SectionList
 export interface SectionListProps<T> extends ScrollViewProps {
-  sections: Array<{ data: T[]; key?: string; [key: string]: any }>;
+  sections: Array<{ data: T[]; key?: string;[key: string]: any }>;
   renderItem: (info: {
     item: T;
     index: number;

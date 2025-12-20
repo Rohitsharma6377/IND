@@ -2,6 +2,24 @@
 
 All notable changes to the INDJS framework will be documented in this file.
 
+## [3.1.1] - 2025-12-20
+
+### Fixed
+- **useRouter Export**: Added missing `useRouter` and `Router` exports to main entry point.
+
+## [3.1.0] - 2025-12-20
+
+### Added
+- **Universal SPA Routing**: New `buildUniversalBundle` logic for high-performance Mobile/Capacitor apps.
+- **Tailwind Interop**: Added `className` support to all core UI components (`View`, `Text`, `Pressable`, etc.).
+- **Native-like Web Primitives**: Improved `ActivityIndicator` (animated spinner) and `SafeAreaView` (safe-area-inset support).
+- **CLI Auto-Detection**: `indjs build` now automatically finds `webDir` from `capacitor.config.json`.
+
+### Fixed
+- **Type Definitions**: Added missing `className` and `style` props to TypeScript interfaces.
+- **TextInput Stability**: Fixed missing `StyleSheet` import in `TextInput`.
+- **Navigation Persistence**: Improved `_layout.jsx` detection in universal bundles.
+
 ## [3.0.1] - 2025-12-19
 
 ### Added

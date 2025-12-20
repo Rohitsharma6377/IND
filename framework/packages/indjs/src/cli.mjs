@@ -127,7 +127,7 @@ async function tryOllama(prompt) {
           try {
             const j = JSON.parse(data);
             if (j && typeof j.response === "string") return resolve(j.response);
-          } catch {}
+          } catch { }
           return resolve(null);
         });
       });
@@ -135,7 +135,7 @@ async function tryOllama(prompt) {
       req.on("timeout", () => {
         try {
           req.destroy();
-        } catch {}
+        } catch { }
         resolve(null);
       });
       req.write(payload);
@@ -183,8 +183,16 @@ export async function run() {
         return start({ root, port });
 
       case "build":
+        let effectiveWebDir = webDir;
+        if (!effectiveWebDir) {
+          try {
+            const capPath = path.join(root, "capacitor.config.json");
+            const capData = JSON.parse(await fs.readFile(capPath, 'utf8'));
+            effectiveWebDir = capData.webDir;
+          } catch { }
+        }
         console.log(chalk.yellow("🔨 Building application..."));
-        return build({ root, baseUrl, webDir });
+        return build({ root, baseUrl, webDir: effectiveWebDir });
 
       case "create":
         const appName = args._[1];
@@ -309,7 +317,7 @@ export async function run() {
               );
               try {
                 await fs.mkdir(androidAssets, { recursive: true });
-              } catch {}
+              } catch { }
 
               // 3. Sync config to native
               console.log(
@@ -373,7 +381,7 @@ export async function run() {
             process.exit();
           });
 
-          return new Promise(() => {}); // Keep alive forever until Ctrl+C
+          return new Promise(() => { }); // Keep alive forever until Ctrl+C
         }
 
         const scriptName = scriptMap[sub] || `mobile:${sub}`;
@@ -456,7 +464,7 @@ export async function run() {
           console.log(chalk.blue("🤖 AI refactor suggestions:"));
           console.log(
             ai ||
-              "- Local AI unavailable. Suggestions: Enable TS strict; extract services; enable streaming; add tests; add metrics.",
+            "- Local AI unavailable. Suggestions: Enable TS strict; extract services; enable streaming; add tests; add metrics.",
           );
           return;
         }

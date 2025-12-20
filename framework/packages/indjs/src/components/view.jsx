@@ -8,7 +8,12 @@ const View = forwardRef(({ children, style, className, ...rest }, ref) => {
   const flatStyle = StyleSheet.flatten([style]);
 
   return (
-    <Component ref={ref} style={flatStyle} className={className} {...rest}>
+    <Component
+      ref={ref}
+      style={flatStyle}
+      className={className || ""}
+      {...rest}
+    >
       {children}
     </Component>
   );

@@ -45,22 +45,22 @@ export async function buildClientBundles({ root, pages }) {
   const preactAlias =
     cfg?.build?.preact === true
       ? {
-          name: "preact-alias",
-          setup(build) {
-            const map = new Map([
-              ["react", "preact/compat"],
-              ["react-dom", "preact/compat"],
-              ["react/jsx-runtime", "preact/jsx-runtime"],
-            ]);
-            build.onResolve(
-              { filter: /^(react|react-dom|react\/jsx-runtime)$/ },
-              (args) => {
-                const target = map.get(args.path);
-                return target ? { path: target, external: false } : null;
-              },
-            );
-          },
-        }
+        name: "preact-alias",
+        setup(build) {
+          const map = new Map([
+            ["react", "preact/compat"],
+            ["react-dom", "preact/compat"],
+            ["react/jsx-runtime", "preact/jsx-runtime"],
+          ]);
+          build.onResolve(
+            { filter: /^(react|react-dom|react\/jsx-runtime)$/ },
+            (args) => {
+              const target = map.get(args.path);
+              return target ? { path: target, external: false } : null;
+            },
+          );
+        },
+      }
       : null;
 
   const manifest = {};
@@ -77,12 +77,12 @@ export async function buildClientBundles({ root, pages }) {
     try {
       await fs.access(appJsx);
       appPath = appJsx;
-    } catch {}
+    } catch { }
     if (!appPath) {
       try {
         await fs.access(appJs);
         appPath = appJs;
-      } catch {}
+      } catch { }
     }
 
     const code = `import React from 'react';
@@ -135,7 +135,7 @@ __ind_boot();
         const rec = viteManifest[e.name];
         if (rec && rec.file) manifest[e.route] = `/${rec.file}`;
       }
-    } catch {}
+    } catch { }
   } else {
     // esbuild bundling (previous behavior)
     for (const e of entries) {
@@ -184,7 +184,7 @@ __ind_boot();
         const hashed = `pages/${e.name}.${hash}.js`;
         await fs.writeFile(path.join(outDir, hashed), buf);
         manifest[e.route] = `/${hashed}`;
-      } catch {}
+      } catch { }
     }
   }
 
@@ -195,5 +195,86 @@ __ind_boot();
       JSON.stringify(manifest, null, 2),
       "utf8",
     );
-  } catch {}
+  } catch { }
+}
+
+/**
+ * Universal bundle for Native/SPA experience (React Native/Flutter like)
+ * This bundles ALL pages into a single entry point with a client-side router.
+ */
+export async function buildUniversalBundle({ root, pages }) {
+  const outDir = path.join(root, ".indjs", "client");
+  await fs.mkdir(outDir, { recursive: true });
+
+  const entryFile = path.join(outDir, "entry_universal.js");
+
+  // Generate code that imports all pages and sets up a router
+  let imports = "";
+  let routeMap = "const routes = [\n";
+
+  pages.forEach((p, i) => {
+    const varName = `Page_${i}`;
+    imports += `import ${varName} from ${JSON.stringify(p.file)};\n`;
+    routeMap += `  { path: ${JSON.stringify(p.route)}, component: ${varName} },\n`;
+  });
+
+  routeMap += "];";
+
+  // detect root layout
+  const rootLayout = path.join(root, "pages", "_layout.jsx");
+  let hasLayout = false;
+  try { await fs.access(rootLayout); hasLayout = true; } catch { }
+
+  const code = `import React from 'react';
+import { createRoot } from 'react-dom/client';
+${imports}
+${hasLayout ? `import Layout from ${JSON.stringify(rootLayout)};` : ''}
+${routeMap}
+
+window.__IND_SPA__ = true;
+
+function UniversalApp() {
+  const [path, setPath] = React.useState(window.location.pathname);
+  
+  React.useEffect(() => {
+    const handleNav = (e) => setPath(window.location.pathname);
+    window.addEventListener('popstate', handleNav);
+    window.addEventListener('ind:navigate', handleNav);
+    return () => {
+      window.removeEventListener('popstate', handleNav);
+      window.removeEventListener('ind:navigate', handleNav);
+    };
+  }, []);
+
+  const route = routes.find(r => r.path === path) || routes.find(r => r.path === '/');
+  const page = React.createElement(route.component, { path });
+  return ${hasLayout ? 'React.createElement(Layout, { path }, page)' : 'page'};
+}
+
+function __ind_boot(){
+  const el = document.getElementById('__ind');
+  if (el) {
+    const r = createRoot(el);
+    r.render(React.createElement(UniversalApp));
+  }
+}
+window.__IND_BOOT__ = __ind_boot;
+__ind_boot();
+`;
+
+  await fs.writeFile(entryFile, code, "utf8");
+
+  const buildResult = await esbuild.build({
+    entryPoints: { universal: entryFile },
+    bundle: true,
+    format: "esm",
+    minify: true,
+    outfile: path.join(outDir, "universal.js"),
+    platform: "browser",
+    jsx: "automatic",
+    loader: { ".js": "jsx", ".jsx": "jsx", ".mjs": "jsx" },
+    plugins: [], // Basic for now
+  });
+
+  return "/universal.js";
 }

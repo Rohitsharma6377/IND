@@ -1,6 +1,6 @@
 {
   "name": "indjs",
-  "version": "3.0.7",
+  "version": "3.1.1",
   "description": "A modern, fast, and lightweight full-stack React framework with file-based routing, SSR, and built-in optimizations",
   "type": "module",
   "author": "INDJS Team || Rohit sharma",
@@ -49,8 +49,7 @@
     "templates/**/*",
     "assets/**/*",
     "README.md",
-    "LICENSE",
-    "index.d.ts"
+    "LICENSE"
   ],
   "engines": {
     "node": ">=18.0.0"
@@ -69,7 +68,6 @@
     "express": "^4.19.2",
     "express-rate-limit": "^7.1.1",
     "helmet": "^7.1.0",
-    "indjs": "^3.0.6",
     "inquirer": "^9.2.12",
     "ioredis": "^5.4.1",
     "jsonwebtoken": "^9.0.2",

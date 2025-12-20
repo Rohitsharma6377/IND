@@ -78,6 +78,7 @@ export function generateHtmlDoc({
       try {
         var href = ev && ev.detail && ev.detail.href ? ev.detail.href : null;
         if (!href) return;
+        if (window.__IND_SPA__) return; // Let SPA router handle it
         navigateTo(href);
       } catch {}
     });

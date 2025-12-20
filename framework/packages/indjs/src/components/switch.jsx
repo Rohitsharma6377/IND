@@ -4,7 +4,7 @@ import StyleSheet from "../apis/style-sheet.mjs";
 
 const Switch = forwardRef(
   (
-    { value, onValueChange, disabled, trackColor, thumbColor, style, ...rest },
+    { value, onValueChange, disabled, trackColor, thumbColor, style, className, ...rest },
     ref,
   ) => {
     const Component = resolveElement("switch");
@@ -18,6 +18,7 @@ const Switch = forwardRef(
           onChange={(e) => onValueChange && onValueChange(e.target.checked)}
           disabled={disabled}
           style={StyleSheet.flatten([style])}
+          className={className || ""}
           {...rest}
         />
       );
@@ -33,6 +34,7 @@ const Switch = forwardRef(
         trackColor={trackColor}
         thumbColor={thumbColor}
         style={style}
+        className={className || ""}
         {...rest}
       />
     );

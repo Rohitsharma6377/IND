@@ -1,6 +1,6 @@
 import { discoverRoutes, isDynamicRoute } from "../routing/routes.mjs";
-import { buildClientBundles } from "./client.mjs";
-import { buildCss } from "../css.mjs";
+import { buildClientBundles, buildUniversalBundle } from "./client.mjs";
+import { buildCss, cssHref } from "../css.mjs";
 import { renderPageModule } from "../ssr.mjs";
 import { loadModule } from "../load.mjs";
 import path from "path";
@@ -136,9 +136,45 @@ export async function build({ root, baseUrl, webDir }) {
 
   console.log("\n✅ Build completed successfully!");
   console.log(`📁 Output directory: ${staticOut}`);
-  console.log(
-    "🚀 Ready for deployment to Vercel, Netlify, or any static host\n",
-  );
+  console.log("\n🚀 Ready for deployment to Vercel, Netlify, or any static host\n");
+
+  // Mobile/Native SPA support
+  if (webDir) {
+    console.log("\n📱 Generating Universal SPA for Mobile...");
+    const universalSrc = await buildUniversalBundle({ root, pages });
+    const cssPath = await cssHref({ root });
+
+    // Copy universal bundle to static output
+    const clientDir = path.join(root, ".indjs", "client");
+    await fs.copyFile(
+      path.join(clientDir, "universal.js"),
+      path.join(staticOut, "universal.js")
+    );
+    try {
+      await fs.copyFile(
+        path.join(clientDir, "styles.css"),
+        path.join(staticOut, "styles.css")
+      );
+    } catch { }
+
+    // Generate a clean index.html for Capacitor
+    const html = `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="universal.js" defer></script>
+</head>
+<body class="bg-white">
+  <div id="__ind"></div>
+</body>
+</html>`;
+
+    const indexFile = path.join(staticOut, "index.html");
+    await fs.writeFile(indexFile, html, "utf8");
+    console.log("   ✓ Universal index.html generated for Capacitor");
+  }
 
   // Optional: emit to custom webDir (e.g., for Capacitor)
   if (webDir) {

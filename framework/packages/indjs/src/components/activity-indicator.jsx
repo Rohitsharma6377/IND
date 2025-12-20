@@ -3,13 +3,20 @@ import { resolveElement } from "../universal/resolve.js";
 import StyleSheet from "../apis/style-sheet.mjs";
 
 const ActivityIndicator = forwardRef(
-  ({ size = "small", color = "#999", style, ...rest }, ref) => {
+  ({ size = "small", color = "#999", style, className, ...rest }, ref) => {
     const Component = resolveElement("activityindicator");
 
     if (Component === "div" || Component === "view") {
+      const dimension = size === "small" ? 20 : 40;
       const spinnerStyle = {
-        animation: "indjs-spin 1s linear infinite",
+        width: dimension,
+        height: dimension,
+        border: `2px solid ${color}33`,
+        borderTop: `2px solid ${color}`,
+        borderRadius: "50%",
+        animation: "indjs-spin 0.8s linear infinite",
         display: "inline-block",
+        boxSizing: "border-box",
         ...StyleSheet.flatten(style),
       };
 
@@ -24,11 +31,25 @@ const ActivityIndicator = forwardRef(
         document.head.appendChild(styleEl);
       }
 
-      return <div ref={ref} style={spinnerStyle} {...rest} />;
+      return (
+        <div
+          ref={ref}
+          style={spinnerStyle}
+          className={className || ""}
+          {...rest}
+        />
+      );
     }
 
     return (
-      <Component ref={ref} size={size} color={color} style={style} {...rest} />
+      <Component
+        ref={ref}
+        size={size}
+        color={color}
+        style={style}
+        className={className || ""}
+        {...rest}
+      />
     );
   },
 );

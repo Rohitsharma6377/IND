@@ -1,4 +1,5 @@
 import React, { forwardRef } from "react";
+import StyleSheet from "../apis/style-sheet.mjs";
 
 const TextInput = forwardRef(
   (
@@ -43,7 +44,7 @@ const TextInput = forwardRef(
           readOnly={!editable}
           rows={numberOfLines}
           style={{ ...commonStyle, resize: "none" }}
-          className={className}
+          className={className || ""}
           {...rest}
         />
       );
@@ -61,7 +62,7 @@ const TextInput = forwardRef(
         placeholder={placeholder}
         readOnly={!editable}
         style={commonStyle}
-        className={className}
+        className={className || ""}
         {...rest}
       />
     );
