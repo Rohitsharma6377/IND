@@ -1,20 +1,14 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import Page_0 from "C:\\Users\\ASUS\\Desktop\\project\\IND\\mobile-app\\pages\\about.jsx";
-import Page_1 from "C:\\Users\\ASUS\\Desktop\\project\\IND\\mobile-app\\pages\\categories.jsx";
-import Page_2 from "C:\\Users\\ASUS\\Desktop\\project\\IND\\mobile-app\\pages\\index.jsx";
-import Page_3 from "C:\\Users\\ASUS\\Desktop\\project\\IND\\mobile-app\\pages\\profile.jsx";
-import Page_4 from "C:\\Users\\ASUS\\Desktop\\project\\IND\\mobile-app\\pages\\statistics.jsx";
-import Page_5 from "C:\\Users\\ASUS\\Desktop\\project\\IND\\mobile-app\\pages\\_layout.jsx";
+import Page_0 from "C:\\Users\\ASUS\\Desktop\\project\\IND\\mobile-app\\pages\\calendar.jsx";
+import Page_1 from "C:\\Users\\ASUS\\Desktop\\project\\IND\\mobile-app\\pages\\index.jsx";
+import Page_2 from "C:\\Users\\ASUS\\Desktop\\project\\IND\\mobile-app\\pages\\_layout.jsx";
 
 import Layout from "C:\\Users\\ASUS\\Desktop\\project\\IND\\mobile-app\\pages\\_layout.jsx";
 const routes = [
-  { path: "/about", component: Page_0 },
-  { path: "/categories", component: Page_1 },
-  { path: "/", component: Page_2 },
-  { path: "/profile", component: Page_3 },
-  { path: "/statistics", component: Page_4 },
-  { path: "/_layout", component: Page_5 },
+  { path: "/calendar", component: Page_0 },
+  { path: "/", component: Page_1 },
+  { path: "/_layout", component: Page_2 },
 ];
 
 window.__IND_SPA__ = true;

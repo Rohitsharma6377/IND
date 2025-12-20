@@ -1,8 +1,5 @@
 {
-  "/about": "/pages/about.7a9ae8b7.js",
-  "/categories": "/pages/categories.376c9076.js",
-  "/": "/pages/index.ebdd8709.js",
-  "/profile": "/pages/profile.715b9fff.js",
-  "/statistics": "/pages/statistics.5b5c1740.js",
-  "/_layout": "/pages/_layout.09e61cc9.js"
+  "/calendar": "/pages/calendar.46c9d6bd.js",
+  "/": "/pages/index.8e6fe3e4.js",
+  "/_layout": "/pages/_layout.f786e169.js"
 }

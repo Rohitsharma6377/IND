@@ -4,8 +4,8 @@
 
 @layer base {
   body {
-    @apply bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    @apply bg-gray-50;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
       'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
       sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -43,11 +43,11 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gradient-to-b from-violet-400 to-fuchsia-400 rounded-full;
+    @apply bg-blue-400 rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply from-violet-500 to-fuchsia-500;
+    @apply bg-blue-500;
   }
 
   /* Safe area for mobile */
@@ -57,7 +57,7 @@
 
   /* Glass morphism effect */
   .glass {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }

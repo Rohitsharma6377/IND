@@ -1,37 +1,44 @@
 import React from 'react';
-import { View, Pressable, Text, useRouter } from 'indjs';
+import { View, Pressable } from 'indjs';
+import { HiHome, HiCalendar } from 'react-icons/hi';
+import { useRouter } from 'indjs';
 
 export default function BottomNav() {
     const router = useRouter();
     const currentPath = router.pathname;
 
     const navItems = [
-        { id: 'tasks', path: '/', label: 'Tasks', icon: '📝', activeIcon: '✅' },
-        { id: 'categories', path: '/categories', label: 'Categories', icon: '📁', activeIcon: '📂' },
-        { id: 'statistics', path: '/statistics', label: 'Stats', icon: '📊', activeIcon: '📈' },
-        { id: 'profile', path: '/profile', label: 'Profile', icon: '👤', activeIcon: '👨' }
+        {
+            id: 'home',
+            path: '/',
+            icon: HiHome
+        },
+        {
+            id: 'calendar',
+            path: '/calendar',
+            icon: HiCalendar
+        }
     ];
 
     return (
-        <View className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
-            <View className="flex flex-row items-center justify-around px-2 py-3 pb-safe">
+        // Clean white bar, rounded top, fixed at bottom
+        <View className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[35px] shadow-[0_-10px_40px_rgba(0,0,0,0.08)] z-50">
+            <View className="flex flex-row items-center justify-around px-6 py-4 pb-6">
                 {navItems.map((item, index) => {
                     const isActive = currentPath === item.path;
+                    const IconComponent = item.icon;
                     return (
                         <Pressable
                             key={index}
                             onPress={() => router.push(item.path)}
-                            className="flex-1 flex items-center justify-center py-2"
+                            className="flex-1 flex items-center justify-center"
                         >
-                            <View className={`flex items-center justify-center transition-all duration-300 ${isActive ? 'transform scale-110' : ''}`}>
-                                <View className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-1 ${isActive ? 'bg-gradient-to-r from-violet-600 to-fuchsia-600' : 'bg-transparent'}`}>
-                                    <Text className="text-2xl">
-                                        {isActive ? item.activeIcon : item.icon}
-                                    </Text>
-                                </View>
-                                <Text className={`text-xs font-medium ${isActive ? 'text-violet-600' : 'text-gray-600'}`}>
-                                    {item.label}
-                                </Text>
+                            <View className={`flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300 ${isActive ? 'bg-purple-600 shadow-lg shadow-purple-200' : 'bg-transparent'
+                                }`}>
+                                <IconComponent
+                                    className={`w-7 h-7 transition-colors duration-200 ${isActive ? 'text-white' : 'text-gray-400'
+                                        }`}
+                                />
                             </View>
                         </Pressable>
                     );

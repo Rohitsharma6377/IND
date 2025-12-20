@@ -1,7 +1,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { View, Text, SafeAreaView, Pressable } from 'indjs';
-import { store } from '../utils/store';
+import { View, SafeAreaView } from 'indjs';
+import { store } from '../utils/persistedStore';
 import BottomNav from '../components/BottomNav';
 import '../styles/globals.css';
 
@@ -9,29 +9,7 @@ export default function Layout({ children }) {
   return (
     <Provider store={store}>
       <SafeAreaView className="flex-1">
-        <View className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50">
-          {/* Header */}
-          <View className="bg-white shadow-md sticky top-0 z-40 backdrop-blur-lg bg-opacity-90">
-            <View className="width-full max-w-7xl mx-auto px-4 py-4">
-              <View className="flex flex-row items-center justify-between">
-                <View className="flex flex-row items-center gap-3">
-                  <View className="w-10 h-10 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-xl flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                  </View>
-                  <Text className="text-xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
-                    TaskFlow
-                  </Text>
-                </View>
-
-                <Pressable className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-colors duration-300">
-                  <Text className="text-xl">🔔</Text>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-
+        <View className="min-h-screen bg-gray-50">
           {/* Main Content */}
           <View className="pb-24 flex-1">
             {children}
