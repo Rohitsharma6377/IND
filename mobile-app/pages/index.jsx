@@ -28,6 +28,18 @@ export default function Home() {
     setShowModal(false);
   };
 
+  // Safe date helper
+  const formatDate = (dateString) => {
+    try {
+      if (!dateString) return 'Today';
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Today';
+      return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+    } catch (e) {
+      return 'Today';
+    }
+  };
+
   const getPriorityColor = (priority) => {
     if (priority === 'high') return 'from-purple-600 to-blue-600';
     if (priority === 'medium') return 'from-blue-500 to-indigo-500';
@@ -42,10 +54,10 @@ export default function Home() {
         <View className="flex flex-row items-center justify-between mb-8">
           <View>
             <Text className="text-4xl font-extrabold text-gray-900 leading-tight">Hello,</Text>
-            <Text className="text-3xl font-bold text-gray-400 leading-tight">{user.name.split(' ')[0]}!</Text>
+            <Text className="text-3xl font-bold text-gray-400 leading-tight">{user.name ? user.name.split(' ')[0] : 'User'}!</Text>
           </View>
           <View className="w-14 h-14 bg-white rounded-full border-4 border-gray-100 shadow-sm overflow-hidden flex items-center justify-center">
-            <Text className="text-xl font-bold text-purple-600">{user.name[0]}</Text>
+            <Text className="text-xl font-bold text-purple-600">{user.name ? user.name[0] : 'U'}</Text>
           </View>
         </View>
 
@@ -57,8 +69,8 @@ export default function Home() {
                 key={f}
                 onPress={() => setFilter(f)}
                 className={`mr-3 px-6 py-3 rounded-full border transition-all duration-200 ${filter === f
-                    ? 'bg-gray-900 border-gray-900 shadow-md'
-                    : 'bg-white border-gray-100 text-gray-500'
+                  ? 'bg-gray-900 border-gray-900 shadow-md'
+                  : 'bg-white border-gray-100 text-gray-500'
                   }`}
               >
                 <Text className={`text-sm font-semibold whitespace-nowrap capitalize ${filter === f ? 'text-white' : 'text-gray-500'
@@ -81,7 +93,7 @@ export default function Home() {
               filteredTasks.slice(0, 5).map((task, index) => (
                 <View
                   key={task.id}
-                  className={`w-72 h-48 bg-gradient-to-br ${getPriorityColor(task.priority)} rounded-[32px] p-6 shadow-xl shadow-indigo-200 mr-5 flex flex-col justify-between`}
+                  className={`w-72 h-48 bg-gradient-to-br ${getPriorityColor(task?.priority)} rounded-[32px] p-6 shadow-xl shadow-indigo-200 mr-5 flex flex-col justify-between`}
                 >
                   <View className="flex flex-row items-start justify-between">
                     <View className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
@@ -89,22 +101,22 @@ export default function Home() {
                     </View>
                     <View className="bg-black/20 px-3 py-1.5 rounded-full backdrop-blur-md">
                       <Text className="text-white/90 text-[10px] font-bold tracking-wide uppercase">
-                        {task.priority} Priority
+                        {task?.priority || 'Normal'} Priority
                       </Text>
                     </View>
                   </View>
 
                   <View>
                     <Text className="text-white text-2xl font-bold mb-1 leading-tight tracking-tight" numberOfLines={1}>
-                      {task.title}
+                      {task?.title || 'Untitled Task'}
                     </Text>
                     <Text className="text-indigo-100 text-sm leading-relaxed opacity-90" numberOfLines={2}>
-                      {task.description || 'No description provided.'}
+                      {task?.description || 'No description provided.'}
                     </Text>
                   </View>
 
                   <Text className="text-white/80 text-[11px] font-semibold">
-                    {new Date(task.createdAt).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}
+                    {formatDate(task?.createdAt)}
                   </Text>
                 </View>
               ))
@@ -137,9 +149,9 @@ export default function Home() {
                       <HiCalendar className="w-7 h-7 text-white" />
                     </View>
                     <View className="flex-1">
-                      <Text className="text-base font-bold text-gray-900 mb-0.5" numberOfLines={1}>{task.title}</Text>
+                      <Text className="text-base font-bold text-gray-900 mb-0.5" numberOfLines={1}>{task?.title}</Text>
                       <Text className="text-xs text-gray-400 font-medium">
-                        {task.category || 'General'} • {new Date(task.createdAt).toLocaleDateString()}
+                        {task?.category || 'General'} • {formatDate(task?.createdAt)}
                       </Text>
                     </View>
                   </View>
