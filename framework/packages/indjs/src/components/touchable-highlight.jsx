@@ -10,6 +10,7 @@ const TouchableHighlight = forwardRef(
       onPress,
       underlayColor = "black",
       activeOpacity = 0.85,
+      className,
       ...rest
     },
     ref,
@@ -17,13 +18,15 @@ const TouchableHighlight = forwardRef(
     const Component = resolveElement("touchablehighlight");
 
     if (Component === "button" || Component === "div") {
-      const flatStyle = StyleSheet.flatten([{ cursor: "pointer" }, style]);
+      const flatStyle = StyleSheet.flatten([{ cursor: "pointer", background: 'none', border: 'none', padding: 0, textAlign: 'left', font: 'inherit' }, style]);
 
       // Simple web implementation: just opacity, mimicking overlay is harder without state
       return (
         <button
           ref={ref}
+          type="button"
           style={flatStyle}
+          className={className || ""}
           onClick={onPress}
           onMouseDown={(e) => {
             e.currentTarget.style.backgroundColor = underlayColor;
@@ -53,6 +56,7 @@ const TouchableHighlight = forwardRef(
         onPress={onPress}
         underlayColor={underlayColor}
         activeOpacity={activeOpacity}
+        className={className || ""}
         {...rest}
       >
         {children}

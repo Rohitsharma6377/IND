@@ -2,6 +2,16 @@
 
 All notable changes to the INDJS framework will be documented in this file.
 
+## [3.1.2] - 2026-01-23
+
+### Fixed
+- **ImageBackground Component**: Added missing `className` prop support.
+- **Modal Component**: Added missing `className` prop support.
+- **TouchableHighlight Component**: Added missing `className` prop and improved button styling reset.
+- **Image Component**: Added missing `className` prop support.
+- **Optional Dependencies**: Made `sharp` and `ioredis` dynamically imported to prevent crashes when not installed.
+- **Image Optimization**: Added fallback to serve original file when `sharp` is not available.
+
 ## [3.1.1] - 2025-12-20
 
 ### Fixed
