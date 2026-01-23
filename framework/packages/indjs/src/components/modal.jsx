@@ -12,6 +12,7 @@ const Modal = forwardRef(
       animationType,
       onRequestClose,
       style,
+      className,
       ...rest
     },
     ref,
@@ -27,7 +28,7 @@ const Modal = forwardRef(
 
       // Render as portal if possible
       const content = (
-        <div ref={ref} style={modalStyle} {...rest}>
+        <div ref={ref} style={modalStyle} className={className || ""} {...rest}>
           {children}
         </div>
       );

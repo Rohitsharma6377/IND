@@ -4,7 +4,7 @@ import StyleSheet from "../apis/style-sheet.mjs";
 
 const ImageBackground = forwardRef(
   (
-    { children, style, imageStyle, source, src, resizeMode = "cover", ...rest },
+    { children, style, imageStyle, source, src, resizeMode = "cover", className, ...rest },
     ref,
   ) => {
     const Component = resolveElement("imagebackground");
@@ -23,7 +23,7 @@ const ImageBackground = forwardRef(
         style,
       ]);
       return (
-        <div ref={ref} style={flatStyle} {...rest}>
+        <div ref={ref} style={flatStyle} className={className || ""} {...rest}>
           {children}
         </div>
       );
