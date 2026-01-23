@@ -2,7 +2,7 @@ import React, { forwardRef } from "react";
 import { resolveElement } from "../universal/resolve.js";
 import StyleSheet from "../apis/style-sheet.mjs";
 
-const Image = forwardRef(({ style, source, src, ...rest }, ref) => {
+const Image = forwardRef(({ style, source, src, className, ...rest }, ref) => {
   const Component = resolveElement("image");
 
   // React Native uses 'source', Web uses 'src'.
@@ -12,6 +12,7 @@ const Image = forwardRef(({ style, source, src, ...rest }, ref) => {
   const props = {
     ...rest,
     src: imageSource,
+    className: className || "",
     ref,
   };
 

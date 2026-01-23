@@ -6,7 +6,6 @@ import { renderPageModule } from "./ssr.mjs";
 import { routeToClientPath } from "./build/client.mjs";
 import { loadModule } from "./load.mjs";
 import fs from "fs/promises";
-import sharp from "sharp";
 import helmet from "helmet";
 import compression from "compression";
 import cors from "cors";
@@ -17,7 +16,12 @@ import sourceMapSupport from "source-map-support";
 import { loadConfig, getConfig } from "./config.mjs";
 import { loadPlugins, applyHook } from "./plugins.mjs";
 import pino from "pino";
-import IORedis from "ioredis";
+
+// Optional dependencies - loaded dynamically
+let sharp = null;
+let IORedis = null;
+try { sharp = (await import("sharp")).default; } catch {}
+try { IORedis = (await import("ioredis")).default; } catch {}
 
 export async function start({ root, port }) {
   sourceMapSupport.install();
@@ -218,6 +222,14 @@ export async function start({ root, port }) {
       const { src, w, q } = req.query;
       if (!src || typeof src !== "string" || /^(https?:)?\/\//.test(src))
         return res.status(400).send("Invalid src");
+      
+      // Check if sharp is available
+      if (!sharp) {
+        // Fallback: serve original file
+        const filePath = path.join(root, "public", src.replace(/^\//, ""));
+        return res.sendFile(filePath);
+      }
+      
       const width = w ? parseInt(String(w), 10) : undefined;
       const quality = q ? parseInt(String(q), 10) : 80;
       const filePath = path.join(root, "public", src.replace(/^\//, ""));
@@ -272,7 +284,7 @@ export async function start({ root, port }) {
   const tsCache = new LRUCache({ max: 1000, ttl: 0 }); // track render timestamps per path
   const tagMap = new Map(); // tag -> Set(keys)
   let redis = null;
-  if (cfg?.caching?.store === "redis" && cfg?.caching?.redisUrl) {
+  if (IORedis && cfg?.caching?.store === "redis" && cfg?.caching?.redisUrl) {
     try {
       redis = new IORedis(cfg.caching.redisUrl);
     } catch { }
