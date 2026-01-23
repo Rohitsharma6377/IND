@@ -71,15 +71,147 @@ const RocketIcon = ({ className = "w-8 h-8" }) => (
   </svg>
 );
 
+const QuoteIcon = ({ className = "w-8 h-8" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+  </svg>
+);
+
+const ChevronDownIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="6 9 12 15 18 9" />
+  </svg>
+);
+
+const MailIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+    <polyline points="22,6 12,13 2,6" />
+  </svg>
+);
+
+const CodeBracketIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="16 18 22 12 16 6" />
+    <polyline points="8 6 2 12 8 18" />
+  </svg>
+);
+
+const ServerIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
+    <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
+    <line x1="6" y1="6" x2="6.01" y2="6" />
+    <line x1="6" y1="18" x2="6.01" y2="18" />
+  </svg>
+);
+
+const GlobeIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+);
+
+const StarIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+  </svg>
+);
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [openFaq, setOpenFaq] = useState(null);
 
   const copyCommand = () => {
     navigator.clipboard.writeText('npx indjs create my-app');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const testimonials = [
+    {
+      name: "Sarah Chen",
+      role: "Lead Developer at TechCorp",
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
+      content: "INDJS has completely transformed our development workflow. We shipped our product 3x faster than expected. The universal platform support is a game-changer.",
+      rating: 5
+    },
+    {
+      name: "Michael Rodriguez",
+      role: "CTO at StartupXYZ",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+      content: "The best React framework I've ever used. Zero config, amazing DX, and the built-in API routes are incredibly powerful. Our team productivity increased by 200%.",
+      rating: 5
+    },
+    {
+      name: "Emily Watson",
+      role: "Senior Engineer at BigTech",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+      content: "Moving from Next.js to INDJS was seamless. The universal app support meant we could target web, desktop, and mobile from one codebase. Absolutely brilliant!",
+      rating: 5
+    },
+    {
+      name: "David Park",
+      role: "Indie Developer",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
+      content: "As a solo developer, INDJS lets me punch way above my weight. I built and launched my SaaS in just 2 weeks. The documentation is excellent too!",
+      rating: 5
+    }
+  ];
+
+  const faqs = [
+    {
+      question: "What is INDJS and how is it different from Next.js?",
+      answer: "INDJS is a universal React meta-framework that lets you build web, desktop, and mobile apps from a single codebase. Unlike Next.js which focuses primarily on web, INDJS provides native support for Electron (desktop) and Capacitor (mobile) out of the box, while maintaining the same great developer experience."
+    },
+    {
+      question: "Do I need to learn anything new to use INDJS?",
+      answer: "If you know React, you already know 90% of what you need! INDJS uses familiar patterns like file-based routing, API routes, and JSX components. The learning curve is minimal, and our comprehensive documentation will get you up to speed quickly."
+    },
+    {
+      question: "Is INDJS suitable for production applications?",
+      answer: "Absolutely! INDJS is designed for production use with features like automatic code splitting, SSR/SSG support, optimized builds, and robust error handling. Many companies are already using INDJS in production."
+    },
+    {
+      question: "How do I deploy an INDJS application?",
+      answer: "INDJS apps can be deployed anywhere! For web, deploy to Vercel, Netlify, AWS, or any Node.js hosting. For desktop, use our built-in Electron packaging. For mobile, we integrate seamlessly with Capacitor for iOS and Android builds."
+    },
+    {
+      question: "Is INDJS free and open source?",
+      answer: "Yes! INDJS is completely free and open source under the MIT license. You can use it for personal projects, commercial applications, and everything in between. We also welcome contributions from the community."
+    },
+    {
+      question: "What kind of support is available?",
+      answer: "We offer extensive documentation, a Discord community with thousands of developers, GitHub discussions, and regular updates. For enterprise needs, we also offer premium support packages with dedicated assistance."
+    }
+  ];
+
+  const howItWorks = [
+    {
+      step: 1,
+      title: "Create Your Project",
+      description: "Run one command to scaffold a new INDJS project with all the essentials pre-configured.",
+      icon: CodeBracketIcon,
+      code: "npx indjs create my-app"
+    },
+    {
+      step: 2,
+      title: "Build Your Features",
+      description: "Write React components, create API routes, and build your application with hot reload.",
+      icon: ServerIcon,
+      code: "npm run dev"
+    },
+    {
+      step: 3,
+      title: "Deploy Everywhere",
+      description: "Build for web, desktop, or mobile with a single command. Deploy to any platform.",
+      icon: GlobeIcon,
+      code: "npm run build"
+    }
+  ];
 
   const codeExamples = [
     {
