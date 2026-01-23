@@ -98,22 +98,19 @@ export default function Navbar() {
                     {/* Logo */}
                     <Link href="/">
                         <div className="flex items-center cursor-pointer group">
-                            {/* Logo Mark */}
+                            {/* Logo Image */}
                             <div className="relative">
-                                <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl blur-lg opacity-40 group-hover:opacity-70 transition-opacity duration-300"></div>
-                                <div className="relative w-11 h-11 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-indigo-500/40 transition-all duration-300 group-hover:scale-105 overflow-hidden">
-                                    <span className="text-white font-black text-xl tracking-tight relative z-10">I</span>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/20"></div>
-                                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                                    </div>
-                                </div>
+                                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+                                <img 
+                                    src="/logo.svg" 
+                                    alt="INDJS Logo" 
+                                    className="relative w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-lg"
+                                />
                             </div>
                             {/* Logo Text */}
-                            <div className="ml-3 flex flex-col">
+                            <div className="ml-2 flex flex-col">
                                 <span className="text-xl font-black tracking-tight">
-                                    <span className="text-gray-900">IND</span>
-                                    <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">JS</span>
+                                    <span className="bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 bg-clip-text text-transparent">indjs</span>
                                 </span>
                                 <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider -mt-0.5 hidden sm:block">
                                     Framework

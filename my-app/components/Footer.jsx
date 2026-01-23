@@ -14,7 +14,7 @@ export default function Footer() {
         company: [
             { href: '/about', label: 'About' },
             { href: 'https://github.com/Rohitsharma6377/IND', label: 'GitHub', external: true },
-            { href: 'mailto:netcurion@outlook.com', label: 'Contact', external: true },
+            { href: 'mailto:rohitsharmadev1@outlook.com', label: 'Contact', external: true },
         ],
         community: [
             { href: 'https://github.com/Rohitsharma6377/IND/discussions', label: 'Discussions', external: true },
@@ -92,12 +92,14 @@ export default function Footer() {
                     <div className="lg:col-span-2">
                         <Link href="/">
                             <div className="flex items-center mb-4 cursor-pointer group">
-                                <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-xl flex items-center justify-center mr-3 group-hover:scale-110 transition-transform shadow-lg">
-                                    <span className="text-white font-black text-2xl">I</span>
-                                </div>
-                                <div>
+                                <img 
+                                    src="/logo.svg" 
+                                    alt="INDJS Logo" 
+                                    className="w-12 h-12 object-contain group-hover:scale-110 transition-transform"
+                                />
+                                <div className="ml-2">
                                     <span className="text-2xl font-black">INDJS</span>
-                                    <span className="block text-xs text-gray-400">Universal Framework</span>
+                                    <span className="block text-xs text-purple-400">Universal Framework</span>
                                 </div>
                             </div>
                         </Link>

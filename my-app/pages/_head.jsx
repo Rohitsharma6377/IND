@@ -19,19 +19,19 @@ export default function Head({ title, description, image }) {
       <meta charSet="utf-8" />
       
       {/* Favicon */}
-      <link rel="icon" type="image/png" href="/favicon.png" />
-      <link rel="apple-touch-icon" href="/favicon.png" />
+      <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+      <link rel="apple-touch-icon" href="/logo.svg" />
       
       {/* Open Graph / Facebook */}
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://indjs.vercel.app/" />
+      <meta property="og:url" content="https://indjs.rohitsharmadev.me/" />
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={pageDescription} />
       <meta property="og:image" content={pageImage} />
       
       {/* Twitter */}
       <meta property="twitter:card" content="summary_large_image" />
-      <meta property="twitter:url" content="https://indjs.vercel.app/" />
+      <meta property="twitter:url" content="https://indjs.rohitsharmadev.me/" />
       <meta property="twitter:title" content={pageTitle} />
       <meta property="twitter:description" content={pageDescription} />
       <meta property="twitter:image" content={pageImage} />
