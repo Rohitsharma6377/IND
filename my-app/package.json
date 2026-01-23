@@ -1,13 +1,33 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
+  "name": "indjs-website",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
+  "description": "Official INDJS Framework Website - The Universal React Meta-Framework",
+  "author": "Rohit Sharma <netcurion@outlook.com>",
+  "license": "MIT",
+  "homepage": "https://indjs.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rohitsharma6377/IND"
+  },
+  "keywords": [
+    "indjs",
+    "react",
+    "framework",
+    "universal",
+    "ssr",
+    "ssg",
+    "electron",
+    "capacitor"
+  ],
   "scripts": {
     "dev": "indjs dev",
     "build": "indjs build",
     "start": "indjs start",
-    "test": "indjs test"
+    "test": "indjs test",
+    "lint": "eslint .",
+    "preview": "indjs build && indjs start"
   },
   "dependencies": {
     "indjs": "^3.0.0",
@@ -22,5 +42,8 @@
     "tailwindcss": "^3.4.18",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.4.47"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

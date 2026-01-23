@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
-import Page from "/pages/docs.jsx";
+import Page from "/pages/index.jsx";
 import '/styles/globals.css';
 
 function __ind_boot(){

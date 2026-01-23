@@ -1,2 +1,14 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://indjs.vercel.app/sitemap.xml
+
+# Block API routes
+Disallow: /api/
+
+# Allow all crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /

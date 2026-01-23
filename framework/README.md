@@ -1,145 +1,262 @@
-# 🚀 INDJS - The Next Generation React Framework
-
 <div align="center">
 
-**A modern, blazing-fast, and feature-rich full-stack React framework that's better than Next.js**
+<img src="https://raw.githubusercontent.com/Rohitsharma6377/IND/main/docs/assets/logo.svg" alt="INDJS Logo" width="120" height="120" />
 
-[![npm version](https://badge.fury.io/js/indjs.svg)](https://www.npmjs.com/package/indjs)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue)](https://www.typescriptlang.org/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Rohitsharma6377/IND/pulls)
+# 🚀 INDJS
 
-[Documentation](https://netcurion.vercel.app) • [Quick Start](#-quick-start) • [Examples](#-examples) • [CLI Reference](#-cli-commands)
+### **The Ultimate Universal React Meta-Framework**
+
+<h4><em>One Codebase. Every Platform. Zero Compromise.</em></h4>
+
+<br />
+
+[![npm version](https://img.shields.io/npm/v/indjs?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/indjs)
+[![License: MIT](https://img.shields.io/badge/License-MIT-22c55e.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-≥18-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18+-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Downloads](https://img.shields.io/npm/dm/indjs?style=for-the-badge&color=blue)](https://www.npmjs.com/package/indjs)
+
+<br />
+
+[📖 **Docs**](https://netcurion.vercel.app) &nbsp;•&nbsp; [🚀 **Quick Start**](#-quick-start) &nbsp;•&nbsp; [📱 **Universal Apps**](#-universal-deployment) &nbsp;•&nbsp; [🛠️ **CLI**](#-cli-commands) &nbsp;•&nbsp; [💬 **Discord**](https://discord.gg/indjs)
+
+<br />
+
+---
+
+**Build for Web, Desktop & Mobile with a single React codebase**
+
+<br />
+
+| 🌐 **Web** | 💻 **Desktop** | 📱 **Mobile** |
+|:----------:|:--------------:|:-------------:|
+| SSR/SSG/ISR | Electron | Capacitor |
+| Vercel, Netlify | Windows, macOS, Linux | iOS & Android |
+
+<br />
 
 </div>
 
 ---
 
-## 🎯 Why INDJS is Better Than Next.js
+<br />
 
-| Feature | INDJS | Next.js |
-|---------|-------|---------|
-| **Zero Configuration** | ✅ Works out of the box | ⚠️ Requires setup |
-| **Built-in Authentication** | ✅ JWT, OAuth, Sessions | ❌ Requires external libs |
-| **Database Integration** | ✅ MongoDB, PostgreSQL, SQLite, Prisma | ❌ Manual setup |
-| **Testing Suite** | ✅ Vitest + Playwright included | ❌ Manual setup |
-| **Deployment Tools** | ✅ One-click to 10+ platforms | ⚠️ Limited options |
-| **CLI Code Generation** | ✅ Pages, Components, APIs, Tests | ⚠️ Basic |
-| **Real-time Support** | ✅ WebSocket built-in | ❌ Requires external libs |
-| **AI-Powered CLI** | ✅ Ollama integration | ❌ Not available |
-| **Bundle Size** | ✅ Lightweight (~2MB) | ⚠️ Heavy (~10MB+) |
-| **Learning Curve** | ✅ Easy | ⚠️ Moderate |
+## 🌟 Why Choose INDJS?
+
+<table>
+<tr>
+<th width="50%">Feature</th>
+<th width="25%">🚀 INDJS</th>
+<th width="25%">Next.js</th>
+</tr>
+<tr>
+<td><b>⚡ Zero Config Setup</b></td>
+<td align="center">✅ Instant</td>
+<td align="center">⚠️ Manual</td>
+</tr>
+<tr>
+<td><b>📱 Universal Platform (Web + Desktop + Mobile)</b></td>
+<td align="center">✅ Built-in</td>
+<td align="center">❌ Not Available</td>
+</tr>
+<tr>
+<td><b>🔐 Authentication System</b></td>
+<td align="center">✅ JWT, OAuth, Sessions</td>
+<td align="center">❌ External libs</td>
+</tr>
+<tr>
+<td><b>🗄️ Database Integration</b></td>
+<td align="center">✅ Multi-DB + Prisma</td>
+<td align="center">❌ Manual setup</td>
+</tr>
+<tr>
+<td><b>🧪 Testing Framework</b></td>
+<td align="center">✅ Vitest + Playwright</td>
+<td align="center">❌ Manual setup</td>
+</tr>
+<tr>
+<td><b>🌐 WebSocket Support</b></td>
+<td align="center">✅ Native</td>
+<td align="center">❌ External libs</td>
+</tr>
+<tr>
+<td><b>🤖 AI-Powered CLI</b></td>
+<td align="center">✅ Ollama</td>
+<td align="center">❌ None</td>
+</tr>
+<tr>
+<td><b>📦 Bundle Size</b></td>
+<td align="center">✅ ~2MB</td>
+<td align="center">⚠️ ~10MB+</td>
+</tr>
+<tr>
+<td><b>⚡ Build Speed</b></td>
+<td align="center">✅ esbuild</td>
+<td align="center">⚠️ Webpack</td>
+</tr>
+</table>
+
+<br />
+
+---
+
+<br />
+
+## ✨ Feature Highlights
+
+<div align="center">
+
+<table>
+<tr>
+<td align="center" width="25%">
+
+### 🎯 Core
+**File-based Routing**<br/>
+**SSR / SSG / ISR**<br/>
+**React 18 Streaming**<br/>
+**API Routes**<br/>
+**TypeScript First**
+
+</td>
+<td align="center" width="25%">
+
+### 🎨 Styling
+**Tailwind CSS**<br/>
+**CSS Modules**<br/>
+**Sass/SCSS**<br/>
+**Image Optimization**<br/>
+**Dark Mode**
+
+</td>
+<td align="center" width="25%">
+
+### 🔐 Security
+**JWT Auth**<br/>
+**OAuth (Google, GitHub)**<br/>
+**Session Management**<br/>
+**RBAC**<br/>
+**Helmet Headers**
+
+</td>
+<td align="center" width="25%">
+
+### 🗄️ Database
+**PostgreSQL**<br/>
+**MongoDB**<br/>
+**SQLite**<br/>
+**Prisma ORM**<br/>
+**Migrations**
+
+</td>
+</tr>
+<tr>
+<td align="center" width="25%">
+
+### 🧪 Testing
+**Vitest**<br/>
+**Playwright E2E**<br/>
+**React Testing Lib**<br/>
+**Coverage Reports**<br/>
+**Mock Utilities**
+
+</td>
+<td align="center" width="25%">
+
+### 🚀 Deploy
+**Vercel**<br/>
+**Netlify**<br/>
+**Docker**<br/>
+**AWS Lambda**<br/>
+**Static Export**
+
+</td>
+<td align="center" width="25%">
+
+### ⚡ Performance
+**esbuild Bundler**<br/>
+**Code Splitting**<br/>
+**Lazy Loading**<br/>
+**Redis Caching**<br/>
+**Gzip/Brotli**
+
+</td>
+<td align="center" width="25%">
+
+### 🌐 Advanced
+**WebSocket**<br/>
+**GraphQL**<br/>
+**Middleware**<br/>
+**Plugins**<br/>
+**PWA Support**
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<br />
+
+### 📦 30+ Universal Components
+
+```jsx
+import { 
+  View, Text, Button, TextInput, ScrollView, FlatList, Modal,
+  Image, TouchableOpacity, SafeAreaView, ActivityIndicator, Switch,
+  Pressable, KeyboardAvoidingView, TouchableHighlight, StatusBar
+} from 'indjs';
+```
+
+<br />
 
 ---
 
-## ✨ Features That Make INDJS Exceptional
-
-### 🚀 **Core Features**
-- **File-based Routing** - Automatic routing based on file structure (like Next.js, but better)
-- **Server-Side Rendering (SSR)** - Built-in SSR with React 18 and streaming support
-- **Static Site Generation (SSG)** - Pre-render pages at build time with ISR
-- **Hot Module Replacement** - Instant updates with Vite integration
-- **API Routes** - Full-stack development with built-in serverless API support
-- **TypeScript First** - Full TypeScript support with auto-generated types
-
-### 🎨 **Styling & UI**
-- **Tailwind CSS** - Pre-configured with JIT mode
-- **CSS Modules** - Scoped CSS support
-- **Sass/SCSS** - Built-in preprocessor support
-- **Image Optimization** - Automatic image resizing and optimization with Sharp
-
-### 🔒 **Security & Auth**
-- **JWT Authentication** - Built-in token-based auth
-- **OAuth Providers** - Google, GitHub, Facebook, Twitter
-- **Session Management** - Secure session handling
-- **RBAC** - Role-based access control
-- **Security Headers** - Helmet integration for security best practices
-
-### 🗄️ **Database & ORM**
-- **Multiple Databases** - MongoDB, PostgreSQL, MySQL, SQLite
-- **Prisma Integration** - Type-safe database client
-- **Migrations** - Built-in migration system
-- **Seeding** - Database seeding utilities
-- **Query Builder** - Intuitive query API
-
-### 🧪 **Testing & Quality**
-- **Unit Testing** - Vitest with React Testing Library
-- **E2E Testing** - Playwright for end-to-end tests
-- **API Testing** - Built-in API testing utilities
-- **Mock Utilities** - Comprehensive mocking tools
-- **Coverage Reports** - Automatic test coverage
-
-### 🚢 **Deployment & DevOps**
-- **Vercel** - One-click deployment
-- **Netlify** - Automatic deployment
-- **Docker** - Container support with auto-generated Dockerfile
-- **AWS Lambda** - Serverless deployment
-- **Google Cloud** - Cloud Run support
-- **Azure** - Azure Functions support
-- **Static Export** - Export to static HTML
-- **CI/CD** - GitHub Actions templates
-
-### 🛠️ **Developer Experience**
-- **Powerful CLI** - Generate pages, components, APIs, tests
-- **AI-Powered** - Ollama integration for code generation
-- **Hot Reload** - Instant feedback during development
-- **Error Overlay** - Beautiful error messages with stack traces
-- **Source Maps** - Full source map support
-- **Debugging** - VS Code debugging configuration
-
-### ⚡ **Performance**
-- **Fast Builds** - esbuild for lightning-fast builds
-- **Code Splitting** - Automatic code splitting per route
-- **Lazy Loading** - Dynamic imports for components
-- **Caching** - LRU cache for SSR, Redis support
-- **Compression** - Gzip and Brotli compression
-- **CDN Ready** - Optimized for CDN delivery
-
-### 🌐 **Advanced Features**
-- **WebSocket Support** - Real-time communication built-in
-- **GraphQL** - Optional GraphQL server
-- **Middleware** - Express-style middleware
-- **Plugins** - Extensible plugin system
-- **Internationalization** - i18n support
-- **PWA** - Progressive Web App support
-- **Electron** - Desktop app support
-- **Capacitor** - Mobile app support (iOS/Android)
-
----
+<br />
 
 ## 🚀 Quick Start
 
-### Installation
+<table>
+<tr>
+<td width="50%">
 
-Choose your preferred method:
+### Using npx (Recommended)
 
-#### 1️⃣ NPX (Recommended - No Installation Required)
 ```bash
-npx indjs@latest create my-app
+# Create a new project
+npx indjs create my-app
+
+# Navigate and start
 cd my-app
-npm install
 npm run dev
 ```
 
-#### 2️⃣ Global Installation
+</td>
+<td width="50%">
+
+### Using Global Install
+
 ```bash
+# Install INDJS globally
 npm install -g indjs
+
+# Create a new project
 indjs create my-app
 cd my-app
-npm install
 npm run dev
 ```
 
-#### 3️⃣ From Source (Development)
-```bash
-git clone https://github.com/Rohitsharma6377/IND.git
-cd IND/framework
-npm install
-node packages/indjs/bin/indjs.js create my-app
-```
+</td>
+</tr>
+</table>
 
-Your app will be running at **http://localhost:3000** 🎉
+<div align="center">
+
+Your app is running at **http://localhost:3000** 🎉
+
+</div>
+
+<br />
 
 ---
 
@@ -147,544 +264,465 @@ Your app will be running at **http://localhost:3000** 🎉
 
 ```
 my-app/
-├── pages/                  # File-based routing
-│   ├── index.jsx          # → / (Home page)
-│   ├── about.jsx          # → /about
-│   ├── blog/
-│   │   ├── index.jsx      # → /blog
-│   │   └── [slug].jsx     # → /blog/:slug (Dynamic route)
-│   ├── api/               # API routes
-│   │   ├── hello.js       # → /api/hello
-│   │   └── users/
-│   │       ├── index.js   # → /api/users
-│   │       └── [id].js    # → /api/users/:id
-│   ├── _layout.jsx        # Global layout wrapper
-│   └── _head.jsx          # Custom head tags
-├── components/            # React components
-│   ├── Button.jsx
-│   ├── Card.jsx
-│   └── Navbar.jsx
-├── styles/               # Stylesheets
-│   ├── globals.css       # Global styles
-│   └── tailwind.css      # Tailwind configuration
-├── public/               # Static assets
-│   ├── favicon.ico
-│   └── images/
-├── hooks/                # Custom React hooks
-├── utils/                # Utility functions
-├── lib/                  # Libraries and helpers
-├── tests/                # Test files
-├── indjs.config.js       # INDJS configuration
-├── tailwind.config.js    # Tailwind configuration
-├── tsconfig.json         # TypeScript configuration
-└── package.json
+├── 📄 indjs.config.js         # Framework configuration
+├── 📄 tailwind.config.cjs     # Tailwind CSS config
+├── 📄 package.json
+│
+├── 📂 pages/                   # 🔀 File-based routing
+│   ├── 📄 _app.jsx            # App wrapper
+│   ├── 📄 _layout.jsx         # Persistent layout
+│   ├── 📄 index.jsx           # → /
+│   ├── 📄 about.jsx           # → /about
+│   ├── 📂 blog/
+│   │   ├── 📄 index.jsx       # → /blog
+│   │   └── 📄 [slug].jsx      # → /blog/:slug (dynamic)
+│   └── 📂 api/
+│       ├── 📄 hello.js        # → /api/hello
+│       └── 📄 users.js        # → /api/users
+│
+├── 📂 components/              # ♻️ Reusable components
+├── 📂 styles/                  # 🎨 Global styles
+│   └── 📄 globals.css
+└── 📂 public/                  # 📦 Static assets
 ```
+
+<br />
 
 ---
 
 ## 🛠️ CLI Commands
 
-### Project Creation
-```bash
-# Create new project with template selection
-indjs create my-app
+<table>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+<tr>
+<td><code>indjs dev</code></td>
+<td>🔥 Start development server with HMR</td>
+</tr>
+<tr>
+<td><code>indjs build</code></td>
+<td>📦 Build for production</td>
+</tr>
+<tr>
+<td><code>indjs start</code></td>
+<td>🚀 Start production server</td>
+</tr>
+<tr>
+<td><code>indjs create &lt;name&gt;</code></td>
+<td>✨ Create a new project</td>
+</tr>
+<tr>
+<td><code>indjs generate page &lt;name&gt;</code></td>
+<td>📄 Generate a new page</td>
+</tr>
+<tr>
+<td><code>indjs generate component &lt;name&gt;</code></td>
+<td>🧩 Generate a component</td>
+</tr>
+<tr>
+<td><code>indjs generate api &lt;name&gt;</code></td>
+<td>🔌 Generate API route</td>
+</tr>
+<tr>
+<td><code>indjs deploy vercel</code></td>
+<td>☁️ Deploy to Vercel</td>
+</tr>
+<tr>
+<td><code>indjs desktop dev</code></td>
+<td>💻 Run Electron dev mode</td>
+</tr>
+<tr>
+<td><code>indjs mobile dev</code></td>
+<td>📱 Run Capacitor live reload</td>
+</tr>
+<tr>
+<td><code>indjs ai scaffold &lt;type&gt; &lt;name&gt;</code></td>
+<td>🤖 AI-powered code generation</td>
+</tr>
+<tr>
+<td><code>indjs test</code></td>
+<td>🧪 Run tests with Vitest</td>
+</tr>
+</table>
 
-# Available templates:
-# - basic (default)
-# - blog
-# - ecommerce
-# - dashboard
-# - saas
-# - portfolio
-```
-
-### Development
-```bash
-indjs dev                    # Start dev server (default: port 3000)
-indjs dev --port 4000       # Custom port
-indjs dev --host 0.0.0.0    # Expose to network
-```
-
-### Production
-```bash
-indjs build                  # Build for production
-indjs start                  # Start production server
-indjs start --port 8080     # Custom port
-```
-
-### Code Generation
-```bash
-# Generate page
-indjs generate page about
-indjs g page blog/[slug]     # Dynamic route
-
-# Generate component
-indjs generate component Button
-indjs g component Card --quick  # Skip prompts
-
-# Generate API route
-indjs generate api users
-indjs g api products/[id]    # Dynamic API route
-
-# Generate layout
-indjs g layout dashboard
-
-# Generate custom hook
-indjs g hook useAuth
-
-# Generate utility
-indjs g util formatDate
-
-# Generate test
-indjs g test Button
-```
-
-### AI-Powered Generation (Experimental)
-```bash
-# AI scaffold (requires Ollama)
-indjs ai scaffold component LoginForm
-indjs ai scaffold api authentication
-
-# Generate documentation
-indjs ai docs
-
-# Code refactoring suggestions
-indjs ai refactor
-```
-
-### Testing
-```bash
-indjs test                   # Run unit tests
-indjs test --watch          # Watch mode
-indjs test --coverage       # With coverage
-
-# E2E tests
-npm run e2e                 # Run Playwright tests
-```
-
-### Deployment
-```bash
-indjs deploy vercel          # Deploy to Vercel
-indjs deploy netlify         # Deploy to Netlify
-indjs deploy docker          # Generate Docker config
-indjs deploy aws             # Deploy to AWS Lambda
-indjs deploy static          # Export static site
-```
-
-### Desktop & Mobile
-```bash
-indjs desktop dev            # Run as Electron app
-indjs mobile build           # Build for Capacitor
-indjs mobile android         # Open Android Studio
-indjs mobile ios             # Open Xcode
-```
+<br />
 
 ---
 
-## 📖 Core Concepts
+## 📖 Code Examples
 
-### File-based Routing
-
-INDJS uses an intuitive file-based routing system:
+<details>
+<summary><b>📄 Page with Data Fetching (SSR)</b></summary>
 
 ```jsx
-// pages/index.jsx → /
-export default function Home() {
-  return <h1>Welcome to INDJS!</h1>;
+// pages/posts.jsx
+export default function Posts({ posts }) {
+  return (
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">Blog Posts</h1>
+      <div className="grid gap-4">
+        {posts.map(post => (
+          <article key={post.id} className="p-4 border rounded-lg hover:shadow-lg">
+            <h2 className="text-xl font-semibold">{post.title}</h2>
+            <p className="text-gray-600">{post.excerpt}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
 }
 
-// pages/about.jsx → /about
-export default function About() {
-  return <h1>About Us</h1>;
-}
-
-// pages/blog/[slug].jsx → /blog/:slug
-export default function BlogPost({ slug }) {
-  return <h1>Post: {slug}</h1>;
-}
-
+// Server-Side Rendering
 export async function getServerSideProps({ params }) {
+  const posts = await fetch('https://api.example.com/posts').then(r => r.json());
+  return { props: { posts } };
+}
+```
+
+</details>
+
+<details>
+<summary><b>🔄 Static Generation with ISR</b></summary>
+
+```jsx
+// pages/blog/[slug].jsx
+export default function BlogPost({ post }) {
+  return (
+    <article className="prose lg:prose-xl mx-auto">
+      <h1>{post.title}</h1>
+      <div dangerouslySetInnerHTML={{ __html: post.content }} />
+    </article>
+  );
+}
+
+export async function getStaticPaths() {
+  const posts = await fetchAllPosts();
   return {
-    props: { slug: params.slug }
+    paths: posts.map(post => ({ params: { slug: post.slug } })),
+    fallback: 'blocking'
+  };
+}
+
+export async function getStaticProps({ params }) {
+  const post = await fetchPost(params.slug);
+  return {
+    props: { post },
+    revalidate: 60 // Regenerate every 60 seconds
   };
 }
 ```
 
-### API Routes
+</details>
 
-Create serverless API endpoints:
+<details>
+<summary><b>🔌 API Routes</b></summary>
 
 ```javascript
-// pages/api/users.js → /api/users
+// pages/api/users.js
 
-// GET /api/users
-export async function get({ req, res }) {
+export async function GET({ req, res }) {
   const users = await db.users.findMany();
   return { users };
 }
 
-// POST /api/users
-export async function post({ req, res, body }) {
+export async function POST({ req, body }) {
   const user = await db.users.create({ data: body });
-  return { user };
+  return { user, status: 201 };
 }
 
-// PUT /api/users/[id].js → /api/users/:id
-export async function put({ params, body }) {
+export async function PUT({ params, body }) {
   const user = await db.users.update({
     where: { id: params.id },
     data: body
   });
   return { user };
 }
-```
 
-### Server-Side Rendering (SSR)
-
-```jsx
-export default function Page({ data }) {
-  return <div>{data.title}</div>;
-}
-
-export async function getServerSideProps({ req, res, params, query }) {
-  const data = await fetchData();
-  
-  return {
-    props: { data }
-  };
+export async function DELETE({ params }) {
+  await db.users.delete({ where: { id: params.id } });
+  return { success: true };
 }
 ```
 
-### Static Site Generation (SSG)
+</details>
 
-```jsx
-export default function BlogPost({ post }) {
-  return <article>{post.content}</article>;
-}
-
-export async function getStaticPaths() {
-  const posts = await fetchAllPosts();
-  
-  return {
-    paths: posts.map(post => ({ params: { slug: post.slug } })),
-    fallback: false
-  };
-}
-
-export async function getStaticProps({ params }) {
-  const post = await fetchPost(params.slug);
-  
-  return {
-    props: { post },
-    revalidate: 60 // ISR: Regenerate every 60 seconds
-  };
-}
-```
-
-### Authentication
+<details>
+<summary><b>🔐 Authentication</b></summary>
 
 ```javascript
-import { Auth } from 'indjs';
+import { hashPassword, verifyPassword, generateToken, requireAuth } from 'indjs/auth';
 
-// Hash password
-const hashedPassword = await Auth.hashPassword('password123');
+// Register user
+export async function POST({ body }) {
+  const hash = await hashPassword(body.password);
+  const user = await db.users.create({
+    data: { email: body.email, password: hash }
+  });
+  const token = generateToken({ userId: user.id });
+  return { user, token };
+}
 
-// Verify password
-const isValid = await Auth.verifyPassword('password123', hashedPassword);
-
-// Generate JWT token
-const token = Auth.generateToken({ 
-  userId: 1, 
-  email: 'user@example.com' 
-});
-
-// Verify token
-const decoded = Auth.verifyToken(token);
-
-// Protect routes with middleware
-export const middleware = Auth.requireAuth({
-  roles: ['admin'],
-  redirect: '/login'
-});
+// Protected route middleware
+export const middleware = requireAuth({ roles: ['admin'] });
 ```
 
-### Database Integration
+</details>
+
+<details>
+<summary><b>🗄️ Database Integration</b></summary>
 
 ```javascript
-import { Database } from 'indjs';
+import { Database } from 'indjs/database';
 
-// Configure database
-Database.configure({
-  type: 'postgresql',
-  url: process.env.DATABASE_URL
+const db = new Database({ 
+  type: 'postgresql', 
+  url: process.env.DATABASE_URL 
 });
 
-// Connect
-await Database.connect();
+await db.connect();
 
 // Query
-const users = await Database.query('SELECT * FROM users WHERE active = ?', [true]);
+const users = await db.query('users')
+  .where({ active: true })
+  .orderBy('createdAt', 'desc')
+  .limit(10);
 
-// Using models
-class User extends Database.Model {
-  constructor() {
-    super('users');
-  }
-}
-
-const user = await User.create({ 
-  name: 'John Doe', 
+// Insert
+const newUser = await db.insert('users', { 
+  name: 'John Doe',
   email: 'john@example.com' 
 });
-
-const allUsers = await User.findAll();
-const oneUser = await User.findById(1);
 ```
 
----
+</details>
 
-## 🎨 Styling
-
-### Tailwind CSS (Pre-configured)
+<details>
+<summary><b>📱 Universal Component</b></summary>
 
 ```jsx
-export default function Button({ children }) {
+import { 
+  View, Text, Button, TextInput, 
+  ScrollView, SafeAreaView 
+} from 'indjs';
+
+export default function ContactForm() {
+  const [name, setName] = useState('');
+  
   return (
-    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-      {children}
-    </button>
+    <SafeAreaView className="flex-1 bg-white">
+      <ScrollView className="p-6">
+        <Text className="text-2xl font-bold mb-6">Contact Us</Text>
+        
+        <TextInput
+          value={name}
+          onChangeText={setName}
+          placeholder="Your name"
+          className="border border-gray-300 p-3 rounded-lg mb-4"
+        />
+        
+        <Button 
+          title="Submit" 
+          onPress={() => console.log('Submitted:', name)}
+          className="bg-blue-500 py-3 rounded-lg"
+        />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 ```
 
-### CSS Modules
+</details>
 
-```jsx
-// Button.module.css
-.button {
-  background: blue;
-  color: white;
-}
-
-// Button.jsx
-import styles from './Button.module.css';
-
-export default function Button() {
-  return <button className={styles.button}>Click me</button>;
-}
-```
+<br />
 
 ---
 
-## 🧪 Testing
+## 📱 Universal Deployment
 
-### Unit Tests (Vitest)
+<div align="center">
 
-```javascript
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
-import Button from './Button';
+<table>
+<tr>
+<td align="center" width="33%">
 
-describe('Button', () => {
-  it('renders correctly', () => {
-    render(<Button>Click me</Button>);
-    expect(screen.getByText('Click me')).toBeInTheDocument();
-  });
-});
+### 🌐 Web
+
+```bash
+# Build and deploy to Vercel
+indjs build
+indjs deploy vercel
 ```
 
-### E2E Tests (Playwright)
+**Platforms:** Vercel, Netlify, AWS, Docker
 
-```javascript
-import { test, expect } from '@playwright/test';
+</td>
+<td align="center" width="33%">
 
-test('homepage loads correctly', async ({ page }) => {
-  await page.goto('http://localhost:3000');
-  await expect(page.locator('h1')).toContainText('Welcome to INDJS');
-});
+### 💻 Desktop
+
+```bash
+# Development
+indjs desktop dev
+
+# Production build
+indjs desktop build
 ```
+
+**Platforms:** Windows, macOS, Linux
+
+</td>
+<td align="center" width="33%">
+
+### 📱 Mobile
+
+```bash
+# Initialize Capacitor
+npx cap init
+
+# Build and run
+indjs mobile build
+indjs mobile android
+```
+
+**Platforms:** iOS, Android
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<br />
 
 ---
 
 ## ⚙️ Configuration
 
-### indjs.config.js
-
 ```javascript
+// indjs.config.js
 export default {
-  // Experimental features
+  // Server Configuration
+  server: {
+    port: 3000,
+    cors: { enabled: true, origin: '*' },
+  },
+  
+  // Build Options
+  build: {
+    target: 'es2020',
+    minify: true,
+    sourcemap: true,
+  },
+  
+  // Experimental Features
   experimental: {
-    devBundler: 'vite',      // Use Vite for dev (faster HMR)
-    streaming: true,          // Enable streaming SSR
+    streaming: true,       // SSR streaming
+    devBundler: 'vite',    // Use Vite in dev
+  },
+  
+  // Caching (Memory or Redis)
+  caching: {
+    store: 'memory',       // 'memory' | 'redis'
+    ttl: 30,               // seconds
   },
   
   // Authentication
   auth: {
     secret: process.env.JWT_SECRET,
-    providers: ['google', 'github'],
-    session: {
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-    }
+    expiresIn: '7d',
   },
   
   // Database
   database: {
     type: 'postgresql',
     url: process.env.DATABASE_URL,
-    migrations: './migrations',
-    seeds: './seeds'
   },
-  
-  // Caching
-  caching: {
-    type: 'redis',           // 'lru' or 'redis'
-    url: process.env.REDIS_URL,
-    ttl: 3600,
-    secret: process.env.REVALIDATE_SECRET
-  },
-  
-  // Deployment
-  deployment: {
-    platform: 'vercel',
-    env: {
-      NODE_ENV: 'production'
-    }
-  },
-  
-  // Plugins
-  plugins: [
-    async (hook) => ({
-      onRequest: async ({ req }) => {
-        console.log('Request:', req.url);
-      }
-    })
-  ],
-  
-  // Observability
-  observability: {
-    enabled: true,
-    metrics: true,
-    tracing: false
-  }
 };
 ```
 
----
-
-## 📚 Examples
-
-### Blog Application
-
-```bash
-indjs create my-blog --template blog
-cd my-blog
-npm install
-npm run dev
-```
-
-### E-commerce Store
-
-```bash
-indjs create my-store --template ecommerce
-cd my-store
-npm install
-npm run dev
-```
-
-### Admin Dashboard
-
-```bash
-indjs create my-dashboard --template dashboard
-cd my-dashboard
-npm install
-npm run dev
-```
+<br />
 
 ---
 
-## 🚢 Deployment
+## � Performance Dashboard
 
-### Vercel (Recommended)
+Access built-in metrics at `/__indjs/dashboard`:
 
-```bash
-indjs deploy vercel
-# or
-vercel --prod
-```
+<table>
+<tr>
+<td>📈 Request Count & Latency</td>
+<td>💾 Cache Hit/Miss Ratio</td>
+<td>⚠️ Error Tracking</td>
+<td>🕐 Server Uptime</td>
+</tr>
+</table>
 
-### Netlify
-
-```bash
-indjs deploy netlify
-# Connect your repository to Netlify
-```
-
-### Docker
-
-```bash
-indjs deploy docker
-docker build -t my-app .
-docker run -p 3000:3000 my-app
-```
-
-### AWS Lambda
-
-```bash
-indjs deploy aws
-sam deploy --guided
-```
-
-### Static Export
-
-```bash
-indjs build --static
-# Output: .indjs/static/
-```
+<br />
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md).
+We welcome contributions! See our [Contributing Guide](./docs/reports/CONTRIBUTING.md).
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+```bash
+# Clone the repo
+git clone https://github.com/Rohitsharma6377/IND.git
+
+# Install dependencies  
+cd IND/framework && npm install
+
+# Run development
+npm run dev
+```
+
+<br />
 
 ---
 
 ## 📄 License
 
-MIT © INDJS Team || Rohit Sharma
+<div align="center">
 
----
+**MIT License © 2025-2026**
 
-## 🙏 Acknowledgments
+[Rohit Sharma](https://github.com/Rohitsharma6377) & INDJS Team
 
-- Inspired by [Next.js](https://nextjs.org/) but designed to be better
-- Built with [React](https://reactjs.org/) and [Express](https://expressjs.com/)
-- Powered by [esbuild](https://esbuild.github.io/) and [Vite](https://vitejs.dev/)
-- Styled with [Tailwind CSS](https://tailwindcss.com/)
+</div>
 
----
-
-## 📞 Support & Community
-
-- 📖 [Documentation](https://netcurion.vercel.app)
-- 🐛 [Issue Tracker](https://github.com/Rohitsharma6377/IND/issues)
-- 💬 [Discussions](https://github.com/Rohitsharma6377/IND/discussions)
-- 📧 [Email Support](mailto:netcurion@outlook.com)
-- 🐦 [Twitter](https://twitter.com/Netcurion)
-- 📷 [Instagram](https://instagram.com/Netcurion)
+<br />
 
 ---
 
 <div align="center">
 
-**Made with ❤️ by the INDJS Team**
+<br />
 
-⭐ Star us on [GitHub](https://github.com/Rohitsharma6377/IND) if you like INDJS!
+## 🌟 Give us a Star!
+
+If **INDJS** helped you, please consider giving us a star on GitHub ⭐
+
+<br />
+
+[![GitHub stars](https://img.shields.io/github/stars/Rohitsharma6377/IND?style=for-the-badge&logo=github&color=yellow)](https://github.com/Rohitsharma6377/IND)
+[![GitHub forks](https://img.shields.io/github/forks/Rohitsharma6377/IND?style=for-the-badge&logo=github&color=blue)](https://github.com/Rohitsharma6377/IND/fork)
+
+<br />
+
+---
+
+<br />
+
+**Built with ❤️ by the INDJS Team**
+
+<br />
+
+[🌐 Website](https://netcurion.vercel.app) &nbsp;•&nbsp; [📦 NPM](https://www.npmjs.com/package/indjs) &nbsp;•&nbsp; [💬 Discord](https://discord.gg/indjs) &nbsp;•&nbsp; [🐦 Twitter](https://twitter.com/Netcurion) &nbsp;•&nbsp; [📧 Contact](mailto:netcurion@outlook.com)
+
+<br />
+
+<sub>Made in 🇮🇳 India</sub>
 
 </div>
