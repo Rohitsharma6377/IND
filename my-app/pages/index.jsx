@@ -660,6 +660,218 @@ export default function Layout({ children }) {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 tracking-tight mb-4">
+              How It <span className="text-indigo-600">Works</span>
+            </h2>
+            <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+              Get started in minutes with just three simple steps
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {howItWorks.map((item, idx) => {
+              const IconComponent = item.icon;
+              return (
+                <div key={idx} className="relative group">
+                  {/* Connection Line */}
+                  {idx < howItWorks.length - 1 && (
+                    <div className="hidden md:block absolute top-16 left-1/2 w-full h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+                  )}
+                  
+                  <div className="relative bg-gray-50 rounded-2xl p-8 hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-indigo-200">
+                    {/* Step Number */}
+                    <div className="absolute -top-4 left-8 w-8 h-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                      {item.step}
+                    </div>
+                    
+                    {/* Icon */}
+                    <div className="w-14 h-14 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <IconComponent className="w-7 h-7 text-indigo-600" />
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
+                    <p className="text-gray-600 mb-4">{item.description}</p>
+                    
+                    {/* Code Snippet */}
+                    <div className="bg-gray-900 rounded-lg p-3 font-mono text-sm text-green-400">
+                      $ {item.code}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-24 bg-gradient-to-br from-gray-50 to-indigo-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 tracking-tight mb-4">
+              Loved by <span className="text-indigo-600">Developers</span>
+            </h2>
+            <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+              See what developers around the world are saying about INDJS
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {testimonials.map((testimonial, idx) => (
+              <div
+                key={idx}
+                className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
+              >
+                {/* Quote Icon */}
+                <div className="absolute -top-4 -left-2 w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center rotate-12">
+                  <QuoteIcon className="w-6 h-6 text-white -rotate-12" />
+                </div>
+                
+                {/* Stars */}
+                <div className="flex gap-1 mb-4 ml-8">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <StarIcon key={i} className="w-5 h-5 text-amber-400" />
+                  ))}
+                </div>
+                
+                {/* Content */}
+                <p className="text-gray-700 text-lg leading-relaxed mb-6">
+                  "{testimonial.content}"
+                </p>
+                
+                {/* Author */}
+                <div className="flex items-center gap-4">
+                  <img
+                    src={testimonial.avatar}
+                    alt={testimonial.name}
+                    className="w-12 h-12 rounded-full object-cover ring-2 ring-indigo-100"
+                  />
+                  <div>
+                    <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
+                    <p className="text-sm text-gray-500">{testimonial.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trusted By Section */}
+      <section className="py-16 bg-white border-y border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-center text-sm font-medium text-gray-400 uppercase tracking-wider mb-10">
+            Trusted by innovative companies worldwide
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-8 items-center opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+            {[
+              { name: 'Vercel', letter: 'V' },
+              { name: 'Stripe', letter: 'S' },
+              { name: 'Notion', letter: 'N' },
+              { name: 'Linear', letter: 'L' },
+              { name: 'Figma', letter: 'F' },
+              { name: 'Discord', letter: 'D' },
+            ].map((company, idx) => (
+              <div key={idx} className="flex items-center justify-center group cursor-default">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold text-lg">{company.letter}</span>
+                  </div>
+                  <span className="text-xl font-bold text-gray-900 hidden sm:block">{company.name}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 tracking-tight mb-4">
+              Frequently Asked <span className="text-indigo-600">Questions</span>
+            </h2>
+            <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+              Everything you need to know about INDJS
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {faqs.map((faq, idx) => (
+              <div
+                key={idx}
+                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-indigo-200 transition-colors"
+              >
+                <button
+                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                  className="w-full px-6 py-5 text-left flex items-center justify-between gap-4"
+                >
+                  <span className="font-semibold text-gray-900">{faq.question}</span>
+                  <ChevronDownIcon 
+                    className={`w-5 h-5 text-gray-500 flex-shrink-0 transition-transform duration-300 ${
+                      openFaq === idx ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-300 ${
+                    openFaq === idx ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  <div className="px-6 pb-5 text-gray-600 leading-relaxed">
+                    {faq.answer}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-24 bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-900 text-white relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 bg-grid-white bg-[size:30px_30px]"></div>
+        </div>
+        
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur rounded-2xl mb-8">
+            <MailIcon className="w-8 h-8 text-white" />
+          </div>
+          
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+            Stay Updated
+          </h2>
+          <p className="text-lg text-indigo-200 mb-8 max-w-xl mx-auto">
+            Get notified about new features, updates, and exclusive content. No spam, unsubscribe anytime.
+          </p>
+          
+          <form className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-5 py-4 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent"
+            />
+            <button
+              type="submit"
+              className="px-8 py-4 bg-white text-indigo-900 font-semibold rounded-xl hover:bg-indigo-100 transition-colors shadow-lg hover:shadow-xl"
+            >
+              Subscribe
+            </button>
+          </form>
+          
+          <p className="text-sm text-indigo-300 mt-4">
+            Join 10,000+ developers already subscribed
+          </p>
+        </div>
+      </section>
+
       {/* CTA Section - Modern Style */}
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600"></div>
