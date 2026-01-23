@@ -93,6 +93,18 @@ export async function build({ root, baseUrl, webDir }) {
     }
   }
 
+  // Copy CSS file to static output
+  console.log("\n🎨 Copying CSS assets...");
+  try {
+    const clientDir = path.join(root, ".indjs", "client");
+    const cssSource = path.join(clientDir, "styles.css");
+    const cssDest = path.join(staticOut, "styles.css");
+    await fs.copyFile(cssSource, cssDest);
+    console.log("   ✓ styles.css copied");
+  } catch (e) {
+    console.log("   ✗ Failed to copy styles.css:", e.message);
+  }
+
   // Copy API routes for serverless functions
   console.log("\n🔌 Copying API routes...");
   await copyApiRoutes(root, staticOut, api);

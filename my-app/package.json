@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Official INDJS Framework Website - The Universal React Meta-Framework",
-  "author": "Rohit Sharma <netcurion@outlook.com>",
+  "author": "Rohit Sharma <rohitsharmadev1@outlook.com>",
   "license": "MIT",
-  "homepage": "https://indjs.vercel.app",
+  "homepage": "https://indjs.rohitsharmadev.me",
   "repository": {
     "type": "git",
     "url": "https://github.com/Rohitsharma6377/IND"

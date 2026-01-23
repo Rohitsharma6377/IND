@@ -94,8 +94,8 @@ export async function renderPageModule({ mod, ctx, assets }) {
   const title = meta.title || props?.title || "INDJS App";
   const description = meta.description || "";
 
-  // Include client CSS (built by Tailwind/PostCSS watcher) - only for dev mode
-  const cssHref = ctx.dev ? "/__indjs/client/styles.css" : null;
+  // Include client CSS - dev mode uses live path, production uses relative path
+  const cssHref = ctx.dev ? "/__indjs/client/styles.css" : "/styles.css";
 
   // Build Vite dev scripts if Vite dev bundler is enabled
   let devViteScripts = "";
