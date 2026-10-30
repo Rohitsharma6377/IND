@@ -62,6 +62,7 @@ test('only attached active products in open stores expose derivatives',async t=>
  c.editProduct(owner,store.id,product.id,{active:1});c.settings(owner,store.id,{name:store.name,plan:'launch',mode:'development'});
  assert.throws(()=>media.derivative(store.slug,a.id,320),e=>e.status===404);
  assert.ok(media.preview(owner,store.id,a.id).length);
+ assert.match(c.products(owner,store.id)[0].media[0].preview,/\/api\/stores\//);
 });
 test('media capacity is checked before committing new assets',async t=>{
  const {c,owner,store,media}=fixture(t),a=await media.upload(owner,store.id,await uploadInput());

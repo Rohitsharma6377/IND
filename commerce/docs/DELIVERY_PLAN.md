@@ -50,4 +50,4 @@ A separate daily development automation is enabled around 10 AM Asia/Kolkata. It
 
 Do not call the platform production-ready or a full Shopify replacement while any P0–P5 gate is incomplete. Never mark a browser callback as payment authority. Keep credentials out of source and exported theme packages. Protect tenant boundaries in all newly introduced queries and file/media references. Keep public theme context to explicitly approved storefront fields.
 
-Checkpoint commit: fill from the GitHub commit containing this plan and current sources. Commit IDs are recorded in Git history; do not invent or prestate a commit hash.
+Implementation checkpoint: `16582e4071e901ef6294ca9f547bfe1bb9113587`. A follow-up hardening commit includes authenticated dashboard thumbnails, explicit public-image projection, a ten-second worker-startup allowance (guest CPU limit remains 250 ms), and two concurrent test files. The final full run passed all 94 tests.

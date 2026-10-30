@@ -11,12 +11,12 @@ function publicContext(store,config,imageOrigin) {
   return {...(config.layout?{layout:config.layout}:{}),shop:{name:store.name,slug:store.slug,currency:'INR'},settings:{title:config.title,subtitle:config.subtitle,announcement:config.announcement,accent:config.accent},
     products:store.products.filter(p=>p.active!==0).slice(0,100).map(p=>{
       const svg=(art(p).match(/<svg[\s\S]*<\/svg>/)?.[0]||'').replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ').replaceAll('var(--product)',/^#[a-f0-9]{6}$/i.test(p.colour)?p.colour:'#a2b2a0');
-      const images=(p.media||[]).map(image=>({...image,url:imageOrigin+image.url,thumbnail:imageOrigin+image.thumbnail}));
+      const images=(p.media||[]).map(image=>({id:image.id,alt:image.alt,width:image.width,height:image.height,url:imageOrigin+image.url,thumbnail:imageOrigin+image.thumbnail}));
       return {images,id:p.id,name:p.name,category:p.category,description:p.description,price:p.price,available:p.stock>0,image_url:images[0]?.url||'data:image/svg+xml;base64,'+Buffer.from(svg).toString('base64')};
     })};
 }
 let active=0;
-export async function renderJavaScript(store,config,{timeoutMs=5000,imageOrigin=''}={}) {
+export async function renderJavaScript(store,config,{timeoutMs=10000,imageOrigin=''}={}) {
   const files=validateJavaScriptPackage(config.files||starterJavaScript);fail(active<4,429,'Theme rendering is busy; try again');active++;
   try {
     return await new Promise((resolve,reject)=>{

@@ -128,7 +128,7 @@ export class Commerce {
   }
   products(actor, storeId) {
     this.access(actor, storeId, 'catalog');
-    return this.all('SELECT * FROM products WHERE store_id=? ORDER BY created_at DESC,id', storeId).map(p=>({...p,media:this.gallery(storeId,p.id)}));
+    return this.all('SELECT * FROM products WHERE store_id=? ORDER BY created_at DESC,id', storeId).map(p=>({...p,media:this.gallery(storeId,p.id).map(image=>({...image,preview:'/api/stores/'+storeId+'/media/'+image.id+'/preview'}))}));
   }
   createProduct(actor, storeId, input) {
     const store = this.access(actor, storeId, 'catalog');
