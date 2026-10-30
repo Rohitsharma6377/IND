@@ -1,6 +1,6 @@
 import { e, money, date, label, icon, badge, btn, art } from './shared.mjs';
 import { connectionsPage,leadsPage,connectionAction,connectionForm } from './connections.mjs';
-import { liquidEditor,themeConfiguration,renderThemePreview,themeAction,themeFileForm,importTheme } from './theme-editor.mjs';
+import { javascriptEditor,themeConfiguration,renderThemePreview,themeAction,themeFileForm,importTheme } from './theme-editor.mjs';
 import { onlineCheckout,paymentAction,paymentStatusModal } from './payment-checkout.mjs';
 const app=document.getElementById('app'), dialog=document.getElementById('dialog');
 const state={config:null,session:null,storeId:null,data:null,page:'overview',extra:null,range:30,cart:[],shop:null,checkoutKey:null};
@@ -72,7 +72,7 @@ function shopMarkup(s,mini=false) {
 }
 function themesPage() {
   const t=state.extra;if(!t)return '<div class="loading">Loading theme editor…</div>';
-  return '<div class="theme-workbench"><section class="panel theme-form"><h2>Make it yours</h2><p class="muted tiny spaced">Edit a draft, render a preview, then publish.</p><form id="theme-settings" data-form="theme">'+select('renderer','Renderer',[['builtin','Built-in theme'],['liquid','Custom Liquid code']],t.draft.renderer||'builtin')+select('template','Visual direction',[['market','Market · retail'],['atelier','Atelier · editorial'],['circuit','Circuit · modern']],t.draft.template)+field('accent','Brand colour',t.draft.accent,'color')+field('title','Headline',t.draft.title,'text','required maxlength="100"')+area('subtitle','Subheading',t.draft.subtitle,'maxlength="200"')+field('announcement','Announcement',t.draft.announcement,'text','maxlength="160"')+'<div class="form-actions"><button class="button" type="submit">Save draft</button>'+btn('theme-preview','Preview')+btn('theme-publish','Publish','primary')+'</div></form></section><section class="theme-preview"><div class="preview-bar"><i></i><i></i><i></i><span>Draft preview · revision '+t.revision+' published</span></div><div id="theme-live">'+(t.draft.renderer==='liquid'?'<p class="notice">Rendering isolated preview…</p>':shopMarkup({name:state.data.store.name,products:state.data.products.filter(p=>p.active),theme:t.draft},true))+'</div></section></div>'+liquidEditor(state)+'<section class="panel spaced"><div class="panel-head"><h2>Version history</h2>'+badge('Publish & rollback','good')+'</div><div class="table-wrap"><table><thead><tr><th>Revision</th><th>Renderer</th><th>Published</th><th></th></tr></thead><tbody>'+t.versions.map(v=>'<tr><td><strong>Revision '+v.revision+'</strong></td><td>'+e(v.config.renderer||'builtin')+' · '+e(v.config.template)+'</td><td>'+date(v.created_at)+'</td><td>'+(v.revision===t.revision?badge('Current','good'):btn('theme-rollback','Restore','','data-revision="'+v.revision+'"'))+'</td></tr>').join('')+'</tbody></table></div></section>';
+  return '<div class="theme-workbench"><section class="panel theme-form"><h2>Make it yours</h2><p class="muted tiny spaced">Edit a draft, render a preview, then publish.</p><form id="theme-settings" data-form="theme">'+select('renderer','Renderer',[['builtin','Built-in theme'],['javascript','Custom JavaScript code']],t.draft.renderer||'builtin')+select('template','Visual direction',[['market','Market · retail'],['atelier','Atelier · editorial'],['circuit','Circuit · modern']],t.draft.template)+field('accent','Brand colour',t.draft.accent,'color')+field('title','Headline',t.draft.title,'text','required maxlength="100"')+area('subtitle','Subheading',t.draft.subtitle,'maxlength="200"')+field('announcement','Announcement',t.draft.announcement,'text','maxlength="160"')+'<div class="form-actions"><button class="button" type="submit">Save draft</button>'+btn('theme-preview','Preview')+btn('theme-publish','Publish','primary')+'</div></form></section><section class="theme-preview"><div class="preview-bar"><i></i><i></i><i></i><span>Draft preview · revision '+t.revision+' published</span></div><div id="theme-live">'+(t.draft.renderer==='javascript'?'<p class="notice">Rendering isolated preview…</p>':shopMarkup({name:state.data.store.name,products:state.data.products.filter(p=>p.active),theme:t.draft},true))+'</div></section></div>'+javascriptEditor(state)+'<section class="panel spaced"><div class="panel-head"><h2>Version history</h2>'+badge('Publish & rollback','good')+'</div><div class="table-wrap"><table><thead><tr><th>Revision</th><th>Renderer</th><th>Published</th><th></th></tr></thead><tbody>'+t.versions.map(v=>'<tr><td><strong>Revision '+v.revision+'</strong></td><td>'+e(v.config.renderer||'builtin')+' · '+e(v.config.template)+'</td><td>'+date(v.created_at)+'</td><td>'+(v.revision===t.revision?badge('Current','good'):btn('theme-rollback','Restore','','data-revision="'+v.revision+'"'))+'</td></tr>').join('')+'</tbody></table></div></section>';
 }
 
 function appsPage() {
@@ -121,7 +121,7 @@ function render() {
     app.innerHTML=shell((pages[state.page]||overview)());
   }
   document.title=pageTitles[state.page]+' · IND Commerce';
-  if(state.page==='themes'&&state.extra?.draft.renderer==='liquid')renderThemePreview(extensionContext()).catch(error=>toast(error.message,true));
+  if(state.page==='themes'&&state.extra?.draft.renderer==='javascript')renderThemePreview(extensionContext()).catch(error=>toast(error.message,true));
 }
 function renderLogin(error='') {
   const sample=[{name:'Everyday canvas tote',category:'Carry',colour:'#c8ae7f'},{name:'Stoneware coffee cup',category:'Home',colour:'#b47758'}];
@@ -195,8 +195,8 @@ async function shopBoot(slug) {
 }
 function renderShop() {
   const s=state.shop,preview=s.preview?'<div class="pilot-banner" style="margin:0;border-radius:0">Saved theme draft · checkout disabled · <a href="/admin#themes">Return to editor</a></div>':'';
-  if(s.theme.renderer==='liquid') {
-    app.innerHTML=preview+'<main id="main"><div class="shop-nav"><span class="shop-brand">'+e(s.name)+'</span>'+btn('cart','Bag ('+state.cart.reduce((n,l)=>n+l.quantity,0)+') '+icon('orders',16))+'</div><iframe id="store-theme-frame" class="liquid-frame" title="Isolated storefront theme" sandbox="allow-scripts"></iframe><footer class="shop-footer">Checkout powered by IND Commerce</footer></main>';
+  if(s.theme.renderer==='javascript') {
+    app.innerHTML=preview+'<main id="main"><div class="shop-nav"><span class="shop-brand">'+e(s.name)+'</span>'+btn('cart','Bag ('+state.cart.reduce((n,l)=>n+l.quantity,0)+') '+icon('orders',16))+'</div><iframe id="store-theme-frame" class="javascript-frame" title="Isolated storefront theme" sandbox="allow-scripts"></iframe><footer class="shop-footer">Checkout powered by IND Commerce</footer></main>';
     const frame=document.getElementById('store-theme-frame');
     if(s.preview)api('/api/stores/'+s.id+'/theme/render','POST',{config:s.theme}).then(result=>{if(frame.isConnected)frame.src=result.frame_url;}).catch(error=>toast(error.message,true));
     else frame.src='/api/public/'+s.slug+'/theme-frame';
@@ -386,7 +386,7 @@ document.addEventListener('input',event=>{
   if(event.target.closest('[data-form="theme"]')||event.target.getAttribute('form')==='theme-settings') {
     const form=document.getElementById('theme-settings'),config=themeConfiguration(form);
     const preview=document.getElementById('theme-live');
-    if(config.renderer==='liquid'){if(preview)preview.innerHTML='<p class="notice">Source changed. Choose Render preview to check the unsaved template.</p>';return;}
+    if(config.renderer==='javascript'){if(preview)preview.innerHTML='<p class="notice">Source changed. Choose Render preview to check the unsaved template.</p>';return;}
     if(preview)preview.innerHTML=shopMarkup({name:state.data.store.name,products:state.data.products.filter(p=>p.active),theme:config},true);
   }
 });

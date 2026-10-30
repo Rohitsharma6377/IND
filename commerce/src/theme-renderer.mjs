@@ -1,10 +1,10 @@
 import { Worker } from 'node:worker_threads';
 import { randomBytes } from 'node:crypto';
-import { fail,validateLiquidPackage } from './contracts.mjs';
+import { fail,validateJavaScriptPackage } from './contracts.mjs';
 import { art } from '../public/shared.mjs';
-export const starterLiquid={
-  'index.liquid':'<header class="theme-nav"><strong>{{ shop.name }}</strong><a href="#products">Shop the collection</a></header>\n<section class="theme-hero"><small>INDEPENDENT GOODS. EVERYDAY JOY.</small><h1>{{ settings.title }}</h1><p>{{ settings.subtitle }}</p></section>\n<section id="products" class="theme-collection"><h2>Thoughtfully chosen essentials</h2><div class="theme-grid">{% for product in products limit: 24 %}{% render "product-card.liquid", product: product %}{% endfor %}</div></section><footer>{{ settings.announcement }} · {{ shop.name }}</footer>',
-  'product-card.liquid':'<article class="theme-product"><img src="{{ product.image_url }}" alt="{{ product.name }}"><small>{{ product.category }}</small><h3>{{ product.name }}</h3><p>{{ product.price | money }}</p>{% if product.available %}<button data-ind-add="{{ product.id }}">Add to bag</button>{% else %}<span>Sold out</span>{% endif %}</article>'
+export const starterJavaScript={
+  "index.js": "import { html } from 'ind:theme';\nimport productCard from './product-card.js';\n\nexport default function render({ shop, settings, products }) {\n  return html`\n    <header class=\"theme-nav\">\n      <strong>${shop.name}</strong><a href=\"#products\">Shop the collection</a>\n    </header>\n    <section class=\"theme-hero\">\n      <small>INDEPENDENT GOODS. EVERYDAY JOY.</small>\n      <h1>${settings.title}</h1><p>${settings.subtitle}</p>\n    </section>\n    <section id=\"products\" class=\"theme-collection\">\n      <h2>Thoughtfully chosen essentials</h2>\n      <div class=\"theme-grid\">${products.slice(0, 24).map(productCard)}</div>\n    </section>\n    <footer>${settings.announcement} · ${shop.name}</footer>\n  `;\n}",
+  "product-card.js": "import { html, money } from 'ind:theme';\n\nexport default function productCard(product) {\n  return html`\n    <article class=\"theme-product\">\n      <img src=\"${product.image_url}\" alt=\"${product.name}\">\n      <small>${product.category}</small><h3>${product.name}</h3>\n      <p>${money(product.price)}</p>\n      ${product.available\n        ? html`<button data-ind-add=\"${product.id}\">Add to bag</button>`\n        : html`<span>Sold out</span>`}\n    </article>\n  `;\n}"
 };
 function publicContext(store,config) {
   return {shop:{name:store.name,slug:store.slug,currency:'INR'},settings:{title:config.title,subtitle:config.subtitle,announcement:config.announcement,accent:config.accent},
@@ -14,8 +14,8 @@ function publicContext(store,config) {
     })};
 }
 let active=0;
-export async function renderLiquid(store,config,{timeoutMs=2500}={}) {
-  const files=validateLiquidPackage(config.files||starterLiquid);fail(active<4,429,'Theme rendering is busy; try again');active++;
+export async function renderJavaScript(store,config,{timeoutMs=5000}={}) {
+  const files=validateJavaScriptPackage(config.files||starterJavaScript);fail(active<4,429,'Theme rendering is busy; try again');active++;
   try {
     return await new Promise((resolve,reject)=>{
       const worker=new Worker(new URL('./theme-worker.mjs',import.meta.url),{workerData:{files,context:publicContext(store,config)},resourceLimits:{maxOldGenerationSizeMb:64,maxYoungGenerationSizeMb:16,stackSizeMb:2}});

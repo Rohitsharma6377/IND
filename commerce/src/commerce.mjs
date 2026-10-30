@@ -290,6 +290,7 @@ export class Commerce {
         const old = this.get('SELECT config FROM theme_versions WHERE store_id=? AND revision=?', storeId, input.rollback);
         fail(old, 404, 'Theme version not found'); config = old.config;
       }
+      config = JSON.stringify(theme(JSON.parse(config)));
       const revision = store.theme_revision + 1;
       this.run('UPDATE stores SET published=?,draft=?,theme_revision=? WHERE id=?', config, config, revision, storeId);
       this.run('INSERT INTO theme_versions VALUES(?,?,?,?,?)', id('theme'), storeId, revision, config, now());

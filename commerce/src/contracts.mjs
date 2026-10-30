@@ -35,8 +35,8 @@ export function theme(input) {
   fail(input && typeof input === 'object', 400, 'A theme configuration is required');
   fail(['market', 'atelier', 'circuit'].includes(input.template), 400, 'Choose a supported theme');
   fail(/^#[\da-f]{6}$/i.test(input.accent), 400, 'Use a six-digit hex colour');
-  const renderer=input.renderer||'builtin';fail(['builtin','liquid'].includes(renderer),400,'Choose built-in or Liquid rendering');
-  const files=renderer==='liquid'||input.files?validateLiquidPackage(input.files):null;
+  const renderer=input.renderer||'builtin';fail(['builtin','javascript'].includes(renderer),400,'Choose built-in or JavaScript rendering');
+  const files=renderer==='javascript'||input.files?validateJavaScriptPackage(input.files):null;
   return { renderer,...(files?{files}:{}),template: input.template, accent: input.accent, title: text(input.title, 'Headline', 100), subtitle: text(input.subtitle, 'Subheading', 200, 0), announcement: text(input.announcement, 'Announcement', 160, 0) };
 }
 export const defaultTheme = { template: 'market', accent: '#246b50', title: 'Everyday things. Thoughtfully made.', subtitle: 'Discover useful, beautiful essentials from independent makers.', announcement: 'Made with care. Delivered across India.' };
@@ -67,15 +67,14 @@ export function verifyEvent(payload, signature, signingSecret) {
 }
 export const escape = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-export function validateLiquidPackage(input) {
-  fail(input&&typeof input==='object'&&!Array.isArray(input),400,'A Liquid file map is required');
-  const entries=Object.entries(input);fail(entries.length>=1&&entries.length<=10,400,'A theme can contain 1–10 Liquid files');
+export function validateJavaScriptPackage(input) {
+  fail(input&&typeof input==='object'&&!Array.isArray(input),400,'A JavaScript file map is required');
+  const entries=Object.entries(input);fail(entries.length>=1&&entries.length<=10,400,'A theme can contain 1–10 JavaScript files');
   const files=Object.create(null);let total=0;
   for(const [name,source]of entries) {
-    fail(/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,60}\.liquid$/.test(name),400,'Use simple .liquid filenames without directories');
-    text(source,name,50000,1);fail(source.length<=50000,400,'Liquid file exceeds 50 KB');
-    files[name]=source;total+=source.length;
+    fail(/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,60}\.(?:js|mjs)$/.test(name),400,'Use simple .js or .mjs filenames without directories');
+    text(source,name,50000,1);files[name]=source;total+=source.length;
   }
-  fail(total<=100000,400,'Theme package exceeds 100 KB');fail(Object.hasOwn(files,'index.liquid'),400,'Theme needs index.liquid');
+  fail(total<=100000,400,'Theme package exceeds 100 KB');fail(Object.hasOwn(files,'index.js'),400,'Theme needs index.js');
   return files;
 }

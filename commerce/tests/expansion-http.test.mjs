@@ -60,7 +60,7 @@ test('Razorpay webhooks bypass browser CSRF only when the raw signature verifies
   assert.equal(c.orders(owner,store.id)[0].payment,'paid');
 });
 test('custom theme source stays private and preview frames carry their own sandbox CSP',async t=>{
-  const {c,owner,store,req}=await fixture(t),config={...defaultTheme,renderer:'liquid',files:{'index.liquid':'<h1>{{ shop.name }}</h1><p>Public design</p>'}};
+  const {c,owner,store,req}=await fixture(t),config={...defaultTheme,renderer:'javascript',files:{'index.js':'import {html} from "ind:theme"; export default ({shop}) => html`<h1>${shop.name}</h1><p>Public design</p>`'}};
   const saved=await req('/api/stores/'+store.id+'/theme',{method:'PUT',auth:true,body:config});assert.equal(saved.status,200);
   const rendered=await req('/api/stores/'+store.id+'/theme/render',{method:'POST',auth:true,body:{config}});
   assert.equal(rendered.status,200);
@@ -88,4 +88,19 @@ test('collaborators cannot access merchant payment credentials or domains',async
   c.grant(owner,store.id,{email:user.email,role:'collaborator'});const signed=c.session(user),headers={Cookie:'ind_session='+signed.token};
   assert.equal((await req('/api/stores/'+store.id+'/gateway',{headers})).status,403);
   assert.equal((await req('/api/stores/'+store.id+'/domains',{headers})).status,403);
+});
+
+test('retired theme source is preserved while new drafts and rollback require a supported renderer',async t=>{
+  const {c,owner,store,req}=await fixture(t);
+  const original=JSON.stringify({...defaultTheme,renderer:'retired',files:{'original.template':'original source'}});
+  c.run('UPDATE stores SET draft=? WHERE id=?',original,store.id);
+  const publish=await req('/api/stores/'+store.id+'/theme/publish',{method:'POST',auth:true,body:{revision:1}});
+  assert.equal(publish.status,400);assert.equal(c.get('SELECT draft FROM stores WHERE id=?',store.id).draft,original);
+  c.run('UPDATE theme_versions SET config=? WHERE store_id=? AND revision=1',original,store.id);
+  assert.throws(()=>c.publishTheme(owner,store.id,{revision:1,rollback:1}),/rendering/);
+  const config={...defaultTheme,renderer:'javascript',files:{'index.js':'export default () => "<h1>JavaScript</h1>"'}};
+  assert.equal((await req('/api/stores/'+store.id+'/theme',{method:'PUT',auth:true,body:config})).status,200);
+  assert.equal((await req('/api/stores/'+store.id+'/theme/publish',{method:'POST',auth:true,body:{revision:1}})).status,200);
+  assert.equal((await req('/api/stores/'+store.id+'/theme/publish',{method:'POST',auth:true,body:{revision:2,rollback:1}})).status,400);
+  assert.equal(JSON.parse(c.get('SELECT config FROM theme_versions WHERE store_id=? AND revision=1',store.id).config).files['original.template'],'original source');
 });

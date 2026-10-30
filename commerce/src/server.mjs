@@ -9,7 +9,7 @@ import { draftWithOllama } from './assistant.mjs';
 import { Payments } from './payments.mjs';
 import { Domains } from './domains.mjs';
 import { marketingPage,marketingPaths } from './marketing.mjs';
-import { renderLiquid,frameDocument,starterLiquid } from './theme-renderer.mjs';
+import { renderJavaScript,frameDocument,starterJavaScript } from './theme-renderer.mjs';
 
 const assets = new Map([
   ['/', ['text/html; charset=utf-8', new URL('../public/index.html', import.meta.url)]],
@@ -124,7 +124,7 @@ export function createCommerceServer({ commerce, demo = false, aiModel = null,pa
       if(publicMatch) {
         if(mapped)fail(publicMatch[1]===mapped.slug,404,'Store not found');
         if(method==='GET'&&!publicMatch[2]){const s=c.publicStore(publicMatch[1]);const {files,...publicTheme}=s.theme;return json(res,200,{...s,theme:publicTheme,payments:payments.publicStatus(s.id)});}
-        if(method==='GET'&&publicMatch[2]==='theme-frame'){const s=c.publicStore(publicMatch[1]);fail(s.theme.renderer==='liquid',404,'No custom theme');return sendFrame(res,frameDocument(await renderLiquid(s,s.theme)));}
+        if(method==='GET'&&publicMatch[2]==='theme-frame'){const s=c.publicStore(publicMatch[1]);fail(s.theme.renderer==='javascript',404,'No custom theme');return sendFrame(res,frameDocument(await renderJavaScript(s,s.theme)));}
         if(method==='POST'&&publicMatch[2]==='payments')return json(res,201,await payments.begin(publicMatch[1],await body(req),req.headers['idempotency-key']));
         if(method==='POST'&&publicMatch[2]==='confirm')return json(res,200,await payments.confirm(publicMatch[1],await body(req)));
         if(method==='POST'&&publicMatch[2]==='receipt'){const input=await body(req);return json(res,200,payments.receipt(publicMatch[1],input.intent_id,input.receipt_token));}
@@ -173,24 +173,25 @@ export function createCommerceServer({ commerce, demo = false, aiModel = null,pa
           }
           if(resource==='tasks' && method==='POST' && item) return json(res,200,c.completeTask(actor,storeId,item));
           if(resource==='theme') {
-            if(method==='GET')return json(res,200,{...c.themeState(actor,storeId),starter:starterLiquid});
+            if(method==='GET')return json(res,200,{...c.themeState(actor,storeId),starter:starterJavaScript});
             const renderStore=()=>{const s=c.access(actor,storeId,'themes');return {name:s.name,slug:s.slug,products:c.products(actor,storeId)};};
             if(method==='POST'&&item==='render'){
-              const input=await body(req,262144),config=theme(input.config);fail(config.renderer==='liquid',400,'Select the Liquid renderer');
-              const document=frameDocument(await renderLiquid(renderStore(),config));c.access(c.actor(token),storeId,'themes');
+              const input=await body(req,262144),config=theme(input.config);fail(config.renderer==='javascript',400,'Select the JavaScript renderer');
+              const document=frameDocument(await renderJavaScript(renderStore(),config));c.access(c.actor(token),storeId,'themes');
               for(const [k,v]of previews)if(v.expires<Date.now())previews.delete(k);
               while(previews.size>=64)previews.delete(previews.keys().next().value);
               const key=secret();previews.set(key,{document,store:storeId,actor:actor.id,expires:Date.now()+120000});
               return json(res,200,{frame_url:'/api/theme-preview/'+key});
             }
             if(method==='PUT'&&!item){
-              const config=theme(await body(req,262144));if(config.renderer==='liquid')await renderLiquid(renderStore(),config);
+              const config=theme(await body(req,262144));if(config.renderer==='javascript')await renderJavaScript(renderStore(),config);
               return json(res,200,c.saveTheme(c.actor(token),storeId,config));
             }
             if(method==='POST'&&item==='publish'){
               const input=await body(req),s=c.access(actor,storeId,'themes');
-              const config=input.rollback?JSON.parse(c.get('SELECT config FROM theme_versions WHERE store_id=? AND revision=?',storeId,input.rollback)?.config||'null'):JSON.parse(s.draft);
-              fail(config,404,'Theme version not found');if(config.renderer==='liquid')await renderLiquid(renderStore(),config);
+              const source=input.rollback?JSON.parse(c.get('SELECT config FROM theme_versions WHERE store_id=? AND revision=?',storeId,input.rollback)?.config||'null'):JSON.parse(s.draft);
+              fail(source,404,'Theme version not found');const config=theme(source);
+              if(config.renderer==='javascript')await renderJavaScript(renderStore(),config);
               return json(res,200,c.publishTheme(c.actor(token),storeId,{...input,expected_config:input.rollback?null:s.draft}));
             }
           }

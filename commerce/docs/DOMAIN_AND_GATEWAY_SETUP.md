@@ -66,4 +66,5 @@ Rollback this application's code/container and its own new ingress/DNS record on
 - [Razorpay orders](https://razorpay.com/docs/api/orders/create/)
 - [Razorpay payment fetch](https://razorpay.com/docs/api/payments/fetch-with-id/)
 - [Razorpay webhook validation](https://razorpay.com/docs/webhooks/validate-test/)
-- [LiquidJS security model](https://liquidjs.com/tutorials/security-model.html)
+- [JavaScript theme authoring and execution boundary](JAVASCRIPT_THEMES.md)
+- [QuickJS runtime API](https://github.com/justjake/quickjs-emscripten/tree/v0.32.0)
