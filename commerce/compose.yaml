@@ -1,0 +1,20 @@
+services:
+  ind-commerce:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PORT: "4310"
+      COMMERCE_BIND: 0.0.0.0
+      COMMERCE_DB: /app/data/commerce.db
+    ports:
+      - "127.0.0.1:4311:4310"
+    volumes:
+      - commerce-data:/app/data
+    mem_limit: 512m
+    pids_limit: 128
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+volumes:
+  commerce-data:

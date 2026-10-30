@@ -1,0 +1,32 @@
+name: IND Commerce
+on:
+  push:
+    branches: [main, codex/ind-commerce-pilot]
+    paths: ['commerce/**', '.github/workflows/commerce.yml']
+  pull_request:
+    paths: ['commerce/**', '.github/workflows/commerce.yml']
+permissions:
+  contents: read
+jobs:
+  commerce:
+    name: Commerce / Node 24 / ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: commerce
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install pinned template dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Check modules
+        run: npm run check
+      - name: Test commerce and HTTP boundaries
+        run: npm test
