@@ -189,6 +189,8 @@ function renderShop() {
 }
 
 document.addEventListener('click',async event=>{
+  const navLink=event.target.closest('.sidebar a[href^="#"]');
+  if(navLink) { event.preventDefault(); const page=navLink.getAttribute('href').slice(1); if(Object.hasOwn(pageTitles,page)) { history.replaceState(null,'','#'+page); navigate(page).catch(error=>toast(error.message,true)); } return; }
   const button=event.target.closest('[data-action]');if(!button)return;
   const action=button.dataset.action,identifier=button.dataset.id;
   try {
