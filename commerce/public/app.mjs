@@ -1,3 +1,4 @@
+import { mediaAction,mediaForm } from './media-editor.mjs';
 import { e, money, date, label, icon, badge, btn, art } from './shared.mjs';
 import { connectionsPage,leadsPage,connectionAction,connectionForm } from './connections.mjs';
 import { javascriptEditor,themeConfiguration,renderThemePreview,themeAction,themeFileForm,importTheme } from './theme-editor.mjs';
@@ -51,7 +52,7 @@ function overview() {
 function productsPage(inventory=false) {
   const rows=state.data.products;
   return '<section class="panel"><div class="panel-head"><div><h2>'+ (inventory?'Stock on hand':'Your catalog')+'</h2><p>'+rows.length+' products · prices include the configured tax</p></div>'+btn(inventory?'ledger':'product-new',inventory?'View stock ledger':icon('plus',14)+' Add product')+'</div>'+
-    (rows.length?'<div class="table-wrap"><table><thead><tr><th>Product</th><th>SKU</th><th>'+(inventory?'Stock':'Price')+'</th><th>'+(inventory?'Status':'Inventory')+'</th><th></th></tr></thead><tbody>'+rows.map(p=>'<tr data-search="'+e(p.name+' '+p.sku+' '+p.category)+'"><td><div class="table-name"><div class="mini-art">'+art(p)+'</div><div><strong>'+e(p.name)+'</strong><p class="tiny muted">'+e(p.category)+' · '+(p.active?'Visible':'Hidden')+'</p></div></div></td><td class="mono">'+e(p.sku)+'</td><td><strong>'+(inventory?p.stock+' units':money(p.price))+'</strong></td><td>'+badge(inventory?(p.stock===0?'Out of stock':p.stock<=5?'Low stock':'In stock'):p.stock+' available',p.stock<=5?'warm':'good')+'</td><td>'+btn(inventory?'stock':'product-edit',inventory?'Adjust stock':'Edit','','data-id="'+e(p.id)+'"')+'</td></tr>').join('')+'</tbody></table></div>':empty('A fresh start for your catalog','Add your first product to start building your store.',btn('product-new','Add your first product','primary')))+'</section>';
+    (rows.length?'<div class="table-wrap"><table><thead><tr><th>Product</th><th>SKU</th><th>'+(inventory?'Stock':'Price')+'</th><th>'+(inventory?'Status':'Inventory')+'</th><th></th></tr></thead><tbody>'+rows.map(p=>'<tr data-search="'+e(p.name+' '+p.sku+' '+p.category)+'"><td><div class="table-name"><div class="mini-art">'+art(p)+'</div><div><strong>'+e(p.name)+'</strong><p class="tiny muted">'+e(p.category)+' · '+(p.active?'Visible':'Hidden')+'</p></div></div></td><td class="mono">'+e(p.sku)+'</td><td><strong>'+(inventory?p.stock+' units':money(p.price))+'</strong></td><td>'+badge(inventory?(p.stock===0?'Out of stock':p.stock<=5?'Low stock':'In stock'):p.stock+' available',p.stock<=5?'warm':'good')+'</td><td>'+btn(inventory?'stock':'product-edit',inventory?'Adjust stock':'Edit','','data-id="'+e(p.id)+'"')+(inventory?'':btn('product-media','Images','','data-id="'+e(p.id)+'"'))+'</td></tr>').join('')+'</tbody></table></div>':empty('A fresh start for your catalog','Add your first product to start building your store.',btn('product-new','Add your first product','primary')))+'</section>';
 }
 function customersPage() {
   const groups=new Map();
@@ -67,7 +68,7 @@ function shopMarkup(s,mini=false) {
   return '<div class="shop '+e(theme.template)+(mini?' mini-shop':'')+'" style="--accent:'+e(theme.accent)+'">'+(theme.announcement?'<div class="shop-announcement">'+e(theme.announcement)+'</div>':'')+
     '<div class="shop-nav"><span class="shop-brand">'+e(s.name)+'</span><div class="shop-links"><a href="#collection">Shop all</a><a href="#collection">Everyday essentials</a></div>'+(mini?icon('orders',17):btn('cart','Bag ('+state.cart.reduce((n,l)=>n+l.quantity,0)+') '+icon('orders',16)))+'</div>'+
     '<section class="shop-hero"><div><p class="kicker">CONSIDERED GOODS. EVERYDAY JOY.</p><h1>'+e(theme.title)+'</h1><p>'+e(theme.subtitle)+'</p>'+(mini?'<span class="button">Explore the collection '+icon('arrow',14)+'</span>':'<a class="button" href="#collection">Explore the collection '+icon('arrow',14)+'</a>')+'</div><div class="hero-art">'+products.slice(0,2).map(p=>art(p)).join('')+'</div></section>'+
-    '<section class="shop-collection" id="collection"><div class="between"><h2>Good things for everyday living.</h2><p>Simple. Useful. Made to stay.</p></div><div class="shop-grid">'+products.slice(0,mini?3:500).map(p=>'<article class="shop-card">'+art(p)+'<h3>'+e(p.name)+'</h3><p>'+money(p.price)+' · tax included</p>'+(mini?'':btn('add-cart',p.stock?'Add to bag '+icon('plus',13):'Sold out','','data-id="'+e(p.id)+'"'+(!p.stock?' disabled':'')))+'</article>').join('')+'</div>'+(!products.length?empty('Our next chapter is coming soon','New products will appear here when the merchant publishes them.'):'')+'</section>'+
+    '<section class="shop-collection" id="collection"><div class="between"><h2>Good things for everyday living.</h2><p>Simple. Useful. Made to stay.</p></div><div class="shop-grid">'+products.slice(0,mini?3:500).map(p=>'<article class="shop-card">'+art(p)+'<h3>'+e(p.name)+'</h3>'+(!mini&&p.media?.length>1?btn('product-gallery','View '+p.media.length+' images','','data-id="'+e(p.id)+'"'):'')+'<p>'+money(p.price)+' · tax included</p>'+(mini?'':btn('add-cart',p.stock?'Add to bag '+icon('plus',13):'Sold out','','data-id="'+e(p.id)+'"'+(!p.stock?' disabled':'')))+'</article>').join('')+'</div>'+(!products.length?empty('Our next chapter is coming soon','New products will appear here when the merchant publishes them.'):'')+'</section>'+
     (!mini?'<footer class="shop-footer"><span>© '+new Date().getFullYear()+' '+e(s.name)+'</span><span>Powered by IND Commerce · Pilot storefront</span></footer>':'')+'</div>';
 }
 function themesPage() {
@@ -226,7 +227,7 @@ document.addEventListener('click',async event=>{
   const button=event.target.closest('[data-action]');if(!button)return;
   const action=button.dataset.action,identifier=button.dataset.id;
   try {
-    if(await connectionAction(action,button,extensionContext())||await themeAction(action,button,extensionContext())||await paymentAction(action,button,extensionContext()))return;
+    if(await mediaAction(action,button,extensionContext())||await connectionAction(action,button,extensionContext())||await themeAction(action,button,extensionContext())||await paymentAction(action,button,extensionContext()))return;
     if(action==='close')return closeModal();
     if(action==='menu')return document.querySelector('.sidebar')?.classList.toggle('open');
     if(action==='nav')return navigate(button.dataset.page);
@@ -297,6 +298,7 @@ document.addEventListener('click',async event=>{
     if(action==='export') {
       const a=document.createElement('a');a.href=storePath('/export');a.download='ind-store-export.json';a.click();toast('Preparing your store export.');return;
     }
+    if(action==='product-gallery'){const product=state.shop.products.find(p=>p.id===identifier);if(product)modal(product.name,(product.media||[]).map(image=>'<figure><img style="width:100%;height:auto" src="'+e(image.url)+'" width="'+image.width+'" height="'+image.height+'" alt="'+e(image.alt)+'" loading="lazy"><figcaption>'+e(image.alt)+'</figcaption></figure>').join(''));return;}
     if(action==='add-cart')return addProductToCart(identifier);
     if(action==='cart')return cartModal();
     if(action==='cart-less'||action==='cart-more') {
@@ -313,7 +315,7 @@ document.addEventListener('submit',async event=>{
   const existingText=submit?.textContent;if(submit){submit.disabled=true;submit.textContent=kind==='assistant'?'Drafting…':'Saving…';}
   const errorBox=(dialog.open?dialog:form).querySelector('.error');if(errorBox)errorBox.innerHTML='';
   try {
-    if(await connectionForm(kind,form,data,extensionContext()))return;
+    if(await mediaForm(kind,form,data,extensionContext())||await connectionForm(kind,form,data,extensionContext()))return;
     if(kind==='theme-file'){themeFileForm(form,data,extensionContext());return;}
     if(kind==='login') {await api('/api/login','POST',data);await entered();return;}
     if(kind==='product-new') {

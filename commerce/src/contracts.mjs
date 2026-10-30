@@ -1,3 +1,4 @@
+import { validateLayout } from './theme-sdk.mjs';
 import { createHash, createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 export class Fault extends Error { constructor(status, message) { super(message); this.status = status; } }
 export const fail = (condition, status, message) => { if (!condition) throw new Fault(status, message); };
@@ -36,8 +37,10 @@ export function theme(input) {
   fail(['market', 'atelier', 'circuit'].includes(input.template), 400, 'Choose a supported theme');
   fail(/^#[\da-f]{6}$/i.test(input.accent), 400, 'Use a six-digit hex colour');
   const renderer=input.renderer||'builtin';fail(['builtin','javascript'].includes(renderer),400,'Choose built-in or JavaScript rendering');
+  let layout;
+  if(input.layout!==undefined){fail(renderer==='javascript',400,'Section layouts require JavaScript rendering');try{layout=validateLayout(input.layout);}catch(error){fail(false,400,error.message);}}
   const files=renderer==='javascript'||input.files?validateJavaScriptPackage(input.files):null;
-  return { renderer,...(files?{files}:{}),template: input.template, accent: input.accent, title: text(input.title, 'Headline', 100), subtitle: text(input.subtitle, 'Subheading', 200, 0), announcement: text(input.announcement, 'Announcement', 160, 0) };
+  return { renderer,...(layout?{layout}:{}),...(files?{files}:{}),template: input.template, accent: input.accent, title: text(input.title, 'Headline', 100), subtitle: text(input.subtitle, 'Subheading', 200, 0), announcement: text(input.announcement, 'Announcement', 160, 0) };
 }
 export const defaultTheme = { template: 'market', accent: '#246b50', title: 'Everyday things. Thoughtfully made.', subtitle: 'Discover useful, beautiful essentials from independent makers.', announcement: 'Made with care. Delivered across India.' };
 export const PLANS = [

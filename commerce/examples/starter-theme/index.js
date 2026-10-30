@@ -1,7 +1,9 @@
-import { html } from 'ind:theme';
+import { html, renderSections } from 'ind:theme';
+import sections from './layout-sections.js';
 import productCard from './product-card.js';
 
-export default function render({ shop, settings, products }) {
+export default function render({ shop, settings, products, layout }) {
+  if (layout) return html`<header class="theme-nav"><strong>${shop.name}</strong><a href="#products">Shop the collection</a></header>${renderSections(layout,sections,{shop,settings,products})}<footer>${settings.announcement}</footer>`;
   return html`
     <header class="theme-nav">
       <strong>${shop.name}</strong><a href="#products">Shop the collection</a>

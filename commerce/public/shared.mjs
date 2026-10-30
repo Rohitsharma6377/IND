@@ -29,6 +29,8 @@ export const icon=(name,size=19)=>'<svg width="'+size+'" height="'+size+'" viewB
 export const badge=(text,type='neutral')=>'<span class="badge '+e(type)+'">'+e(text)+'</span>';
 export const btn=(action,text,cls='',attrs='')=>'<button type="button" class="button '+cls+'" data-action="'+e(action)+'" '+attrs+'>'+text+'</button>';
 export function art(product,large=false) {
+  const cover=product.media?.[0];
+  if(cover)return '<div class="product-art"><img src="'+e(cover.url)+'" srcset="'+e(cover.thumbnail)+' '+Math.min(320,cover.width)+'w, '+e(cover.url)+' '+cover.width+'w" sizes="(max-width: 650px) 45vw, 25vw" width="'+cover.width+'" height="'+cover.height+'" alt="'+e(cover.alt)+'" loading="lazy" style="width:100%;height:100%;object-fit:contain"></div>';
   const category=product.category||'',name=product.name.toLowerCase();
   let shape;
   if(name.includes('tote')||name.includes('basket')) shape='<path d="M66 78q0-36 30-36t30 36" fill="none" stroke="#675841" stroke-width="8"/><path d="m48 76 9 92q40 15 78 0l9-92Z" fill="currentColor"/><path d="m65 91 7 66m56-66-7 66" stroke="#ffffff" opacity=".3" stroke-width="3"/>';

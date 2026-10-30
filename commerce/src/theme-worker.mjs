@@ -69,9 +69,12 @@ try {
     output = context.getString(value);
   } finally { value.dispose(); }
   if (Buffer.byteLength(output, 'utf8') > 262144) throw new Error('Theme output exceeds 256 KB');
-  const html=sanitizeHtml(output,{allowedTags:['div','section','article','header','footer','nav','main','h1','h2','h3','h4','p','span','strong','em','small','ul','ol','li','a','button','img','br','hr'],
+  const origin=workerData.imageOrigin||'';
+    const imagePrefix=origin+'/media/'+workerData.context.shop.slug+'/';
+    const validImage=src=>typeof src==='string'&&(/^data:image\/(png|jpeg|gif|webp|svg\+xml);base64,[a-zA-Z0-9+/=]+$/.test(src)||(origin&&src.startsWith(imagePrefix)&&/^img_[a-f0-9]{24}\/(320|960)[.]webp(?:\?preview=[A-Za-z0-9_-]{43})?$/.test(src.slice(imagePrefix.length))));
+    const html=sanitizeHtml(output,{allowedTags:['div','section','article','header','footer','nav','main','h1','h2','h3','h4','p','span','strong','em','small','ul','ol','li','a','button','img','br','hr','details','summary'],
     allowedAttributes:{'*':['class','style','id','title','aria-label'],a:['href'],button:['data-ind-add','type','disabled'],img:['src','alt','width','height','loading']},
-    allowedSchemes:['data'],allowedSchemesByTag:{img:['data']},allowProtocolRelative:false,
+    allowedSchemes:['data'],allowedSchemesByTag:{img:['data','http','https']},allowProtocolRelative:false,
     allowedStyles:{'*':{color:[/^#[a-f0-9]{3,8}$/i],background:[/^#[a-f0-9]{3,8}$/i],'background-color':[/^#[a-f0-9]{3,8}$/i],
       'text-align':[/^(left|center|right)$/],'font-size':[/^[0-9.]{1,5}(px|rem|em|%)$/],
       padding:[/^[0-9. pxrem%]{1,40}$/],margin:[/^[0-9. pxrem%auto-]{1,40}$/],
@@ -80,7 +83,7 @@ try {
     transformTags:{
       a:(_tag,attrs)=>({tagName:'a',attribs:{...attrs,href:attrs.href?.startsWith('#')?attrs.href:'#'}}),
       button:(_tag,attrs)=>({tagName:'button',attribs:{...attrs,type:'button'}}),
-      img:(_tag,attrs)=>({tagName:'img',attribs:{...attrs,src:/^data:image\/(png|jpeg|gif|webp|svg\+xml);base64,[a-zA-Z0-9+/=]+$/.test(attrs.src||'')?attrs.src:'',loading:'lazy'}})
+      img:(_tag,attrs)=>({tagName:'img',attribs:{...attrs,src:validImage(attrs.src)?attrs.src:'',loading:'lazy'}})
     },enforceHtmlBoundary:true});
   parentPort.postMessage({html});
 } catch (error) {

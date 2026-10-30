@@ -125,3 +125,11 @@ CI configuration installs the pinned direct dependencies and targets Node 24 on 
 The commerce rules and APIs are independent of the renderer: Node, SQLite, browser-native admin/storefront modules, QuickJS/WASM and sanitize-html. They do not require Next.js or Shopify APIs. The surrounding unfinished IndJS runtime remains a separate workstream; this change does not validate IndJS SSR, navigation or Next.js feature parity.
 
 Production still requires PostgreSQL/migrations, durable workers and reservation expiry, identity hardening, tax-document logic, shipping/returns/refunds, billing/partner payouts, operational recovery, staffed support and independent security/load testing. See [release gates](docs/RELEASE_BACKLOG.md). No production migration, main-branch merge or live-data change is performed by this branch.
+
+## Visual builder and product media
+
+The Online store editor now supports a visual section starter with settings, ordering, visibility and revisioned layout JSON. Products → Images opens the upload library and ordered gallery editor. Static PNG/JPEG/WebP uploads are decoded and converted to bounded metadata-free WebP variants; private originals are held in the local SQLite database.
+
+Run `npm ci` on Node 24.13+ before starting. Read [the media and visual builder guide](docs/MEDIA_AND_VISUAL_BUILDER.md) for limits and preview behavior. The [delivery plan](docs/DELIVERY_PLAN.md) tracks current evidence and remaining production gates.
+
+Validated 30 October 2026: 94 Node tests pass, including actual QuickJS/WASM and image decoding; 37 modules pass syntax checks; dependency audit reports zero known vulnerabilities. Browser verification remains pending after a connector timeout. This pilot is not deployed by these changes.

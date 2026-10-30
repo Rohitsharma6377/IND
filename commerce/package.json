@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "sanitize-html": "2.18.1",
-    "quickjs-emscripten": "0.32.0"
+    "quickjs-emscripten": "0.32.0",
+    "sharp": "0.35.5"
   }
 }

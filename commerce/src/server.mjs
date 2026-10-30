@@ -1,3 +1,4 @@
+import { Media } from './media.mjs';
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -12,6 +13,8 @@ import { marketingPage,marketingPaths } from './marketing.mjs';
 import { renderJavaScript,frameDocument,starterJavaScript } from './theme-renderer.mjs';
 
 const assets = new Map([
+  ['/media-editor.mjs', ['text/javascript; charset=utf-8', new URL('../public/media-editor.mjs', import.meta.url)]],
+  ['/layout-model.mjs', ['text/javascript; charset=utf-8', new URL('../public/layout-model.mjs', import.meta.url)]],
   ['/', ['text/html; charset=utf-8', new URL('../public/index.html', import.meta.url)]],
   ['/app.mjs', ['text/javascript; charset=utf-8', new URL('../public/app.mjs', import.meta.url)]],
   ['/shared.mjs', ['text/javascript; charset=utf-8', new URL('../public/shared.mjs', import.meta.url)]],
@@ -50,11 +53,12 @@ export function createCommerceServer({ commerce, demo = false, aiModel = null,pa
   if(publicOrigin){const u=new URL(publicOrigin);fail(u.protocol==='https:'&&!u.username&&!u.password&&u.pathname==='/'&&!u.search&&!u.hash,500,'COMMERCE_PUBLIC_ORIGIN must be an HTTPS origin');publicOrigin=u.origin;}
   fail(!paymentOptions.allowLive||Boolean(publicOrigin),500,'Live payments need a configured HTTPS public origin');
   const payments=new Payments(c,paymentOptions),domains=new Domains(c,{...domainOptions,platformHost:publicOrigin?new URL(publicOrigin).hostname:''});
-  const previews=new Map();
-  const sendFrame=(res,document)=>{
+  const media=new Media(c);
+  const previews=new Map(),mediaPreviews=new Map();
+  const sendFrame=(res,document,imageOrigin='')=>{
     const nonce=document.match(/<script nonce="([A-Za-z0-9_-]+)"/)?.[1];fail(nonce,500,'Frame nonce missing');
     res.setHeader('X-Frame-Options','SAMEORIGIN');res.setHeader('Referrer-Policy','no-referrer');
-    res.setHeader('Content-Security-Policy',"sandbox allow-scripts; default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'nonce-"+nonce+"'; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'self'");
+    res.setHeader('Content-Security-Policy',"sandbox allow-scripts; default-src 'none'; img-src data: "+imageOrigin+"; style-src 'unsafe-inline'; script-src 'nonce-"+nonce+"'; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'self'");
     res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'});res.end(document);
   };
   const rates=new Map(); let nextSweep=Date.now()+60000;
@@ -120,11 +124,13 @@ export function createCommerceServer({ commerce, demo = false, aiModel = null,pa
         const session=c.session(user); setSession(res,session,!local);
         return json(res,200,{user:session.user,csrf:session.csrf});
       }
-      const publicMatch=path.match(/^\/api\/public\/([a-z0-9-]+)(?:\/(checkout|theme-frame|payments|confirm|receipt))?$/);
+      const publicImage=path.match(/^\/media\/([a-z0-9-]+)\/(img_[a-f0-9]+)\/(320|960)[.]webp$/);
+            if(publicImage&&['GET','HEAD'].includes(method)){if(mapped)fail(publicImage[1]===mapped.slug,404,'Image not found');let data;const previewKey=url.searchParams.get('preview');if(previewKey){fail(!mapped,404,'Image not found');const entry=mediaPreviews.get(previewKey);fail(entry&&entry.expires>Date.now()&&entry.slug===publicImage[1],404,'Image preview expired');const previewActor=c.actor(entry.token);c.access(previewActor,entry.store,'themes');data=media.preview(previewActor,entry.store,publicImage[2],Number(publicImage[3]));}else data=media.derivative(publicImage[1],publicImage[2],Number(publicImage[3]));res.writeHead(200,{'Content-Type':'image/webp','Content-Length':data.length});res.end(method==='HEAD'?undefined:Buffer.from(data));return;}
+            const publicMatch=path.match(/^\/api\/public\/([a-z0-9-]+)(?:\/(checkout|theme-frame|payments|confirm|receipt))?$/);
       if(publicMatch) {
         if(mapped)fail(publicMatch[1]===mapped.slug,404,'Store not found');
         if(method==='GET'&&!publicMatch[2]){const s=c.publicStore(publicMatch[1]);const {files,...publicTheme}=s.theme;return json(res,200,{...s,theme:publicTheme,payments:payments.publicStatus(s.id)});}
-        if(method==='GET'&&publicMatch[2]==='theme-frame'){const s=c.publicStore(publicMatch[1]);fail(s.theme.renderer==='javascript',404,'No custom theme');return sendFrame(res,frameDocument(await renderJavaScript(s,s.theme)));}
+        if(method==='GET'&&publicMatch[2]==='theme-frame'){const s=c.publicStore(publicMatch[1]);fail(s.theme.renderer==='javascript',404,'No custom theme');return sendFrame(res,frameDocument(await renderJavaScript(s,s.theme,{imageOrigin:origin}),{imageOrigin:origin}),origin);}
         if(method==='POST'&&publicMatch[2]==='payments')return json(res,201,await payments.begin(publicMatch[1],await body(req),req.headers['idempotency-key']));
         if(method==='POST'&&publicMatch[2]==='confirm')return json(res,200,await payments.confirm(publicMatch[1],await body(req)));
         if(method==='POST'&&publicMatch[2]==='receipt'){const input=await body(req);return json(res,200,payments.receipt(publicMatch[1],input.intent_id,input.receipt_token));}
@@ -141,7 +147,7 @@ export function createCommerceServer({ commerce, demo = false, aiModel = null,pa
         const preview=path.match(/^\/api\/theme-preview\/([A-Za-z0-9_-]+)$/);
         if(preview&&method==='GET'){
           const entry=previews.get(preview[1]);fail(entry&&entry.expires>Date.now()&&entry.actor===actor.id,404,'Preview expired');
-          c.access(actor,entry.store,'themes');return sendFrame(res,entry.document);
+          c.access(actor,entry.store,'themes');return sendFrame(res,entry.document,origin);
         }
         if(path==='/api/pilot-requests'&&method==='GET')return json(res,200,c.pilotRequests(actor));
         if(path==='/api/session' && method==='GET') return json(res,200,{user:{id:actor.id,name:actor.name,email:actor.email,kind:actor.kind},csrf:actor.csrf,stores:c.stores(actor)});
@@ -161,7 +167,15 @@ export function createCommerceServer({ commerce, demo = false, aiModel = null,pa
           const [,storeId,resource,item,action]=route;
           c.access(actor,storeId);
           if(!resource && method==='GET') return json(res,200,c.dashboard(actor,storeId));
+          if(resource==='media'){
+            if(method==='GET'&&!item)return json(res,200,media.list(actor,storeId));
+            if(method==='POST'&&!item)return json(res,201,await media.upload(actor,storeId,await body(req,3000000)));
+            if(method==='PATCH'&&item&&!action)return json(res,200,media.update(actor,storeId,item,await body(req)));
+            if(method==='DELETE'&&item&&!action)return json(res,200,media.remove(actor,storeId,item));
+            if(method==='GET'&&item&&action==='preview'){const data=media.preview(actor,storeId,item);res.writeHead(200,{'Content-Type':'image/webp'});res.end(Buffer.from(data));return;}
+          }
           if(resource==='products') {
+            if(method==='PUT'&&item&&action==='media')return json(res,200,media.attach(actor,storeId,item,await body(req)));
             if(method==='GET' && !item) return json(res,200,c.products(actor,storeId));
             if(method==='POST' && !item) return json(res,201,c.createProduct(actor,storeId,await body(req)));
             if(method==='PATCH' && item && !action) return json(res,200,c.editProduct(actor,storeId,item,await body(req)));
@@ -174,17 +188,17 @@ export function createCommerceServer({ commerce, demo = false, aiModel = null,pa
           if(resource==='tasks' && method==='POST' && item) return json(res,200,c.completeTask(actor,storeId,item));
           if(resource==='theme') {
             if(method==='GET')return json(res,200,{...c.themeState(actor,storeId),starter:starterJavaScript});
-            const renderStore=()=>{const s=c.access(actor,storeId,'themes');return {name:s.name,slug:s.slug,products:c.products(actor,storeId)};};
+            const renderStore=()=>{const s=c.access(actor,storeId,'themes');for(const [key,entry]of mediaPreviews)if(entry.expires<Date.now())mediaPreviews.delete(key);while(mediaPreviews.size>=64)mediaPreviews.delete(mediaPreviews.keys().next().value);const key=secret();mediaPreviews.set(key,{store:storeId,slug:s.slug,token,expires:Date.now()+120000});const products=c.products(actor,storeId).map(p=>({...p,media:(p.media||[]).map(image=>({...image,url:image.url+'?preview='+key,thumbnail:image.thumbnail+'?preview='+key}))}));return {name:s.name,slug:s.slug,products};};
             if(method==='POST'&&item==='render'){
               const input=await body(req,262144),config=theme(input.config);fail(config.renderer==='javascript',400,'Select the JavaScript renderer');
-              const document=frameDocument(await renderJavaScript(renderStore(),config));c.access(c.actor(token),storeId,'themes');
+              const document=frameDocument(await renderJavaScript(renderStore(),config,{imageOrigin:origin}),{imageOrigin:origin});c.access(c.actor(token),storeId,'themes');
               for(const [k,v]of previews)if(v.expires<Date.now())previews.delete(k);
               while(previews.size>=64)previews.delete(previews.keys().next().value);
               const key=secret();previews.set(key,{document,store:storeId,actor:actor.id,expires:Date.now()+120000});
               return json(res,200,{frame_url:'/api/theme-preview/'+key});
             }
             if(method==='PUT'&&!item){
-              const config=theme(await body(req,262144));if(config.renderer==='javascript')await renderJavaScript(renderStore(),config);
+              const config=theme(await body(req,262144));if(config.renderer==='javascript')await renderJavaScript(renderStore(),config,{imageOrigin:origin});
               return json(res,200,c.saveTheme(c.actor(token),storeId,config));
             }
             if(method==='POST'&&item==='publish'){
@@ -261,7 +275,7 @@ export function createCommerceServer({ commerce, demo = false, aiModel = null,pa
       if(!mapped&&path==='/sitemap.xml'){res.writeHead(200,{'Content-Type':'application/xml'});res.end('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+(publicOrigin?[...marketingPaths].filter(p=>!['/signup','/privacy','/terms'].includes(p)).map(p=>'<url><loc>'+publicOrigin+p+'</loc></url>').join(''):'')+'</urlset>');return;}
       if(!mapped&&path==='/signup'&&!allowSignup){res.writeHead(302,{Location:'/contact'});res.end();return;}
       if(!mapped&&marketingPaths.has(path)){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'});res.end(method==='HEAD'?undefined:marketingPage(path,{origin:publicOrigin,demo}));return;}
-      if(mapped)fail(path==='/'||['/app.mjs','/shared.mjs','/styles.css','/connections.mjs','/theme-editor.mjs','/payment-checkout.mjs'].includes(path),404,'Page not found');
+      if(mapped)fail(path==='/'||['/app.mjs','/media-editor.mjs','/layout-model.mjs','/shared.mjs','/styles.css','/connections.mjs','/theme-editor.mjs','/payment-checkout.mjs'].includes(path),404,'Page not found');
       const asset=assets.get(path) ?? (/^\/s\/[a-z0-9-]+$/.test(path) || path==='/admin' ? assets.get('/') : null);
       fail(asset,404,'Page not found');
       res.writeHead(200,{'Content-Type':asset[0]});

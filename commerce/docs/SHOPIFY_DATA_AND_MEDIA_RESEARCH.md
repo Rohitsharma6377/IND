@@ -40,12 +40,13 @@ const registry = {
 export default context => renderSections(layout, registry, context);
 ```
 
-The current package loader imports JavaScript modules only. Embed a layout object in a module or export it from a local JavaScript component. JSON file imports and an editor that persists/reorders layout instances are not implemented by this change. Do not pass raw merchant HTML through settings.
+The package loader imports JavaScript modules. Layout JSON now lives in `theme.layout`, is saved with revisions, survives import/export, and is passed into the public theme context. The visual starter uses `renderSections` with registered JavaScript section components. Custom theme modules can also embed their own data. Arbitrary JSON file imports and custom typed section schemas remain future work.
 
-## Current image gap
+## Media status (updated 30 October 2026)
 
-`theme-renderer.mjs` currently synthesizes SVG illustrations from product data. The worker and frame policy only permit data images. Upload storage, image processing, responsive variants, galleries, alt-text management and an image picker are not present. Merely adding a width query parameter would not implement resizing.
+The pilot now uploads and strictly decodes static PNG/JPEG/WebP files, stores private originals and generated WebP derivatives in SQLite, and supports product gallery ordering and alt text. Public images require attachment to an active product in an open store. Closed-store previews use short-lived session-bound image URLs. JavaScript themes accept managed image URLs only on the exact approved store media path.
 
+Production object storage, CDN caching, queued processing, AVIF, full media export and recovery drills remain unfinished. See [MEDIA_AND_VISUAL_BUILDER.md](MEDIA_AND_VISUAL_BUILDER.md) for limits and current behavior.
 ## Media implementation contract
 
 1. Authenticate the merchant and check store permissions before allocating an upload. Derive the tenant from the authorized store; never trust a caller-supplied storage path.
@@ -79,4 +80,6 @@ Proposed differentiation to validate with Indian merchants: GST and COD reconcil
 
 ## Validation status
 
-Eight section-layout test callbacks executed in an available V8 isolate with lightweight assertions. This is not a Node test-runner result or QuickJS worker/browser verification. The local environment was unavailable. The existing full suite, installation/audit, media pipeline, deployment and payment sandbox remain unverified in this session.
+All 94 Node tests passed on Node 24.19.0, including actual QuickJS/WASM isolation, native raster decoding, HTTP media preview access, checkout/payment protections and layout save/publish/rollback. 37 JavaScript modules parse. npm audit reported zero known vulnerabilities with the pinned lockfile.
+
+Browser QA remains pending because the browser connector timed out. Real provider sandbox, deployed TLS/DNS, container release, production storage and operational readiness remain release gates. Follow [DELIVERY_PLAN.md](DELIVERY_PLAN.md).

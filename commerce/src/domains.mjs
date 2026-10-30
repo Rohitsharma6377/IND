@@ -4,7 +4,9 @@ import { Resolver } from 'node:dns/promises';
 import https from 'node:https';
 import { fail,id,now,secret,text } from './contracts.mjs';
 export function hostname(value) {
-  const name=domainToASCII(text(value,'Domain',253).toLowerCase().replace(/\.$/,''));
+  const raw=text(value,'Domain',253).toLowerCase().replace(/\.$/,'');
+  fail(!/[\\/\\\\:@?#%\s]/.test(raw),400,'Enter a hostname without URL syntax');
+  const name=domainToASCII(raw);
   fail(name&&name.includes('.')&&!isIP(name)&&name.split('.').every(label=>/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label))&&!/\.(local|internal|test|invalid|localhost|example)$/.test(name),400,'Enter a public hostname without a protocol, path, port or wildcard');
   return name;
 }

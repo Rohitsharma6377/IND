@@ -1,3 +1,4 @@
+import { request as httpRequest } from 'node:http';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
@@ -14,7 +15,10 @@ async function fixture(t) {
   t.after(async()=>{server.closeAllConnections();await new Promise(resolve=>server.close(resolve));c.close();});
   const origin='http://127.0.0.1:'+server.address().port,signed=c.session(owner);
   async function req(path,{method='GET',body,auth=false,headers={},noOrigin=false}={}) {
-    const response=await fetch(origin+path,{method,headers:{...(noOrigin?{}:{Origin:origin}),'Content-Type':'application/json',...(auth?{Cookie:'ind_session='+signed.token,'X-CSRF-Token':signed.csrf}:{}),...headers},...(body===undefined?{}:{body:Buffer.isBuffer(body)?body:JSON.stringify(body)})});
+    const options={method,headers:{...(noOrigin?{}:{Origin:origin}),'Content-Type':'application/json',...(auth?{Cookie:'ind_session='+signed.token,'X-CSRF-Token':signed.csrf}:{}),...headers},...(body===undefined?{}:{body:Buffer.isBuffer(body)?body:JSON.stringify(body)})};
+    // Fetch implementations can rewrite Host. Use the HTTP transport for virtual-host tests.
+    if(headers.Host){return await new Promise((resolve,reject)=>{const req=httpRequest(origin+path,{method,headers:options.headers},res=>{const chunks=[];res.on('data',chunk=>chunks.push(chunk));res.on('end',()=>{const raw=Buffer.concat(chunks).toString('utf8');resolve({status:res.statusCode,body:(res.headers['content-type']||'').includes('application/json')?JSON.parse(raw):raw});});});req.on('error',reject);req.end(options.body);});}
+    const response=await fetch(origin+path,options);
     const type=response.headers.get('content-type')||'';
     return {status:response.status,headers:response.headers,body:type.includes('application/json')?await response.json():await response.text()};
   }

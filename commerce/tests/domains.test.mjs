@@ -16,7 +16,7 @@ function fixture(t) {
 }
 test('hostnames reject paths, ports, IPs, wildcards and local-only names',()=>{
   assert.equal(hostname('SHOP.Example.com.'),'shop.example.com');
-  for(const name of ['https://shop.example.com','shop.example.com/path','127.0.0.1','*.example.com','shop.local','host:443'])assert.throws(()=>hostname(name));
+  for(const name of ['https://shop.example.com','shop.example.com/path','127.0.0.1','*.example.com','shop.local','host:443','shop.example.com?admin=1','shop.example.com#admin','user@shop.example.com','shop.example.com%2fadmin'])assert.throws(()=>hostname(name));
   for(const ip of ['127.0.0.1','10.1.2.3','172.16.1.1','192.168.1.1','169.254.1.1','100.64.1.1','203.0.113.1','::1'])assert.equal(publicIPv4(ip),false);
   assert.equal(publicIPv4('66.116.248.221'),true);
 });

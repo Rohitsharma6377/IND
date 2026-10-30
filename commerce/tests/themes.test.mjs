@@ -61,3 +61,10 @@ test('frame HTML has a nonce-bound bridge and no form/network permission',()=>{
   assert.match(html,/script nonce="[A-Za-z0-9_-]+"/);assert.match(html,/connect-src &#39;none&#39;/);
   assert.match(html,/parent.postMessage/);assert.ok(!html.includes('allow-same-origin'));
 });
+
+test('managed image URLs stay on the exact store media path and unapproved fetch targets are removed',async()=>{
+ const origin='https://commerce.example.com',asset='img_'+'a'.repeat(24);
+ const source='export default () => '+JSON.stringify('<img src="'+origin+'/media/demo/'+asset+'/960.webp"><img src="'+origin+'/api/session"><img src="https://attacker.example/image"><img src="'+origin+'/media/other/'+asset+'/960.webp">');
+ const output=await renderJavaScript(store,{...defaultTheme,renderer:'javascript',files:{'index.js':source}},{imageOrigin:origin});
+ assert.match(output,new RegExp(asset));assert.ok(!output.includes('/api/session'));assert.ok(!output.includes('attacker.example'));assert.ok(!output.includes('/media/other/'));
+});

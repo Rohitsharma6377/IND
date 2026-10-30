@@ -10,6 +10,7 @@ export class Commerce {
     this.depth = 0;
     this.db.exec(readFileSync(new URL('./schema.sql', import.meta.url), 'utf8'));
     this.db.exec(readFileSync(new URL('./expansion.sql', import.meta.url), 'utf8'));
+    this.db.exec(readFileSync(new URL('./media.sql', import.meta.url), 'utf8'));
   }
   close() { this.db.close(); }
   get(sql, ...args) { return this.db.prepare(sql).get(...args); }
@@ -121,9 +122,13 @@ export class Commerce {
       return { revoked: true };
     });
   }
+  gallery(storeId,productId){
+    const store=this.get('SELECT slug FROM stores WHERE id=?',storeId);
+    return this.all('SELECT a.id,a.alt,a.width,a.height,pm.position FROM product_media pm JOIN media_assets a ON a.id=pm.asset_id AND a.store_id=pm.store_id WHERE pm.store_id=? AND pm.product_id=? ORDER BY pm.position',storeId,productId).map(asset=>({...asset,url:'/media/'+store.slug+'/'+asset.id+'/960.webp',thumbnail:'/media/'+store.slug+'/'+asset.id+'/320.webp'}));
+  }
   products(actor, storeId) {
     this.access(actor, storeId, 'catalog');
-    return this.all('SELECT * FROM products WHERE store_id=? ORDER BY created_at DESC,id', storeId);
+    return this.all('SELECT * FROM products WHERE store_id=? ORDER BY created_at DESC,id', storeId).map(p=>({...p,media:this.gallery(storeId,p.id)}));
   }
   createProduct(actor, storeId, input) {
     const store = this.access(actor, storeId, 'catalog');
@@ -171,7 +176,7 @@ export class Commerce {
     const s = this.get("SELECT id,name,slug,mode,published,theme_revision FROM stores WHERE slug=? AND mode IN ('demo','active')", slug);
     fail(s, 404, 'This storefront is not open');
     return { ...s, theme: JSON.parse(s.published), published: undefined,
-      products: this.all('SELECT id,name,category,description,price,tax_bps,stock,colour FROM products WHERE store_id=? AND active=1 ORDER BY created_at,id', s.id) };
+      products: this.all('SELECT id,name,category,description,price,tax_bps,stock,colour FROM products WHERE store_id=? AND active=1 ORDER BY created_at,id', s.id).map(p=>({...p,media:this.gallery(s.id,p.id)})) };
   }
   checkout(slug, input, key, {online=false} = {}) {
     const store = this.get("SELECT id FROM stores WHERE slug=? AND mode IN ('demo','active')", slug);
