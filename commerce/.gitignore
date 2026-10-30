@@ -4,3 +4,5 @@ data/
 *.db-wal
 .env
 coverage/
+node_modules/
+.write-check

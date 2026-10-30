@@ -24,6 +24,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Install pinned template dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
       - name: Check modules
         run: npm run check
       - name: Test commerce and HTTP boundaries

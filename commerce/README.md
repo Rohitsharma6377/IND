@@ -1,119 +1,117 @@
-# IND Commerce — local pilot
+# IND Commerce — merchant platform and marketing website
 
-An independently owned commerce application inside the IND repository. This is the first implementation of the [India-first commerce blueprint](https://chatgpt.com/space/page_f4698a0be33c8191b5cc8026eb64c09d), prepared for Netcurion Technologies.
+An independently owned commerce pilot in the IND repository. It includes the public website, merchant/partner/support workspaces, storefronts, custom Liquid templates, domain verification and a Razorpay adapter.
 
-**Status: local pilot, not a production Shopify replacement.** The code implements real local persistence and permission-checked workflows. Live payment collection, courier bookings, GST tax-invoice certification, billing, partner payouts and production deployment are not included. All seeded records are fictional. A full Shopify competitor requires further engineering and supported merchant pilots.
+**This is pilot software. Live DNS, hosting, provider sandbox validation and production release gates are not completed.** The selected marketing hostname is **commerce.netcuriontechnology.com**; it has not been pointed or deployed by this change.
 
-## Run it
+## Run locally
 
-Requires **Node.js 24.13 or later**. There are no npm dependencies or installation step.
+Requires **Node.js 24.13+**.
 
 ```sh
 cd commerce
+npm install --ignore-scripts --no-audit --no-fund
 npm run demo
 ```
 
-Open **http://127.0.0.1:4310**. Choose Merchant dashboard, Partner workspace, Support inbox, or Receiving merchant. The demo runs only when the explicit `--demo` flag is present. It uses `data/demo.db`; normal start uses `data/commerce.db`. Both are ignored by Git.
+- Marketing website: `http://127.0.0.1:4310/`
+- Merchant, partner, support and receiving-merchant demo roles: `http://127.0.0.1:4310/admin`
+- Fictional sample storefront: `http://127.0.0.1:4310/s/banyan`
 
-The server binds only to the local computer and validates its Host and Origin headers. Do not put this pilot behind a public proxy or expose its port. Demo login intentionally needs no password and must stay local. Do not enter real personal, banking or payment data into the demo.
+The explicit `--demo` flag creates fictional data in `data/demo.db`. Normal mode uses `data/commerce.db`. Do not enter real personal/payment information into the demo or expose demo login publicly. The normal default bind is loopback; a wider bind requires an HTTPS public origin and demo mode disabled.
 
-Use `PORT` to choose another local port, and `COMMERCE_DB` for a different absolute database filename. Do not point demo mode at a real database. Close the server with Ctrl+C.
+The disconnected local workspace contains intermediate expansion files. Fetch this PR into an isolated checkout when resuming; preserve the unfinished IndJS work and earlier local files.
 
-## Create password-based accounts
+The two direct template dependencies are pinned. Generate/review the npm lockfile and audit the resolved dependency tree when the execution workspace returns, before merging or building a release.
 
-Normal mode does not seed any users or allow demo entry. Set a private password through your shell environment, then use the setup command. Avoid storing passwords in source or command history. For example, in PowerShell you can collect it interactively:
+## What is implemented
+
+| Surface | Code behavior |
+| --- | --- |
+| Public website | Home, pricing, themes, partners, developers, signup, contact, pilot privacy and terms; responsive navigation, feature tabs, FAQ, metadata, robots and sitemap |
+| Onboarding | Password-based merchant/partner signup with explicit pilot consent; merchant stores start closed; no paid subscription is created |
+| Merchant workspace | Products, stock ledger, authoritative COD checkout, orders, customer grouping, charts, collection summaries, exports and activity |
+| Theme studio | Three built-in directions plus a Liquid code editor, package import/export, partial files, isolated preview, draft/publish/history/rollback |
+| Private integrations | Store-bound read-only app tokens, scope enforcement, revocation, no contact/address data in app order responses |
+| Partner workspace | Development stores, scoped collaboration and handover; transfer revokes memberships/app tokens, disables inherited gateway setup and resets domain proof |
+| Support | Tickets and responses; consented pilot enquiries are available only to support accounts; no automated email or marketing subscription |
+| Domains | Unique TXT ownership proof, operator-target DNS checking, separate pinned HTTPS/certificate/route verification and tenant-bound custom-host routing |
+| Payments | Encrypted/versioned Razorpay settings, server-side provider orders, hosted checkout, signature/payment verification, raw signed/deduplicated webhooks, exception records |
+| AI | Optional local Ollama drafting with limited product context and no action tools |
+
+Draft prices remain **₹999 / ₹2,499 / ₹6,999 monthly**. These are unvalidated proposals. Product capacity is enforced; staff/location metering and billing remain planned.
+
+## Normal accounts and private configuration
+
+Normal mode does not seed users or allow demo entry. Create accounts with the setup command and a private environment password:
 
 ```powershell
-$credential = Get-Credential -UserName 'owner@example.com' -Message 'Choose the local commerce account password'
+$credential = Get-Credential -UserName 'owner@example.com' -Message 'Choose the local pilot password'
 $env:COMMERCE_SETUP_PASSWORD = $credential.GetNetworkCredential().Password
 npm run setup -- --email=owner@example.com --name=Owner --slug=my-store
 Remove-Item Env:COMMERCE_SETUP_PASSWORD
 npm start
 ```
 
-Passwords need at least 12 characters. Use `--store=My-store` for the store display name, `--kind=partner` for a partner account, or `--kind=support` for a support account. Omit `--slug` when creating an account to receive a partner handover. Account recovery, invitations, signup, MFA and verified email are future work.
+Use `--kind=partner` or `--kind=support` for those account types. Omit `--slug` for a merchant receiving a handover. Passwords require 12+ characters.
 
-A normal store starts in development mode. Its owner can open its storefront from Settings after preparing the catalog. Opening a storefront only enables local COD order records; it does not connect payments, delivery or a public domain.
+The server reads its process environment. For a private `.env`, use `node --env-file=.env src/server.mjs` or supply environment values through the service/container manager. The `.env.example` file contains names and non-secret deployment targets only. Never commit real credentials.
 
-## Implemented workflows
+Public self-serve signup can be disabled with `COMMERCE_ALLOW_SIGNUP=0`; the signup route then redirects to the pilot contact form. Verified email, password recovery, MFA and verified handover acceptance are production gates, not completed account features.
 
-| Area | Working local behavior |
-| --- | --- |
-| Merchant workspace | Store switcher, permission-aware navigation, metrics computed from orders, search within visible rows, customer grouping, order-value charts and collection summaries |
-| Products and inventory | Create/edit/hide products, tax-inclusive integer-paise prices, SKU uniqueness, stock adjustments with reasons and a stock ledger |
-| Storefront and checkout | Three first-party theme styles, product collection, bag, customer/address form, server-calculated COD orders, stock checks and idempotency |
-| Orders | Independent payment/fulfilment states; ship → deliver → manually record collection; cancellation before shipment restores stock exactly once |
-| Themes | Schema-validated settings, live local edit preview, saved draft preview, publish revision checks, history and rollback |
-| Plugins | Review declared permissions; install/uninstall three allowlisted first-party plugins; packing/low-stock tasks and a server-side COD value guard |
-| Private apps | Store-bound, hashed, read-only tokens; catalog/order scopes; revoke immediately; no contact data in the app order API |
-| Developer console | App creation/revocation and a durable local order-event outbox; HMAC event-signing utility |
-| Partners | Development stores, merchant handover, automatic revocation of old memberships/app tokens, limited post-handover store identity |
-| Support | Merchant tickets, priorities, support inbox, response/status; support accounts have no implicit catalog or order access |
-| Access and ownership | Password login, expiring database-backed sessions, CSRF/origin checks, owner/admin/staff/collaborator/viewer permissions, membership grants/revocation, JSON export and activity records |
-| AI | Optional local Ollama draft service with limited product context; no tools, automatic edits or customer details |
-| Plans | Clearly labelled draft pricing cards and a saved plan selection; product capacity enforced; no charges or actual subscriptions |
+## Custom Liquid themes
 
-The initial draft prices are ₹999 / ₹2,499 / ₹6,999 per month. These are **unvalidated proposals**, not live offers. Staff/location limits on the cards describe the research proposal and are not metered here.
+In Online store, choose **Custom Liquid code**, edit the source files, render a preview, save the draft and publish. The package needs `index.liquid` and can include up to nine simple-named partials. Export/import uses a JSON package with `schema_version`, `settings` and `files`.
 
-## Try an end-to-end order
-
-1. Enter the merchant demo and open **View store**.
-2. Add an item to the bag and place a fictional COD order.
-3. Return to `/admin`, open Orders, and inspect the saved order.
-4. Mark it shipped, then delivered, then record COD collected. These are local operational confirmations; they do not book a courier or move money.
-5. In Inventory, inspect the stock ledger. In Automations, inspect packing and stock review tasks.
-6. Create another order and cancel it before shipment; stock is restored once.
-
-The browser never supplies the authoritative price or tax. Repeating a checkout with the same idempotency key returns the same order; using that key for a different payload fails.
-
-## Try partner handover
-
-1. Enter Partner workspace and create a development store.
-2. Open it, add products and customize a theme. Development storefronts are closed to public checkout.
-3. Return to Partner workspace and hand it over to `client@demo.ind.local`. Type TRANSFER.
-4. The previous agency membership and all existing private app tokens are revoked.
-5. Enter Receiving merchant. It now owns that store and can open it or explicitly grant agency access again.
-
-The setup command creates receiving accounts in normal mode. The current pilot has one account per partner organization; team organizations, invitations and verified handover acceptance remain future work. An agency does not receive fabricated commission balances.
-
-## Private app API
-
-Create a token in Developer console. Keep it on your integration server and use:
-
-```http
-GET /api/app/products
-Authorization: Bearer YOUR_TOKEN
+```liquid
+{% for product in products %}
+  <article class="theme-product">
+    <h3>{{ product.name }}</h3>
+    <p>{{ product.price | money }}</p>
+    {% if product.available %}
+      <button data-ind-add="{{ product.id }}">Add to bag</button>
+    {% endif %}
+  </article>
+{% endfor %}
 ```
 
-`catalog:read` grants the product endpoint; `orders:read` grants `GET /api/app/orders`. Tokens determine the tenant; a query parameter cannot choose another store. Only read APIs are exposed. Closing the token dialog removes the displayed plaintext token; the database retains a hash.
+Available context is limited to public shop/settings/product fields. Templates use the maintained LiquidJS parser with an in-memory file map, bounded worker threads, output sanitization and a sandboxed frame. HTML and a limited style set are supported; arbitrary JavaScript, filesystem paths, remote includes, forms and external links are not supported.
 
-This is a private integration foundation, not an arbitrary-code plugin sandbox or public app marketplace. Allowlisted plugins execute trusted first-party handlers in the commerce transaction. Recorded events are not externally delivered. The HMAC helper is tested as a utility and is not a claim that a webhook delivery service is running.
+The frame has its own nonce-bound CSP and cannot use the management origin. Its bridge can request a known product be added to the parent cart; server checkout still validates prices, stock and payments. Source files are not returned by the public store JSON API. This is not Shopify theme/API compatibility or an arbitrary-code marketplace.
 
-## Optional local AI
+## Payment gateway
 
-Run Ollama on `127.0.0.1:11434`, install a model yourself, and set `COMMERCE_AI_MODEL` to that installed model before starting the commerce server. No model is downloaded, no paid API is provisioned, and no remote provider endpoint can be supplied through the UI.
+Open **Domains & payments** as the store owner. Configure `COMMERCE_MASTER_KEY` first, then enter the merchant's test key ID, API secret and webhook secret in the protected UI. Credentials use store-bound AES-256-GCM encryption; immutable versions support older payment attempts after rotation.
 
-AI receives a merchant prompt plus at most 20 product names/categories/stock counts. Treat prompts as potentially sensitive. Responses are bounded, time out after 30 seconds, render as text, and never apply changes. No model-running service was available during authoring; automated AI tests use a mock response.
+The customer chooses COD or configured Razorpay checkout. Online amounts are calculated by the server. A browser callback is verified and then checked against the provider's payment reference, order, amount, currency and capture state. Raw webhook signatures and event IDs are checked; later failed/authorised events cannot downgrade capture.
 
-## Validate
+Keep live mode off. It requires `COMMERCE_ALLOW_LIVE_PAYMENTS=1`, HTTPS public origin, demo disabled, a merchant account and verified provider sandbox behavior. No account/key was provisioned, no real payment was executed, and no live credentials are included.
+
+Uncertain provider creation is not retried automatically. Stock remains reserved for review. Merchant cancellation restores stock but does not cancel the provider order; a later verified capture becomes a refund-review exception without automatic fulfilment. Refund execution, settlement reconciliation and automatic abandoned-order expiry are still unfinished.
+
+See [domain and gateway activation](docs/DOMAIN_AND_GATEWAY_SETUP.md) for the exact deployment target, DNS record, webhook path, checks and rollback boundary.
+
+## Domain management
+
+Owners receive a unique TXT challenge and configured ingress target. DNS verification and HTTPS verification are different states. Private/reserved IPs cannot pass the pinned HTTPS probe. Custom hosts are bound to one storefront and cannot access management routes or another store API.
+
+The application does not register domains, edit registrar records, provision TLS certificates or configure the live proxy. The supplied Docker/Compose and HTTP bootstrap Nginx files are unverified deployment templates. Configure valid TLS and review sibling services before enabling real traffic.
+
+## Validation record
+
+The **31-test baseline at revision 1a1c4aedb0661e0fcc469210489b190e0e6024bb passed** through the restored local Node runtime before the workspace disconnected again.
+
+The expanded suite now contains **60 tests**, including payment cryptography/lifecycle/rotation, domain ownership and routing, Liquid isolation, public signup and marketing HTTP flows. These expanded tests have been authored but **have not been run** in the unavailable workspace. All 26 JavaScript modules syntax-parse, and 98 pure rendering/validation/import checks passed. These do not replace Node, SQLite, HTTP or browser tests.
 
 ```sh
 npm run check
 npm test
 ```
 
-Tests cover tenant isolation, role revocation, pricing/tax snapshots, replay protection, last-unit parallel HTTP checkouts, cancellation/restocking, state transitions, theme privacy/history, plugin behavior, token scopes, handover, support boundaries, persistence, HTTP auth/CSRF/Host boundaries and mocked AI limits.
+CI configuration installs the pinned direct dependencies and targets Node 24 on Linux and Windows. Actual CI results must be reviewed. No browser layout, real provider sandbox, live DNS/TLS, container deployment or production recovery has been verified for this expansion.
 
-A GitHub Actions workflow runs on Node 24 on Linux and Windows. Read actual check results before treating the pilot as validated. Local execution and visual browser verification were interrupted by workspace unavailability during this implementation; 25 pure validation/rendering/asset checks passed in a JavaScript isolate; these do not verify Node, SQLite, HTTP behavior or browser layout. Syntax parsing alone is not runtime verification.
+## Technology and production boundary
 
-## Architecture and production boundary
+The commerce rules and APIs are independent of the renderer: Node, SQLite, browser-native admin/storefront modules, LiquidJS and sanitize-html. They do not require Next.js or Shopify APIs. The surrounding unfinished IndJS runtime remains a separate workstream; this change does not validate IndJS SSR, navigation or Next.js feature parity.
 
-The commerce core is a dependency-free Node modular application with a SQLite adapter and a browser-native administration/storefront client. It has its own data model, theme settings, partner rules and app-token contracts. It does not use Shopify APIs or require Next.js.
-
-The surrounding IndJS framework remains a separate, unfinished workstream. This first commerce application does **not** validate IndJS SSR, navigation, React themes or Next.js compatibility. An IndJS renderer can use the commerce services after its runtime passes the framework checks. Keeping commerce rules independent avoids tying stock and payments to renderer behavior.
-
-SQLite is suitable for this local, single-server pilot. Production multi-tenant hosting needs PostgreSQL/migrations, operational recovery, tenant-isolation review, queues and delivery workers, identity hardening, provider sandbox certification and load testing. See [the release backlog](docs/RELEASE_BACKLOG.md).
-
-All tax figures are arithmetic over a configured inclusive rate. No place-of-supply logic, GSTIN verification, invoice numbering, CGST/SGST/IGST split, e-invoice/e-way bill or compliance certification is implemented. No refunds, partial fulfilment, returns, variants, multi-location stock, coupons or online payment settlements are implemented yet.
-
-Public HTML uses a Content Security Policy and escaped text, but these measures are not an independent security audit. There is no production security, uptime or conversion claim.
+Production still requires PostgreSQL/migrations, durable workers and reservation expiry, identity hardening, tax-document logic, shipping/returns/refunds, billing/partner payouts, operational recovery, staffed support and independent security/load testing. See [release gates](docs/RELEASE_BACKLOG.md). No production migration, main-branch merge or live-data change is performed by this branch.

@@ -1,39 +1,42 @@
-# Release gates and next implementation milestones
+# IND Commerce release gates
 
-The local pilot implements a coherent order-to-collection reference. The full product goal remains in the [research blueprint](https://chatgpt.com/space/page_f4698a0be33c8191b5cc8026eb64c09d). Do not market this branch as feature parity with Shopify.
+This branch is a pilot implementation, not a production Shopify replacement. The full product goal is in the [research blueprint](https://chatgpt.com/space/page_f4698a0be33c8191b5cc8026eb64c09d).
 
-| Milestone | Next work | Required evidence |
+| Area | Prepared in source | Required before production |
 | --- | --- | --- |
-| Identity and tenancy | Verified email, invitations, reset, MFA, secure HTTPS cookies, organizations, role policy review | Cross-store negative tests, recovery tests, session rotation and access review |
-| Database and operations | PostgreSQL adapter and migrations, backups/restore, observability, deployment environments and secrets | Restore drill, migration rollback plan, concurrency and load results |
-| Catalog | Variants, product media uploads, CSV import/export, bulk edits, multi-location stock and reservation expiry | Import error reports, image validation, concurrent inventory tests |
-| Checkout and money | Contracted payment gateway, verified signed webhooks, payment attempts, provider idempotency, settlement reconciliation and refunds | Real provider sandbox tests including duplicate and out-of-order events; no browser callback treated as proof of payment |
-| Fulfilment | One courier adapter, tracking, NDR/RTO, returns, partial fulfilment, COD remittance | Sandbox booking/cancellation, replay-safe tracking, reconciliation exceptions |
-| India documents | Maintained GST rules, invoice/credit-note numbering, place of supply and applicable e-invoice/e-way workflows | Review by qualified specialists and example document reconciliation |
-| Themes and IndJS | First-class theme manifests/section schemas, React renderer, media, accessibility, localization and editor conflict handling | Publish/rollback E2E tests, rendering and navigation conformance, mobile performance |
-| App ecosystem | OAuth/consent, app organizations, signed delivery workers, retries, uninstall cleanup and version compatibility | Scope/revocation tests, delivery logs, abuse controls and sandbox assessment before arbitrary code |
-| Partners | Invite/accept handover, team roles, referral attribution, commissions, payouts and tax documents | Ownership acceptance, refund holds, ledger reconciliation and merchant revocation |
-| Support | Staffed coverage, approved temporary support access, redaction, status page and incident runbooks | Support access expiry, incident drill, recorded staffing/SLA commitments |
-| AI and automation | Evaluations, provider controls, workflow approvals and costs, persistent jobs, consent-based messaging | Scoped inputs, prompt-injection tests, approval bypass tests, failure/retry/cost limits |
-| Billing | Validated plans, metering, invoices, subscription lifecycle, transparent overages | Merchant interviews, workload cost model and sandbox billing tests |
-| Pilot | Ten consenting merchants and three agencies with explicit support arrangements | Real activation, task completion, cost, support and retention evidence |
+| Marketing | Nine public pages, metadata, pilot forms, signup | Browser/accessibility review, approved brand/legal copy, live ingress and domain verification |
+| Identity | Password hash, expiring sessions, roles, CSRF and host checks | Verified email, MFA, invitations, recovery, signup abuse controls and account deletion |
+| Data | Local SQLite persistence and additive expansion tables | PostgreSQL migrations, tenant-isolation review, backups/restore, load tests and operational monitoring |
+| Catalog | Products, stock ledger and transactional order deductions | Variants, media, CSV import, multi-location stock and reservation expiry |
+| Payments | Razorpay adapter, signed captures, immutable credential versions and exception handling | Real provider sandbox tests, live onboarding, refunds, disputes, settlement reconciliation and recovery |
+| Domains | TXT/pointing checks, separate pinned HTTPS route proof, host/tenant boundary | Registrar access, dedicated ingress, valid certificates, renewal/ownership monitoring and IPv6 policy |
+| Themes | Built-in themes, bounded Liquid workers, allowlisted HTML, isolated frames, editor/history | Full browser/a11y/performance tests, compatibility review and resource-abuse assessment |
+| Plugins | First-party allowlist and private read-only app tokens | OAuth/consent, delivery workers, retries, uninstall lifecycle and safe public extension isolation |
+| Partners | Development stores and transfer with access/key/domain reset | Verified recipient acceptance, organizations, referrals, commissions, tax documents and payouts |
+| Support | Tickets and consented pilot enquiries | Staffed coverage, approved temporary support sessions, incident drills and service commitments |
+| Operations | Dedicated deployment templates | Tested container build, exact isolated server inventory, TLS ingress, restore and rollback drills |
+| India workflows | Configured inclusive tax arithmetic only | Reviewed invoice/credit-note numbering, place of supply, GST splits and applicable e-invoice/e-way workflows |
+| Commercial pilot | Proposed plans and working configuration choices | Merchant interviews, workload economics, supported merchant pilots and evidence-based pricing |
 
-## Implementation decisions
+## Current validation
 
-- The first runtime is local-only, bound to loopback. Normal mode and fictional demo mode use separate default databases.
-- COD collection is a manual ledger state, never represented as a confirmed bank settlement.
-- Cancellation before shipment restores inventory once; returns/refunds require a later dedicated state machine.
-- Private app order responses deliberately exclude customer contact/address fields. Future data scopes must require explicit consent.
-- Support reads tickets without a default store membership.
-- Handover revokes all old memberships and app tokens. A receiving account must already exist; verified invite acceptance is a release gate.
-- Plugin permissions are a review contract for allowlisted first-party behavior. They do not turn arbitrary Node code into a secure sandbox.
-- Theme rollback publishes a new revision; previous immutable configurations remain available.
-- AI drafting is optional, uses a fixed loopback endpoint, is text-only and has no action tools.
-- No cloud deployment, live data migration, provider provisioning, billing charge, email or external customer message is performed by this branch.
+- The original 31-test pilot baseline passed at revision 1a1c4aedb0661e0fcc469210489b190e0e6024bb.
+- The 60-test expanded suite is supplied but has not run after the workspace disconnected.
+- All 26 modules syntax-parse; 98 pure rendering/validation/import checks passed. These do not certify Node/SQLite/HTTP/browser behavior.
+- No real Ollama inference, provider sandbox transaction, live DNS/TLS change, production deployment, recovery drill or independent security audit is complete.
 
-## Validation record
+## Exact activation target
 
-- JavaScript modules were syntax-parsed while preparing source. 25 pure validation/rendering/asset checks passed in a JavaScript isolate; this is separate from the Node/SQLite/HTTP test suite.
-- Local process execution and browser QA could not be completed after the user workspace disconnected.
-- Automated tests and a Linux/Windows CI workflow are supplied. The pull request records actual CI results separately; this document does not assert they passed.
-- Real Ollama inference, payments, courier APIs, production recovery and merchant pilot outcomes have not been verified.
+The user selected **commerce.netcuriontechnology.com**. Read-only DNS showed GoDaddy nameservers and parent IPv4 **66.116.248.221**. The new hostname, application deployment and certificate were not changed. Follow [the activation runbook](DOMAIN_AND_GATEWAY_SETUP.md), inspect the live server first, and keep the company site and other products separate.
+
+## Important invariants
+
+- Browser success callbacks never mark an online order paid without provider signature/reference/amount/currency/capture verification.
+- Retired gateway credential versions remain encrypted for old attempts and webhook retries.
+- Handover revokes memberships/app tokens, disables inherited payment setup and rotates domain ownership proofs.
+- Cancellation restores stock once; late captures become refund-review exceptions and never fulfil automatically.
+- Uncertain provider-order creation is not automatically retried. Pending stock needs operator review until an expiry/reconciliation worker is implemented.
+- Custom templates only receive public catalog context. They do not execute arbitrary JavaScript or read host files.
+- Template preview frames use their own response CSP and opaque sandbox; management runs outside that frame.
+- DNS proof does not mean TLS is active. Custom hosts cannot access management or choose a different store slug.
+- Contact forms save explicit reply consent without sending emails or adding marketing subscriptions.

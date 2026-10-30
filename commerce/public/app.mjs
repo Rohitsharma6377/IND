@@ -1,8 +1,11 @@
 import { e, money, date, label, icon, badge, btn, art } from './shared.mjs';
+import { connectionsPage,leadsPage,connectionAction,connectionForm } from './connections.mjs';
+import { liquidEditor,themeConfiguration,renderThemePreview,themeAction,themeFileForm,importTheme } from './theme-editor.mjs';
+import { onlineCheckout,paymentAction,paymentStatusModal } from './payment-checkout.mjs';
 const app=document.getElementById('app'), dialog=document.getElementById('dialog');
 const state={config:null,session:null,storeId:null,data:null,page:'overview',extra:null,range:30,cart:[],shop:null,checkoutKey:null};
-const pageTitles={overview:'Overview',orders:'Orders',products:'Products',inventory:'Inventory',customers:'Customers',reports:'Analytics',themes:'Online store',apps:'Apps & plugins',automation:'Automations & AI',developer:'Developer console',settings:'Settings',support:'Help & support',audit:'Activity log',partner:'Partner workspace'};
-const permitted={orders:'orders',products:'catalog',inventory:'catalog',customers:'orders',reports:'orders',themes:'themes',apps:'apps',automation:'catalog',developer:'apps',settings:'settings',support:'support',audit:'access'};
+const pageTitles={connections:'Domains & payments',leads:'Pilot requests',overview:'Overview',orders:'Orders',products:'Products',inventory:'Inventory',customers:'Customers',reports:'Analytics',themes:'Online store',apps:'Apps & plugins',automation:'Automations & AI',developer:'Developer console',settings:'Settings',support:'Help & support',audit:'Activity log',partner:'Partner workspace'};
+const permitted={connections:'settings',orders:'orders',products:'catalog',inventory:'catalog',customers:'orders',reports:'orders',themes:'themes',apps:'apps',automation:'catalog',developer:'apps',settings:'settings',support:'support',audit:'access'};
 let navigation=0;
 function toast(message,bad=false) {
   const el=document.createElement('div');el.className='toast'+(bad?' bad':'');el.textContent=message;
@@ -11,7 +14,7 @@ function toast(message,bad=false) {
 async function api(path,method='GET',input,extra={}) {
   const response=await fetch(path,{method,credentials:'same-origin',headers:{'Content-Type':'application/json',...(state.session?.csrf?{'X-CSRF-Token':state.session.csrf}:{}),...extra},...(input===undefined?{}:{body:JSON.stringify(input)})});
   const result=await response.json();
-  if(!response.ok) throw Object.assign(new Error(result.error || 'Request failed'),{status:response.status});
+  if(!response.ok) throw Object.assign(new Error(result.error || 'Request failed'),{status:response.status,receipt:result.receipt});
   return result;
 }
 const storePath=(suffix='')=>'/api/stores/'+state.storeId+suffix;
@@ -35,12 +38,12 @@ function chart(orders) {
 }
 function orderTable(orders,compact=false) {
   if(!orders.length) return empty('No orders yet','Open your storefront and place a sample COD order.',btn('visit-store','Open storefront'));
-  return '<div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Payment</th><th>Fulfilment</th><th>Total</th>'+(compact?'':'<th></th>')+'</tr></thead><tbody>'+orders.map(o=>'<tr data-search="'+e(o.number+' '+o.customer+' '+o.email)+'"><td><button class="button quiet" data-action="order" data-id="'+e(o.id)+'">'+e(o.number)+'</button><p class="muted tiny">'+date(o.created_at)+'</p></td><td><strong>'+e(o.customer)+'</strong></td><td>'+badge(o.payment==='paid'?'Collected':'COD unpaid',o.payment==='paid'?'good':'warm')+'</td><td>'+badge(label(o.fulfilment),o.fulfilment==='delivered'?'good':'neutral')+'</td><td><strong>'+money(o.total)+'</strong></td>'+(compact?'':'<td>'+btn('order',icon('arrow'),'icon-only','data-id="'+e(o.id)+'" aria-label="Open order '+e(o.number)+'"')+'</td>')+'</tr>').join('')+'</tbody></table></div>';
+  return '<div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Payment</th><th>Fulfilment</th><th>Total</th>'+(compact?'':'<th></th>')+'</tr></thead><tbody>'+orders.map(o=>'<tr data-search="'+e(o.number+' '+o.customer+' '+o.email)+'"><td><button class="button quiet" data-action="order" data-id="'+e(o.id)+'">'+e(o.number)+'</button><p class="muted tiny">'+date(o.created_at)+'</p></td><td><strong>'+e(o.customer)+'</strong></td><td>'+badge(o.payment==='paid'?(o.method==='cod'?'COD collected':'Paid online'):(o.method==='cod'?'COD unpaid':'Awaiting capture'),o.payment==='paid'?'good':'warm')+'</td><td>'+badge(label(o.fulfilment),o.fulfilment==='delivered'?'good':'neutral')+'</td><td><strong>'+money(o.total)+'</strong></td>'+(compact?'':'<td>'+btn('order',icon('arrow'),'icon-only','data-id="'+e(o.id)+'" aria-label="Open order '+e(o.number)+'"')+'</td>')+'</tr>').join('')+'</tbody></table></div>';
 }
 function overview() {
   const d=state.data; if(!d.permissions.orders) return '<section class="panel panel-pad stack"><h2>Your scoped store workspace</h2><p class="muted small">Your '+e(d.store.role)+' role controls which store tools and records you can use.</p><div class="row wrap">'+(d.permissions.catalog?btn('nav','Manage products','primary','data-page="products"'):'')+(d.permissions.themes?btn('nav','Edit store theme','','data-page="themes"'):'')+(d.permissions.support?btn('nav','Get support','','data-page="support"'):'')+'</div><p class="tiny muted">Order, customer and collection figures are available only to roles with order access.</p></section>'; const orders=filteredOrders(),paid=orders.filter(o=>o.payment==='paid'),sum=rows=>rows.reduce((n,o)=>n+o.total,0),low=d.products.filter(p=>p.stock<=5),tasks=d.tasks.filter(t=>!t.done);
   const metric=(title,value,foot,ic)=>'<div class="metric"><div class="metric-label">'+e(title)+icon(ic,15)+'</div><div class="metric-value">'+value+'</div><div class="metric-foot">'+foot+'</div></div>';
-  return '<div class="metrics">'+metric('Collected sales',money(sum(paid)),'Manually recorded COD collections','chart')+metric('Orders',orders.length,'Excludes cancelled orders','orders')+metric('Average order value',money(orders.length?Math.round(sum(orders)/orders.length):0),'Based on placed order value','products')+metric('Low-stock products',low.length,'Five units or fewer · current stock','inventory')+'</div>'+
+  return '<div class="metrics">'+metric('Collected sales',money(sum(paid)),'Verified captures and recorded COD','chart')+metric('Orders',orders.length,'Excludes cancelled orders','orders')+metric('Average order value',money(orders.length?Math.round(sum(orders)/orders.length):0),'Based on placed order value','products')+metric('Low-stock products',low.length,'Five units or fewer · current stock','inventory')+'</div>'+
     '<div class="grid-main"><div class="stack"><section class="panel"><div class="panel-head"><div><h2>Your store, at a glance</h2><p>Last 7 days · Indian rupees</p></div>'+badge('Order value','outline')+'</div><div class="panel-body"><div class="chart-value">'+money(sum(d.orders.filter(o=>o.fulfilment!=='cancelled'&&Date.now()-new Date(o.created_at)<7*86400000)))+'</div>'+chart(d.orders.filter(o=>o.fulfilment!=='cancelled'))+'</div></section><section class="panel"><div class="panel-head"><div><h2>Recent orders</h2><p>Keep every delivery moving.</p></div>'+btn('nav','View all '+icon('arrow',14),'quiet','data-page="orders"')+'</div>'+orderTable(d.orders.slice(0,5),true)+'</section><section class="panel panel-pad"><div class="between"><h2>Needs your attention</h2>'+badge(tasks.length+' tasks','warm')+'</div>'+(tasks.length?tasks.slice(0,4).map(t=>'<div class="todo">'+btn('complete-task',icon('check',12),'circle','data-id="'+e(t.id)+'" aria-label="Complete '+e(t.title)+'"')+'<div><strong>'+e(t.title)+'</strong><p>'+e(t.detail)+'</p></div></div>').join(''):'<div class="empty small">You’re all caught up.</div>')+'</section></div>'+
     '<aside class="stack"><section class="panel panel-pad"><h2>Quick actions</h2>'+[['product-new','Add a product','Grow your catalog','products'],['visit-store','View your store','See the customer experience','globe'],['nav','Customize your theme','Make it feel like your brand','themes'],['export','Export store data','Keep a portable copy','shield']].filter(([action])=>action!=='export'||d.permissions.export).map(([action,title,sub,ic])=>'<div class="quick"><div class="quick-icon">'+icon(ic,17)+'</div><div><strong>'+title+'</strong><p>'+sub+'</p></div>'+btn(action,icon('arrow',14),'quiet','aria-label="'+title+'"'+(action==='nav'?' data-page="themes"':''))+'</div>').join('')+'</section>'+
     '<section class="callout"><p class="kicker">YOUR STORE. YOUR WAY.</p><h2>A little less busywork.<br>A lot more possibility.</h2><p>Let small automations handle the repetitive parts. Keep every important decision in your hands.</p>'+btn('nav','Explore automations '+icon('arrow',14),'','data-page="automation"')+'<div class="orb"></div></section><section class="panel panel-pad"><div class="row">'+icon('shield',20)+'<h2>Built around ownership</h2></div><p class="muted small spaced">Scoped partner access, revocable app tokens, theme history and portable store data.</p>'+btn('nav','Review store access '+icon('arrow',14),'quiet spaced','data-page="settings"')+'</section></aside></div>';
@@ -57,7 +60,7 @@ function customersPage() {
 }
 function reportsPage() {
   const rows=filteredOrders(),total=rows.reduce((n,o)=>n+o.total,0),paid=rows.filter(o=>o.payment==='paid').reduce((n,o)=>n+o.total,0);
-  return '<div class="grid-main"><section class="panel panel-pad"><div class="between"><h2>Order value</h2>'+badge('Last 7 days')+'</div>'+chart(state.data.orders.filter(o=>o.fulfilment!=='cancelled'))+'</section><section class="panel panel-pad stack"><h2>Collection reconciliation</h2><div class="between small"><span class="muted">Placed order value</span><strong>'+money(total)+'</strong></div><div class="between small"><span class="muted">COD marked collected</span><strong>'+money(paid)+'</strong></div><div class="between small"><span class="muted">Still to collect</span><strong>'+money(total-paid)+'</strong></div><p class="tiny muted">Selected period. Collection is a merchant-entered record; no bank or gateway reconciliation is connected.</p></section></div><section class="panel spaced"><div class="panel-head"><h2>Orders in the selected period</h2>'+btn('export','Export store data')+'</div>'+orderTable(rows)+'</section>';
+  return '<div class="grid-main"><section class="panel panel-pad"><div class="between"><h2>Order value</h2>'+badge('Last 7 days')+'</div>'+chart(state.data.orders.filter(o=>o.fulfilment!=='cancelled'))+'</section><section class="panel panel-pad stack"><h2>Collection reconciliation</h2><div class="between small"><span class="muted">Placed order value</span><strong>'+money(total)+'</strong></div><div class="between small"><span class="muted">Payments confirmed</span><strong>'+money(paid)+'</strong></div><div class="between small"><span class="muted">Still to collect</span><strong>'+money(total-paid)+'</strong></div><p class="tiny muted">Selected period. COD collection is merchant-entered. Online payment is confirmed through the configured gateway; bank settlement reconciliation is not connected.</p></section></div><section class="panel spaced"><div class="panel-head"><h2>Orders in the selected period</h2>'+btn('export','Export store data')+'</div>'+orderTable(rows)+'</section>';
 }
 function shopMarkup(s,mini=false) {
   const theme=s.theme,products=s.products;
@@ -65,13 +68,13 @@ function shopMarkup(s,mini=false) {
     '<div class="shop-nav"><span class="shop-brand">'+e(s.name)+'</span><div class="shop-links"><a href="#collection">Shop all</a><a href="#collection">Everyday essentials</a></div>'+(mini?icon('orders',17):btn('cart','Bag ('+state.cart.reduce((n,l)=>n+l.quantity,0)+') '+icon('orders',16)))+'</div>'+
     '<section class="shop-hero"><div><p class="kicker">CONSIDERED GOODS. EVERYDAY JOY.</p><h1>'+e(theme.title)+'</h1><p>'+e(theme.subtitle)+'</p>'+(mini?'<span class="button">Explore the collection '+icon('arrow',14)+'</span>':'<a class="button" href="#collection">Explore the collection '+icon('arrow',14)+'</a>')+'</div><div class="hero-art">'+products.slice(0,2).map(p=>art(p)).join('')+'</div></section>'+
     '<section class="shop-collection" id="collection"><div class="between"><h2>Good things for everyday living.</h2><p>Simple. Useful. Made to stay.</p></div><div class="shop-grid">'+products.slice(0,mini?3:500).map(p=>'<article class="shop-card">'+art(p)+'<h3>'+e(p.name)+'</h3><p>'+money(p.price)+' · tax included</p>'+(mini?'':btn('add-cart',p.stock?'Add to bag '+icon('plus',13):'Sold out','','data-id="'+e(p.id)+'"'+(!p.stock?' disabled':'')))+'</article>').join('')+'</div>'+(!products.length?empty('Our next chapter is coming soon','New products will appear here when the merchant publishes them.'):'')+'</section>'+
-    (!mini?'<footer class="shop-footer"><span>© '+new Date().getFullYear()+' '+e(s.name)+'</span><span>Powered by IND Commerce · Local pilot · Cash on delivery only</span></footer>':'')+'</div>';
+    (!mini?'<footer class="shop-footer"><span>© '+new Date().getFullYear()+' '+e(s.name)+'</span><span>Powered by IND Commerce · Pilot storefront</span></footer>':'')+'</div>';
 }
 function themesPage() {
-  const t=state.extra;
-  if(!t) return '<div class="loading">Loading theme editor…</div>';
-  return '<div class="theme-workbench"><section class="panel theme-form"><h2>Make it yours</h2><p class="muted tiny spaced">Edit a draft, preview it, then publish when you are ready.</p><form data-form="theme">'+select('template','Theme',[['market','Market · everyday retail'],['atelier','Atelier · warm editorial'],['circuit','Circuit · modern essentials']],t.draft.template)+field('accent','Brand colour',t.draft.accent,'color')+field('title','Headline',t.draft.title,'text','required maxlength="100"')+area('subtitle','Subheading',t.draft.subtitle,'maxlength="200"')+field('announcement','Announcement',t.draft.announcement,'text','maxlength="160"')+'<div class="form-actions"><button class="button" type="submit">Save draft</button>'+btn('theme-preview','Preview')+btn('theme-publish','Publish','primary')+'</div></form></section><section class="theme-preview"><div class="preview-bar"><i></i><i></i><i></i><span>Draft preview · revision '+t.revision+' published</span></div><div id="theme-live">'+shopMarkup({name:state.data.store.name,products:state.data.products.filter(p=>p.active),theme:t.draft},true)+'</div></section></div><section class="panel spaced"><div class="panel-head"><h2>Version history</h2>'+badge('Publish & rollback','good')+'</div><div class="table-wrap"><table><thead><tr><th>Revision</th><th>Theme</th><th>Published</th><th></th></tr></thead><tbody>'+t.versions.map(v=>'<tr><td><strong>Revision '+v.revision+'</strong></td><td>'+e(label(v.config.template))+'</td><td>'+date(v.created_at)+'</td><td>'+(v.revision===t.revision?badge('Current','good'):btn('theme-rollback','Restore','','data-revision="'+v.revision+'"'))+'</td></tr>').join('')+'</tbody></table></div></section>';
+  const t=state.extra;if(!t)return '<div class="loading">Loading theme editor…</div>';
+  return '<div class="theme-workbench"><section class="panel theme-form"><h2>Make it yours</h2><p class="muted tiny spaced">Edit a draft, render a preview, then publish.</p><form id="theme-settings" data-form="theme">'+select('renderer','Renderer',[['builtin','Built-in theme'],['liquid','Custom Liquid code']],t.draft.renderer||'builtin')+select('template','Visual direction',[['market','Market · retail'],['atelier','Atelier · editorial'],['circuit','Circuit · modern']],t.draft.template)+field('accent','Brand colour',t.draft.accent,'color')+field('title','Headline',t.draft.title,'text','required maxlength="100"')+area('subtitle','Subheading',t.draft.subtitle,'maxlength="200"')+field('announcement','Announcement',t.draft.announcement,'text','maxlength="160"')+'<div class="form-actions"><button class="button" type="submit">Save draft</button>'+btn('theme-preview','Preview')+btn('theme-publish','Publish','primary')+'</div></form></section><section class="theme-preview"><div class="preview-bar"><i></i><i></i><i></i><span>Draft preview · revision '+t.revision+' published</span></div><div id="theme-live">'+(t.draft.renderer==='liquid'?'<p class="notice">Rendering isolated preview…</p>':shopMarkup({name:state.data.store.name,products:state.data.products.filter(p=>p.active),theme:t.draft},true))+'</div></section></div>'+liquidEditor(state)+'<section class="panel spaced"><div class="panel-head"><h2>Version history</h2>'+badge('Publish & rollback','good')+'</div><div class="table-wrap"><table><thead><tr><th>Revision</th><th>Renderer</th><th>Published</th><th></th></tr></thead><tbody>'+t.versions.map(v=>'<tr><td><strong>Revision '+v.revision+'</strong></td><td>'+e(v.config.renderer||'builtin')+' · '+e(v.config.template)+'</td><td>'+date(v.created_at)+'</td><td>'+(v.revision===t.revision?badge('Current','good'):btn('theme-rollback','Restore','','data-revision="'+v.revision+'"'))+'</td></tr>').join('')+'</tbody></table></div></section>';
 }
+
 function appsPage() {
   return '<div class="notice">First-party plugins run inside the commerce core. Review the declared permissions before installing. Unrestricted third-party code execution is not enabled.</div><div class="cards spaced">'+(state.extra||[]).map(p=>'<article class="card"><div class="between"><div class="app-icon">'+icon(p.id==='stock-watch'?'inventory':p.id==='cod-guard'?'shield':'orders',23)+'</div>'+badge(p.installed?'Installed':'First party',p.installed?'good':'neutral')+'</div><h2>'+e(p.name)+'</h2><p>'+e(p.description)+'</p><div class="scopes">'+p.scopes.map(s=>badge(s,'outline')).join('')+'</div><div class="card-bottom"><span class="tiny muted">v'+e(p.version)+' · '+e(p.category)+'</span>'+btn(p.installed?'plugin-remove':'plugin-review',p.installed?'Uninstall':'Review & install',p.installed?'':'primary','data-id="'+e(p.id)+'"')+'</div></article>').join('')+'</div>';
 }
@@ -104,20 +107,21 @@ function shell(content) {
   const allowed=(page)=>!permitted[page]||perms[permitted[page]];
   let navigationHtml='';
   if(user.kind==='partner') navigationHtml+=nav('partner','Partner workspace','partner')+'<div class="nav-section">CLIENT STORE</div>';
-  if(user.kind==='support') navigationHtml+=nav('support','Support inbox','support');
-  else if(s) navigationHtml+=[['overview','Overview','home'],['orders','Orders','orders',state.data.orders.filter(o=>o.fulfilment==='unfulfilled').length],['products','Products','products'],['inventory','Inventory','inventory'],['customers','Customers','customers'],['reports','Analytics','chart']].filter(([p])=>allowed(p)).map(a=>nav(...a)).join('')+'<div class="nav-section">GROW YOUR STORE</div>'+[['themes','Online store','themes'],['apps','Apps & plugins','apps'],['automation','Automations & AI','automation'],['developer','Developer console','developer']].filter(([p])=>allowed(p)).map(a=>nav(...a)).join('');
+  if(user.kind==='support') navigationHtml+=nav('support','Support inbox','support')+nav('leads','Pilot requests','customers');
+  else if(s) navigationHtml+=[['overview','Overview','home'],['orders','Orders','orders',state.data.orders.filter(o=>o.fulfilment==='unfulfilled').length],['products','Products','products'],['inventory','Inventory','inventory'],['customers','Customers','customers'],['reports','Analytics','chart']].filter(([p])=>allowed(p)).map(a=>nav(...a)).join('')+'<div class="nav-section">GROW YOUR STORE</div>'+[['themes','Online store','themes'],['apps','Apps & plugins','apps'],['automation','Automations & AI','automation'],['developer','Developer console','developer'],['connections','Domains & payments','globe']].filter(([p])=>allowed(p)).map(a=>nav(...a)).join('');
   return '<aside class="sidebar">'+brand()+(user.kind!=='support'?'<div class="store-switch"><div class="initial">'+icon('globe',17)+'</div><select id="store-select" aria-label="Select store"><option value="">'+(user.kind==='partner'?'Partner workspace':'Choose a store')+'</option>'+state.session.stores.map(x=>'<option value="'+e(x.id)+'"'+(s?.id===x.id&&state.page!=='partner'?' selected':'')+'>'+e(x.name)+'</option>').join('')+'</select></div>':'')+'<nav>'+navigationHtml+'</nav><div class="sidebar-foot">'+(s&&allowed('settings')?nav('settings','Settings','settings'):'')+(s&&allowed('audit')?nav('audit','Activity log','shield'):'')+(user.kind!=='support'&&s&&allowed('support')?nav('support','Help & support','support'):'')+'<div class="pilot-note"><strong class="tiny">'+icon('shield',12)+' Local pilot</strong><p>Independent technology.<br>Built for what comes next.</p></div></div></aside><div class="main-wrap"><header class="topbar"><div class="row">'+btn('menu',icon('menu'),'mobile-menu icon-only','aria-label="Toggle navigation"')+'<div class="breadcrumb">Workspace <span>/</span><strong>'+e(pageTitles[state.page])+'</strong></div></div><div class="top-actions"><label class="search">'+icon('search',15)+'<input id="global-search" placeholder="Find a product or order…" aria-label="Filter this page"></label>'+badge(state.config.demo?'Demo workspace':'Local pilot','outline')+'<div class="row top-user"><div class="avatar">'+e(user.name.split(' ').map(n=>n[0]).slice(0,2).join(''))+'</div><span class="tiny">'+e(user.name)+'</span></div>'+btn('logout',icon('logout',16),'icon-only','aria-label="Sign out"')+'</div></header><main id="main" class="content"><div class="page-head between"><div><p class="kicker">'+e(state.page==='partner'?'BUILD WITH IND':user.kind==='support'?'IND SUPPORT':s?.name||'YOUR WORKSPACE')+'</p><h1 style="margin-top:9px">'+e(state.page==='overview'?'Good to see you, '+user.name.split(' ')[0]+'.':pageTitles[state.page])+'</h1><p>'+e(state.page==='overview'?'Here’s what’s happening with your store.':'Everything you need, in one considered workspace.')+'</p></div><div class="row">'+(['overview','orders','reports'].includes(state.page)?'<select id="range" class="button" aria-label="Date range">'+[7,30,90].map(n=>'<option value="'+n+'"'+(state.range===n?' selected':'')+'>Last '+n+' days</option>').join('')+'</select>':'')+(s&&state.page!=='partner'?btn('visit-store','View store '+icon('external',13)): '')+'</div></div>'+(state.config.demo?'<div class="pilot-banner">'+icon('clock',15)+' Fictional demo data · COD orders are local records · no live charges or shipments.'+(user.kind==='partner'?'':btn('demo-switch','Switch demo role','quiet'))+'</div>':'')+content+'</main></div>';
 }
 function render() {
   if(!state.session) return renderLogin();
   if(state.page==='partner') app.innerHTML=shell(partnerPage());
-  else if(state.session.user.kind==='support') app.innerHTML=shell(supportPage(true));
+  else if(state.session.user.kind==='support') app.innerHTML=shell(state.page==='leads'?leadsPage(state.extra||[]):supportPage(true));
   else if(!state.data) app.innerHTML=shell(empty('Welcome to your workspace','A store will appear here after setup or an agency handover.',state.config.demo?btn('demo-switch','Switch demo role'):''));
   else {
-    const pages={overview,orders:()=>'<section class="panel"><div class="panel-head"><div><h2>All orders</h2><p>Payment and fulfilment are tracked independently.</p></div>'+badge(state.data.orders.length+' orders')+'</div>'+orderTable(state.data.orders)+'</section>',products:()=>productsPage(),inventory:()=>productsPage(true),customers:customersPage,reports:reportsPage,themes:themesPage,apps:appsPage,automation:automationPage,developer:developerPage,settings:settingsPage,support:()=>supportPage(),audit:auditPage};
+    const pages={overview,orders:()=>'<section class="panel"><div class="panel-head"><div><h2>All orders</h2><p>Payment and fulfilment are tracked independently.</p></div>'+badge(state.data.orders.length+' orders')+'</div>'+orderTable(state.data.orders)+'</section>',products:()=>productsPage(),inventory:()=>productsPage(true),customers:customersPage,reports:reportsPage,themes:themesPage,apps:appsPage,automation:automationPage,developer:developerPage,settings:settingsPage,connections:()=>connectionsPage({...state.extra,storeId:state.storeId},state.config),support:()=>supportPage(),audit:auditPage};
     app.innerHTML=shell((pages[state.page]||overview)());
   }
   document.title=pageTitles[state.page]+' · IND Commerce';
+  if(state.page==='themes'&&state.extra?.draft.renderer==='liquid')renderThemePreview(extensionContext()).catch(error=>toast(error.message,true));
 }
 function renderLogin(error='') {
   const sample=[{name:'Everyday canvas tote',category:'Carry',colour:'#c8ae7f'},{name:'Stoneware coffee cup',category:'Home',colour:'#b47758'}];
@@ -125,9 +129,11 @@ function renderLogin(error='') {
 }
 async function refreshSession() { state.session=await api('/api/session'); }
 async function loadPage(page=state.page) {
+  if(page==='partner'&&state.session.user.kind!=='partner')page='overview';
+  if(page==='leads'&&state.session.user.kind!=='support')page='overview';
   const seq=++navigation;state.page=page;state.extra=null;
   if(state.session.user.kind==='support') {
-    state.page='support';state.extra=await api('/api/support');if(seq===navigation)render();return;
+    state.page=page==='leads'?'leads':'support';state.extra=await api(state.page==='leads'?'/api/pilot-requests':'/api/support');if(seq===navigation)render();return;
   }
   if(page==='partner' && state.session.user.kind==='partner') {
     state.extra=await api('/api/partner/stores');if(seq===navigation)render();return;
@@ -140,6 +146,7 @@ async function loadPage(page=state.page) {
     else if(current==='apps') state.extra=await api(storePath('/plugins'));
     else if(current==='developer') { const [apps,events]=await Promise.all([api(storePath('/apps')),api(storePath('/events'))]);state.extra={apps,events}; }
     else if(current==='settings') state.extra=await api(storePath('/members'));
+    else if(current==='connections'){const [gateway,domains,attempts]=await Promise.all([api(storePath('/gateway')),api(storePath('/domains')),api(storePath('/payments'))]);state.extra={gateway,domains,attempts};}
   }
   if(seq===navigation)render();
 }
@@ -163,8 +170,8 @@ function productModal(product) {
 }
 function orderModal(orderId) {
   const o=state.data.orders.find(o=>o.id===orderId);if(!o)return;
-  const next=o.fulfilment==='unfulfilled'?'ship':o.fulfilment==='shipped'?'deliver':o.fulfilment==='delivered'&&o.payment==='unpaid'?'collect':null;
-  modal(o.number,'<div class="row">'+badge(label(o.fulfilment),o.fulfilment==='delivered'?'good':'neutral')+badge(o.payment==='paid'?'COD collected':'COD unpaid',o.payment==='paid'?'good':'warm')+'</div><dl class="details spaced"><div><dt>Customer</dt><dd>'+e(o.customer)+'<br>'+e(o.email)+'<br>'+e(o.phone)+'</dd></div><div><dt>Delivery address</dt><dd>'+e(o.address)+'</dd></div></dl><div class="table-wrap spaced"><table><thead><tr><th>Product</th><th>Qty</th><th>Total</th></tr></thead><tbody>'+o.items.map(l=>'<tr><td><strong>'+e(l.name)+'</strong><p class="tiny">'+e(l.sku)+'</p></td><td>'+l.quantity+'</td><td>'+money(l.total)+'</td></tr>').join('')+'</tbody></table></div><div class="between spaced small"><span>Included configured tax</span><span>'+money(o.tax)+'</span></div><div class="between spaced"><strong>Total</strong><strong>'+money(o.total)+'</strong></div><div class="notice spaced">Local order summary. This is not a certified GST tax invoice. Marking COD collected records a manual confirmation; it does not move funds.</div><div class="form-actions">'+(o.fulfilment==='unfulfilled'&&o.payment==='unpaid'?btn('order-confirm-cancel','Cancel & restock','danger','data-id="'+e(o.id)+'"'):'')+(next?btn('order-action',next==='ship'?'Mark shipped':next==='deliver'?'Mark delivered':'Record COD collected','primary','data-id="'+e(o.id)+'" data-order-action="'+next+'"'):'')+'</div>');
+  const next=(o.method!=='cod'&&o.payment!=='paid')?null:o.fulfilment==='unfulfilled'?'ship':o.fulfilment==='shipped'?'deliver':o.fulfilment==='delivered'&&o.payment==='unpaid'&&o.method==='cod'?'collect':null;
+  modal(o.number,'<div class="row">'+badge(label(o.fulfilment),o.fulfilment==='delivered'?'good':'neutral')+badge(o.payment==='paid'?(o.method==='cod'?'COD collected':'Paid online'):(o.method==='cod'?'COD unpaid':'Awaiting capture'),o.payment==='paid'?'good':'warm')+'</div><dl class="details spaced"><div><dt>Customer</dt><dd>'+e(o.customer)+'<br>'+e(o.email)+'<br>'+e(o.phone)+'</dd></div><div><dt>Delivery address</dt><dd>'+e(o.address)+'</dd></div></dl><div class="table-wrap spaced"><table><thead><tr><th>Product</th><th>Qty</th><th>Total</th></tr></thead><tbody>'+o.items.map(l=>'<tr><td><strong>'+e(l.name)+'</strong><p class="tiny">'+e(l.sku)+'</p></td><td>'+l.quantity+'</td><td>'+money(l.total)+'</td></tr>').join('')+'</tbody></table></div><div class="between spaced small"><span>Included configured tax</span><span>'+money(o.tax)+'</span></div><div class="between spaced"><strong>Total</strong><strong>'+money(o.total)+'</strong></div><div class="notice spaced">Local order summary. This is not a certified GST tax invoice. Marking COD collected records a manual confirmation; it does not move funds.</div><div class="form-actions">'+(o.fulfilment==='unfulfilled'&&o.payment==='unpaid'?btn('order-confirm-cancel','Cancel & restock','danger','data-id="'+e(o.id)+'"'):'')+(next?btn('order-action',next==='ship'?'Mark shipped':next==='deliver'?'Mark delivered':'Record COD collected','primary','data-id="'+e(o.id)+'" data-order-action="'+next+'"'):'')+'</div>');
 }
 function cartModal() {
   if(!state.cart.length)return modal('Your bag',empty('Your bag is waiting','Add something you love from the collection.'));
@@ -172,11 +179,13 @@ function cartModal() {
   modal('Your bag',state.cart.map(l=>'<div class="cart-line">'+art(l)+'<div><h3>'+e(l.name)+'</h3><p>'+money(l.price)+'</p></div><div class="cart-qty">'+btn('cart-less','−','icon-only','data-id="'+e(l.id)+'" aria-label="Reduce '+e(l.name)+' quantity"')+'<span class="small">'+l.quantity+'</span>'+btn('cart-more','+','icon-only','data-id="'+e(l.id)+'" aria-label="Increase '+e(l.name)+' quantity"')+'</div></div>').join('')+'<div class="between spaced"><strong>Total</strong><strong>'+money(total)+'</strong></div><p class="tiny muted spaced">Tax included. No delivery charge in this local pilot.</p><div class="form-actions">'+btn('checkout-form','Continue to checkout '+icon('arrow',14),'primary')+'</div>');
 }
 function checkoutModal() {
-  if(state.shop.preview) return toast('Checkout is unavailable in a theme preview.',true);
+  if(state.shop.preview)return toast('Checkout is unavailable in a theme preview.',true);
   if(!state.cart.length)return cartModal();
   state.checkoutKey ||= crypto.randomUUID();
-  modal('Checkout','<form data-form="checkout"><div class="form-grid">'+field('customer','Full name','','text','required maxlength="120" autocomplete="name"')+field('email','Email address','','email','required autocomplete="email" maxlength="254"')+field('phone','Phone number','','tel','required minlength="10" maxlength="20" autocomplete="tel"')+'<div class="wide">'+area('address','Delivery address','','required minlength="10" maxlength="500" autocomplete="street-address"')+'</div></div><div class="notice spaced"><strong>Cash on delivery</strong><p class="small">Pay on delivery. Online payments are not connected. '+(state.config.demo?'This is a fictional local order.':'This local pilot does not book a delivery.')+'</p></div><div class="form-actions"><button type="submit" class="button primary">Place COD order · '+money(state.cart.reduce((n,l)=>n+l.price*l.quantity,0))+'</button></div></form>');
+  const online=state.shop.payments?.enabled;
+  modal('Checkout','<form data-form="checkout"><div class="form-grid">'+field('customer','Full name','','text','required maxlength="120" autocomplete="name"')+field('email','Email address','','email','required maxlength="254" autocomplete="email"')+field('phone','Phone number','','tel','required minlength="10" maxlength="20" autocomplete="tel"')+'<div class="wide">'+area('address','Delivery address','','required minlength="10" maxlength="500" autocomplete="street-address"')+'</div><div class="wide">'+select('method','Payment method',[['cod','Cash on delivery'],...(online?[['razorpay','Online · Razorpay '+state.shop.payments.mode+' mode']]:[])],'cod')+'</div></div><div class="notice spaced"><p class="small">Choose cash on delivery or the merchant’s online checkout, when enabled. '+(state.config.demo?'Use fictional customer data and test payment credentials.':'No courier booking is made by this pilot.')+'</p></div><div class="form-actions"><button type="submit" class="button primary">Continue · '+money(state.cart.reduce((n,l)=>n+l.price*l.quantity,0))+'</button></div></form>');
 }
+
 async function shopBoot(slug) {
   state.shop=await api('/api/public/'+slug);
   if(new URLSearchParams(location.search).has('preview')) {
@@ -185,8 +194,31 @@ async function shopBoot(slug) {
   renderShop();
 }
 function renderShop() {
-  app.innerHTML=(state.shop.preview?'<div class="pilot-banner" style="margin:0;border-radius:0">Saved theme draft · checkout disabled · <a href="/admin#themes">Return to editor</a></div>':'')+'<main id="main">'+shopMarkup(state.shop)+'</main>';document.title=state.shop.name+' · IND Commerce';
+  const s=state.shop,preview=s.preview?'<div class="pilot-banner" style="margin:0;border-radius:0">Saved theme draft · checkout disabled · <a href="/admin#themes">Return to editor</a></div>':'';
+  if(s.theme.renderer==='liquid') {
+    app.innerHTML=preview+'<main id="main"><div class="shop-nav"><span class="shop-brand">'+e(s.name)+'</span>'+btn('cart','Bag ('+state.cart.reduce((n,l)=>n+l.quantity,0)+') '+icon('orders',16))+'</div><iframe id="store-theme-frame" class="liquid-frame" title="Isolated storefront theme" sandbox="allow-scripts"></iframe><footer class="shop-footer">Checkout powered by IND Commerce</footer></main>';
+    const frame=document.getElementById('store-theme-frame');
+    if(s.preview)api('/api/stores/'+s.id+'/theme/render','POST',{config:s.theme}).then(result=>{if(frame.isConnected)frame.src=result.frame_url;}).catch(error=>toast(error.message,true));
+    else frame.src='/api/public/'+s.slug+'/theme-frame';
+  } else app.innerHTML=preview+'<main id="main">'+shopMarkup(s)+'</main>';
+  document.title=s.name+' · IND Commerce';
 }
+function extensionContext(){return {state,api,storePath,modal,field,area,select,actions,closeModal,refresh,toast,btn,render,renderShop};}
+function addProductToCart(identifier) {
+  if(state.shop.preview)return toast('Checkout is disabled in a theme preview.',true);
+  const p=state.shop.products.find(p=>p.id===identifier),line=state.cart.find(l=>l.id===identifier);
+  if(!p||p.stock<1)return toast('This product is out of stock.',true);
+  if(line&&line.quantity>=Math.min(99,p.stock))return toast('You have reached the available quantity.',true);
+  if(line)line.quantity++;else state.cart.push({...p,quantity:1});
+  state.checkoutKey=null;renderShop();toast('Added to your bag.');
+}
+window.addEventListener('message',event=>{
+  const storeFrame=document.getElementById('store-theme-frame'),previewFrame=document.getElementById('theme-preview-frame');
+  const frame=[storeFrame,previewFrame].find(frame=>frame&&event.source===frame.contentWindow);if(!frame||!event.data||typeof event.data!=='object')return;
+  if(event.data.type==='ind:height'&&Number.isFinite(event.data.height))frame.style.height=Math.max(350,Math.min(5000,event.data.height))+'px';
+  if(frame===storeFrame&&event.data.type==='ind:add'&&typeof event.data.product_id==='string')addProductToCart(event.data.product_id);
+});
+
 
 document.addEventListener('click',async event=>{
   const navLink=event.target.closest('.sidebar a[href^="#"]');
@@ -194,6 +226,7 @@ document.addEventListener('click',async event=>{
   const button=event.target.closest('[data-action]');if(!button)return;
   const action=button.dataset.action,identifier=button.dataset.id;
   try {
+    if(await connectionAction(action,button,extensionContext())||await themeAction(action,button,extensionContext())||await paymentAction(action,button,extensionContext()))return;
     if(action==='close')return closeModal();
     if(action==='menu')return document.querySelector('.sidebar')?.classList.toggle('open');
     if(action==='nav')return navigate(button.dataset.page);
@@ -228,12 +261,12 @@ document.addEventListener('click',async event=>{
     if(action==='theme-preview') {
       const form=document.querySelector('[data-form="theme"]');
       if(!form.reportValidity())return;
-      await api(storePath('/theme'),'PUT',Object.fromEntries(new FormData(form)));
+      await api(storePath('/theme'),'PUT',themeConfiguration(form));
       location.href='/s/'+state.data.store.slug+'?preview=1';return;
     }
     if(action==='theme-publish') {
       const form=document.querySelector('[data-form="theme"]');if(!form.reportValidity())return;
-      await api(storePath('/theme'),'PUT',Object.fromEntries(new FormData(form)));
+      await api(storePath('/theme'),'PUT',themeConfiguration(form));
       await api(storePath('/theme/publish'),'POST',{revision:state.extra.revision});
       await refresh();toast('Theme published. The previous version is available in history.');return;
     }
@@ -264,14 +297,7 @@ document.addEventListener('click',async event=>{
     if(action==='export') {
       const a=document.createElement('a');a.href=storePath('/export');a.download='ind-store-export.json';a.click();toast('Preparing your store export.');return;
     }
-    if(action==='add-cart') {
-      if(state.shop.preview)return toast('Checkout is disabled in a theme preview.',true);
-      const p=state.shop.products.find(p=>p.id===identifier),line=state.cart.find(l=>l.id===identifier);
-      if(!p||p.stock<1)return toast('This product is out of stock.',true);
-      if(line&&line.quantity>=Math.min(99,p.stock))return toast('You have reached the available quantity.',true);
-      if(line)line.quantity++;else state.cart.push({...p,quantity:1});
-      state.checkoutKey=null;renderShop();toast('Added to your bag.');return;
-    }
+    if(action==='add-cart')return addProductToCart(identifier);
     if(action==='cart')return cartModal();
     if(action==='cart-less'||action==='cart-more') {
       const line=state.cart.find(l=>l.id===identifier);if(!line)return;
@@ -287,6 +313,8 @@ document.addEventListener('submit',async event=>{
   const existingText=submit?.textContent;if(submit){submit.disabled=true;submit.textContent=kind==='assistant'?'Drafting…':'Saving…';}
   const errorBox=(dialog.open?dialog:form).querySelector('.error');if(errorBox)errorBox.innerHTML='';
   try {
+    if(await connectionForm(kind,form,data,extensionContext()))return;
+    if(kind==='theme-file'){themeFileForm(form,data,extensionContext());return;}
     if(kind==='login') {await api('/api/login','POST',data);await entered();return;}
     if(kind==='product-new') {
       await api(storePath('/products'),'POST',{...data,price:Math.round(Number(data.price)*100),stock:Number(data.stock),tax_bps:Math.round(Number(data.tax)*100)});
@@ -300,7 +328,7 @@ document.addEventListener('submit',async event=>{
       await api(storePath('/products/'+form.dataset.id+'/stock'),'POST',{delta:Number(data.delta),reason:data.reason});
       closeModal();await refresh();toast('Stock adjustment recorded.');return;
     }
-    if(kind==='theme') {await api(storePath('/theme'),'PUT',data);await refresh();toast('Theme draft saved.');return;}
+    if(kind==='theme') {await api(storePath('/theme'),'PUT',themeConfiguration(form));await refresh();toast('Theme draft saved.');return;}
     if(kind==='app-new') {
       const result=await api(storePath('/apps'),'POST',{name:data.name,scopes:fd.getAll('scopes')});
       await refresh();
@@ -322,16 +350,26 @@ document.addEventListener('submit',async event=>{
       toast('Draft generated. No store changes were applied.');return;
     }
     if(kind==='checkout') {
+      if(data.method==='razorpay'){
+        const intent=await api('/api/public/'+state.shop.slug+'/payments','POST',{...data,receipt_token:state.paymentIntent?.checkout_key===state.checkoutKey?state.paymentIntent.receipt_token:undefined,items:state.cart.map(l=>({product_id:l.id,quantity:l.quantity}))},{'Idempotency-Key':state.checkoutKey});
+        state.paymentIntent={...intent,checkout_key:state.checkoutKey};state.paymentCustomer=data;
+        await onlineCheckout(extensionContext(),state.paymentIntent,data);return;
+      }
       const result=await api('/api/public/'+state.shop.slug+'/checkout','POST',{...data,method:'cod',items:state.cart.map(l=>({product_id:l.id,quantity:l.quantity}))},{'Idempotency-Key':state.checkoutKey});
       state.cart=[];state.checkoutKey=null;state.shop=await api('/api/public/'+state.shop.slug);renderShop();
       modal('Thank you for your order','<div class="stack"><div class="app-icon">'+icon('check',25)+'</div><h2>'+e(result.number)+'</h2><p>Your '+(state.config.demo?'fictional demo ':'')+'COD order was saved. '+money(result.total)+' is due on delivery. No payment was taken and no courier booking was made.</p><div class="notice">This local pilot does not send confirmation emails or book deliveries.</div><div class="form-actions">'+btn('close','Continue shopping','primary')+'</div></div>');return;
     }
   } catch(error) {
+    if(kind==='checkout'&&error.receipt){
+      state.paymentIntent={...error.receipt,checkout_key:state.checkoutKey,status:'uncertain'};
+      paymentStatusModal(extensionContext(),state.paymentIntent,{status:'uncertain'});
+    }
     if(errorBox&&errorBox.isConnected)errorBox.innerHTML='<div class="form-error">'+e(error.message)+'</div>';else toast(error.message,true);
   } finally {if(submit?.isConnected){submit.disabled=false;submit.textContent=existingText;}}
 });
 document.addEventListener('change',async event=>{
   try {
+    if(event.target.matches('[data-theme-import]')){await importTheme(event,extensionContext());return;}
     if(event.target.id==='store-select') {
       if(!event.target.value&&state.session.user.kind==='partner')return navigate('partner');
       if(!event.target.value)return;
@@ -345,15 +383,18 @@ document.addEventListener('input',event=>{
     const query=event.target.value.toLowerCase();
     for(const row of document.querySelectorAll('[data-search]'))row.hidden=!row.dataset.search.toLowerCase().includes(query);
   }
-  if(event.target.closest('[data-form="theme"]')) {
-    const form=event.target.closest('form'),config=Object.fromEntries(new FormData(form));
-    const preview=document.getElementById('theme-live');if(preview)preview.innerHTML=shopMarkup({name:state.data.store.name,products:state.data.products.filter(p=>p.active),theme:config},true);
+  if(event.target.closest('[data-form="theme"]')||event.target.getAttribute('form')==='theme-settings') {
+    const form=document.getElementById('theme-settings'),config=themeConfiguration(form);
+    const preview=document.getElementById('theme-live');
+    if(config.renderer==='liquid'){if(preview)preview.innerHTML='<p class="notice">Source changed. Choose Render preview to check the unsaved template.</p>';return;}
+    if(preview)preview.innerHTML=shopMarkup({name:state.data.store.name,products:state.data.products.filter(p=>p.active),theme:config},true);
   }
 });
 dialog.addEventListener('close',()=>{dialog.innerHTML='';});
 window.addEventListener('hashchange',()=>{if(!state.shop&&state.session)navigate(location.hash.slice(1)).catch(error=>toast(error.message,true));});
 async function boot() {
   state.config=await api('/api/config');
+  if(state.config.store_slug){await shopBoot(state.config.store_slug);return;}
   const shop=location.pathname.match(/^\/s\/([a-z0-9-]+)$/);
   if(shop) {
     if(new URLSearchParams(location.search).has('preview')) {

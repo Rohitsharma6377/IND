@@ -52,7 +52,8 @@ test('static assets are served without exposing source, data or traversal paths'
   const response=await fetch(origin+'/');
   assert.equal(response.status,200);
   assert.match(response.headers.get('content-security-policy'),/script-src 'self'/);
-  assert.match(await response.text(),/src="\/app.mjs"/);
+  assert.match(await response.text(),/src="\/marketing.mjs"/);
+  const admin=await fetch(origin+'/admin');assert.match(await admin.text(),/src="\/app.mjs"/);
   for(const path of ['/src/commerce.mjs','/data/demo.db','/..%2fpackage.json'])assert.equal((await req(path)).status,404);
   assert.equal((await req('/api/login',{method:'POST',body:'{bad json'})).status,400);
 });

@@ -9,6 +9,7 @@ export class Commerce {
     this.db = new DatabaseSync(filename);
     this.depth = 0;
     this.db.exec(readFileSync(new URL('./schema.sql', import.meta.url), 'utf8'));
+    this.db.exec(readFileSync(new URL('./expansion.sql', import.meta.url), 'utf8'));
   }
   close() { this.db.close(); }
   get(sql, ...args) { return this.db.prepare(sql).get(...args); }
@@ -90,6 +91,8 @@ export class Commerce {
       this.run('INSERT INTO memberships VALUES(?,?,?)', storeId, target.id, 'owner');
       this.run('UPDATE stores SET owner_id=? WHERE id=?', target.id, storeId);
       this.run('UPDATE apps SET revoked=1 WHERE store_id=?', storeId);
+      this.run('UPDATE gateway_accounts SET enabled=0 WHERE store_id=?',storeId);
+      for(const domain of this.all('SELECT id FROM store_domains WHERE store_id=?',storeId))this.run("UPDATE store_domains SET status='pending',challenge=?,verified_at=NULL,last_error='Ownership transferred: verify this domain again' WHERE id=?",'ind-commerce='+secret(),domain.id);
       this.audit(storeId, actor.id, 'store.handover', 'Ownership transferred; partner access and existing app tokens revoked');
       return { transferred: true };
     });
@@ -170,7 +173,7 @@ export class Commerce {
     return { ...s, theme: JSON.parse(s.published), published: undefined,
       products: this.all('SELECT id,name,category,description,price,tax_bps,stock,colour FROM products WHERE store_id=? AND active=1 ORDER BY created_at,id', s.id) };
   }
-  checkout(slug, input, key) {
+  checkout(slug, input, key, {online=false} = {}) {
     const store = this.get("SELECT id FROM stores WHERE slug=? AND mode IN ('demo','active')", slug);
     fail(store, 404, 'This storefront is not open');
     text(key, 'Checkout idempotency key', 100, 16);
@@ -184,8 +187,8 @@ export class Commerce {
     const customer = text(input.customer, 'Customer name', 120), contact = email(input.email);
     const phone = text(input.phone, 'Phone', 20, 10), address = text(input.address, 'Delivery address', 500, 10);
     fail(/^\+?[0-9 ()-]{10,20}$/.test(phone) && phone.replace(/\D/g, '').length >= 10 && phone.replace(/\D/g, '').length <= 15, 400, 'Enter a valid phone number');
-    fail(input.method === undefined || input.method === 'cod', 400, 'Only cash on delivery is configured');
-    const normalized = { customer, email: contact, phone, address, items: [...cart].sort((a,b) => a[0].localeCompare(b[0])) };
+    const method=input.method||'cod';fail(method==='cod'||(online&&method==='razorpay'),400,'This payment method is not enabled');
+    const normalized = { customer, email: contact, phone, address, method, items: [...cart].sort((a,b) => a[0].localeCompare(b[0])) };
     const fingerprint = hash(JSON.stringify(normalized));
     return this.tx(() => {
       const old = this.get('SELECT * FROM orders WHERE store_id=? AND idempotency_key=?', store.id, key);
@@ -203,7 +206,7 @@ export class Commerce {
       }
       fail(total <= 100000000, 400, 'Order value exceeds the local pilot limit');
       const guard = this.get("SELECT 1 AS enabled FROM installations WHERE store_id=? AND plugin_id='cod-guard'", store.id);
-      fail(!guard || total <= 1000000, 409, 'Cash on delivery is limited to ₹10,000 for this store');
+      fail(method!=='cod' || !guard || total <= 1000000, 409, 'Cash on delivery is limited to ₹10,000 for this store');
       for (const line of items) {
         const update = this.run('UPDATE products SET stock=stock-? WHERE id=? AND store_id=? AND stock>=?', line.quantity, line.product_id, store.id, line.quantity);
         fail(update.changes === 1, 409, 'Stock changed. Please try checkout again');
@@ -211,7 +214,7 @@ export class Commerce {
       }
       const sequence = this.get('SELECT COUNT(*) AS n FROM orders WHERE store_id=?', store.id).n + 1001;
       const number = 'IND-' + sequence;
-      this.run('INSERT INTO orders(id,number,store_id,customer,email,phone,address,items,total,tax,idempotency_key,request_hash,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)', orderId, number, store.id, customer, contact, phone, address, JSON.stringify(items), total, tax, key, fingerprint, now());
+      this.run('INSERT INTO orders(id,number,store_id,customer,email,phone,address,items,total,tax,method,idempotency_key,request_hash,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)', orderId, number, store.id, customer, contact, phone, address, JSON.stringify(items), total, tax, method, key, fingerprint, now());
       this.run('INSERT INTO events VALUES(?,?,?,?,?)', id('evt'), store.id, 'order.created', JSON.stringify({ order_id: orderId, total, currency: 'INR' }), now());
       const plugins = this.all('SELECT plugin_id FROM installations WHERE store_id=?', store.id).map(p => p.plugin_id);
       if (plugins.includes('packing-note')) this.task(store.id, 'Pack ' + number + ' with care', 'Check every item and include a thank-you note. No customer message was sent.');
@@ -235,12 +238,14 @@ export class Commerce {
       const order = this.get('SELECT * FROM orders WHERE id=? AND store_id=?', orderId, storeId);
       fail(order, 404, 'Order not found');
       if (action === 'ship') {
+        fail(order.method==='cod'||order.payment==='paid',409,'Online payment must be captured before shipping');
         fail(order.fulfilment === 'unfulfilled', 409, 'Only an unfulfilled order can be marked shipped');
         this.run("UPDATE orders SET fulfilment='shipped' WHERE id=?", orderId);
       } else if (action === 'deliver') {
         fail(order.fulfilment === 'shipped', 409, 'Only a shipped order can be marked delivered');
         this.run("UPDATE orders SET fulfilment='delivered' WHERE id=?", orderId);
       } else if (action === 'collect') {
+        fail(order.method==='cod',409,'Online payment is confirmed only by the gateway');
         fail(order.fulfilment === 'delivered' && order.payment === 'unpaid', 409, 'Record COD collection once, after delivery');
         this.run("UPDATE orders SET payment='paid' WHERE id=?", orderId);
       } else if (action === 'cancel') {
@@ -278,6 +283,7 @@ export class Commerce {
     const store = this.access(actor, storeId, 'themes');
     return this.tx(() => {
       fail(input.revision === store.theme_revision, 409, 'Theme changed in another session. Reload before publishing');
+      if(input.expected_config)fail(store.draft===input.expected_config,409,'Theme draft changed during validation; reload before publishing');
       let config = store.draft;
       if (input.rollback !== undefined) {
         integer(input.rollback, 'Revision', 1000000, 1);
@@ -389,4 +395,21 @@ export class Commerce {
       products: this.all('SELECT * FROM products WHERE store_id=?', storeId),
       orders: this.orders(actor, storeId), ledger: this.all('SELECT * FROM ledger WHERE store_id=?', storeId) };
   }
+  signup(input) {
+    fail(input.consent===true,400,'Accept the pilot terms and privacy notice');
+    const kind=input.kind||'merchant';fail(['merchant','partner'].includes(kind),400,'Choose merchant or partner');
+    return this.tx(()=>{
+      const account=this.user({name:input.name,email:input.email,password:input.password,kind});
+      if(kind==='merchant')this.newStore(account,{name:input.store_name,slug:input.slug});
+      return this.session(account);
+    });
+  }
+  pilotRequest(input) {
+    fail(input.consent===true,400,'Consent to a reply is required');
+    const interest=text(input.interest,'Interest',40);fail(['merchant','partner','developer'].includes(interest),400,'Choose a valid interest');
+    this.run('INSERT INTO pilot_requests(id,name,email,company,interest,message,consent_at) VALUES(?,?,?,?,?,?,?)',id('lead'),text(input.name,'Name',100),email(input.email),text(input.company||'','Company',150,0),interest,text(input.message,'Message',3000),now());
+    return {saved:true};
+  }
+  pilotRequests(actor) {fail(actor.kind==='support',403,'Support account required');return this.all('SELECT * FROM pilot_requests ORDER BY consent_at DESC LIMIT 200');}
+
 }
