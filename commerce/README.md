@@ -104,7 +104,7 @@ npm test
 
 Tests cover tenant isolation, role revocation, pricing/tax snapshots, replay protection, last-unit parallel HTTP checkouts, cancellation/restocking, state transitions, theme privacy/history, plugin behavior, token scopes, handover, support boundaries, persistence, HTTP auth/CSRF/Host boundaries and mocked AI limits.
 
-A GitHub Actions workflow runs on Node 24 on Linux and Windows. Read actual check results before treating the pilot as validated. Local execution and visual browser verification were interrupted by workspace unavailability during this implementation; syntax parsing alone is not runtime verification.
+A GitHub Actions workflow runs on Node 24 on Linux and Windows. Read actual check results before treating the pilot as validated. Local execution and visual browser verification were interrupted by workspace unavailability during this implementation; 25 pure validation/rendering/asset checks passed in a JavaScript isolate; these do not verify Node, SQLite, HTTP behavior or browser layout. Syntax parsing alone is not runtime verification.
 
 ## Architecture and production boundary
 

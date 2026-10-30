@@ -166,7 +166,7 @@ export function createCommerceServer({ commerce, demo = false, aiModel = null } 
             const context={store:c.access(actor,storeId).name,products:products.slice(0,20).map(p=>({name:p.name,category:p.category,stock:p.stock})),low_stock:products.filter(p=>p.stock<=5).length};
             const result=await draftWithOllama(input,context,aiModel);
             // Re-check revocation after awaiting a model response.
-            c.access(actor,storeId,'catalog');
+            c.access(c.actor(token),storeId,'catalog');
             return json(res,200,result);
           }
         }

@@ -33,7 +33,7 @@ The local pilot implements a coherent order-to-collection reference. The full pr
 
 ## Validation record
 
-- JavaScript modules were syntax-parsed while preparing source.
+- JavaScript modules were syntax-parsed while preparing source. 25 pure validation/rendering/asset checks passed in a JavaScript isolate; this is separate from the Node/SQLite/HTTP test suite.
 - Local process execution and browser QA could not be completed after the user workspace disconnected.
 - Automated tests and a Linux/Windows CI workflow are supplied. The pull request records actual CI results separately; this document does not assert they passed.
 - Real Ollama inference, payments, courier APIs, production recovery and merchant pilot outcomes have not been verified.
